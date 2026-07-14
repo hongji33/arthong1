@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ART HONG PUZZLE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #f3f4f6; font-family: 'Noto Sans KR', sans-serif; }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+</head>
+<body class="flex flex-col min-h-screen items-center justify-between p-4 bg-slate-50 text-slate-800">
+
+    <script>
+        // 1. Firebase 설정 객체 (1단계에서 복사한 본인의 정보로 반드시 대체하세요!)
+        const firebaseConfig = {
+  apiKey: "AIzaSyCIJG0d63_J3RQ5uLCkUMzQ6Z4CZ2QADbI",
+  authDomain: "arthong1-23052.firebaseapp.com",
+  projectId: "arthong1-23052",
+  storageBucket: "arthong1-23052.firebasestorage.app",
+  messagingSenderId: "228109777514",
+  appId: "1:228109777514:web:93d8d5114282874ff2e813",
+  measurementId: "G-00E5SXDX0H"
+};
+
+        // Firebase 초기화
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        let currentTeam = null;
+
+        // 2. 실시간 랭킹 불러오기 (데이터베이스가 변경될 때마다 자동 업데이트)
+        database.ref('rankings').on('value', (snapshot) => {
+            const data = snapshot.val();
+            const rankingListDiv = document.getElementById('ranking-list');
+            rankingListDiv.innerHTML = ''; // 초기화
+
+            if (data) {
+                // 데이터를 배열로 변환 후 기록 시간순(오름차순) 정렬
+                const sortedRank = Object.keys(data).map(key => ({
+                    team: key,
+                    time: data[key].time
+                })).sort((a, b) => a.time - b.time);
+
+                // 화면에 순위 그리기
+                sortedRank.forEach((rank, index) => {
+                    rankingListDiv.innerHTML += `<p class="my-1 font-medium text-slate-700">${index + 1}등: ${rank.team}조 (${rank.time}초)</p>`;
+                });
+            } else {
+                rankingListDiv.innerHTML = '<p class="text-slate-500">아직 등록된 랭킹이 없습니다.</p>';
+            }
+        });
+
+        // 3. 선생님 관리 도구 로그인 및 암호 저장 로직
+        function toggleTeacherSection() {
+            const controls = document.getElementById('teacher-controls');
+            if (controls.classList.contains('hidden')) {
+                const checkPw = prompt('관리자 비밀번호를 입력하세요:');
+                if (checkPw === 'admin') { // 선생님용 마스터 비밀번호 설정
+                    controls.classList.remove('hidden');
+                    loadPasswords(); // 저장되어 있던 조별 암호 DB에서 불러오기
+                } else {
+                    alert('비밀번호가 올바르지 않습니다.');
+                }
+            } else {
+                controls.classList.add('hidden');
+            }
+        }
+
+        // DB에서 조별 비밀번호 세팅값 가져오기
+        function loadPasswords() {
+            database.ref('passwords').once('value', (snapshot) => {
+                const passwords = snapshot.val();
+                if (passwords) {
+                    for(let i = 1; i <= 7; i++) {
+                        const input = document.querySelector(`.grid input[value="${i.toString().repeat(4)}"]`) || document.querySelectorAll('.grid input')[i-1];
+                        if(input && passwords[`team${i}`]) input.value = passwords[`team${i}`];
+                    }
+                }
+            });
+        }
+
+        // 4. 모달창 열기/닫기
+        function openPasswordModal(teamNum) {
+            currentTeam = teamNum;
+            document.getElementById('selected-team-name').innerText = teamNum + '조';
+            document.getElementById('team-password').value = '';
+            document.getElementById('password-modal').classList.remove('hidden');
+            document.getElementById('team-password').focus();
+        }
+
+        function closePasswordModal() {
+            document.getElementById('password-modal').classList.add('hidden');
+        }
+
+        // 5. 학생이 입력한 암호를 DB와 대조하여 검증
+        function submitPassword() {
+            const userInPw = document.getElementById('team-password').value;
+            
+            database.ref(`passwords/team${currentTeam}`).once('value', (snapshot) => {
+                const correctPw = snapshot.val() || String(currentTeam).repeat(4); // DB에 없으면 기본값(1111 등) 사용
+                
+                if (userInPw === String(correctPw)) {
+                    alert(`${currentTeam}조 인증 성공! 퍼즐을 시작합니다.`);
+                    closePasswordModal();
+                    
+                    // 예시: 퍼즐이 완료되었을 때 DB에 스코어를 기록하는 가상의 트리거 함수
+                    // saveScore(currentTeam, 120); 
+                } else {
+                    alert('암호가 틀렸습니다. 다시 확인해 주세요.');
+                }
+            });
+        }
+
+        // [참고용] 퍼즐 성공 시 랭킹을 DB에 기록하는 함수
+        function saveScore(teamNum, seconds) {
+            database.ref(`rankings/${teamNum}조`).set({
+                time: seconds,
+                timestamp: Date.now()
+            });
+        }
+
+        function goToMain() { location.reload(); }
+    </script>
+</body>
+</html>
