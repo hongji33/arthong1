@@ -163,19 +163,47 @@ textarea{resize:vertical; min-height:70px;}
 
   <div class="mode-bar"><span id="modePill" class="pill pill-demo">● 데모 모드</span></div>
 
-  <!-- ===== 홈 ===== -->
+  <!-- ===== 방 만들기 / 입장 ===== -->
+  <section id="roomgate" class="screen">
+    <div class="title"><h1>🚪 방 만들기 / 입장</h1><p>선생님·반마다 따로 쓰는 공간이에요</p></div>
+    <div class="card">
+      <label>학교명</label>
+      <input id="rgSchool" placeholder="예: OO중학교">
+      <label>교사 닉네임</label>
+      <input id="rgTeacher" placeholder="예: 김미술">
+      <label>반 / 교시</label>
+      <input id="rgClass" placeholder="예: 3-1">
+      <button class="btn btn-primary mt2" onclick="createRoom()">이 방으로 입장</button>
+      <p class="hint" id="rgMsg">같은 <b>학교·닉네임·반</b>을 넣으면 같은 방이에요. 반이 다르면(3-1, 3-2) 자료가 서로 <b>섞이지 않고 따로</b> 저장돼요. 닉네임까지 완전히 같으면 다른 선생님과 겹칠 수 있으니, 나만의 닉네임을 쓰세요.</p>
+    </div>
+  </section>
+
+  <!-- ===== 홈 (학생 화면) ===== -->
   <section id="home" class="screen on">
     <div class="title">
       <h1>🧩 미술 작품 모둠 퍼즐</h1>
       <p>작품을 감상하고, 모둠이 함께 퍼즐을 완성해요!</p>
     </div>
+    <div id="homeRoomTag" class="status-line"></div>
     <div class="rank" id="homeRank"></div>
     <div class="card">
-      <button class="btn btn-primary" onclick="go('login')">🙋 학생 입장</button>
-      <button class="btn btn-ghost mt" onclick="openControl()">📺 교사 진행 화면 (교실 앞 화면)</button>
-      <button class="btn btn-line mt" onclick="teacherGate()">🔑 교사 설정(최초비번:0000 ※로그인 후 변경하세요.)</button>
+      <button class="btn btn-primary btn-big" onclick="studentEnter()">🙋 학생 입장</button>
+      <button class="btn btn-ghost mt" onclick="teacherLogin()">🔑 교사용 로그인</button>
     </div>
-    <p class="hint center">데모 모드에서는 이 기기 안에서만 작동해요. 창고 열쇠를 넣으면 여러 기기가 실시간으로 연결돼요.</p>
+    <p class="hint center">학생은 선생님이 준 <b>초대 링크</b>로 들어오면 바로 입장할 수 있어요.</p>
+  </section>
+
+  <!-- ===== 교사 메뉴 (로그인 후) ===== -->
+  <section id="teacherhub" class="screen">
+    <div class="title"><h1>교사 메뉴</h1></div>
+    <div class="card">
+      <div id="hubRoomLabel" style="font-weight:800; color:var(--accent); margin-bottom:10px;"></div>
+      <button class="btn btn-primary" onclick="openControl()">📺 교사 진행 화면 (교실 앞 화면)</button>
+      <button class="btn btn-line mt" onclick="openTeacher()">🔑 교사 설정 (작품·퀴즈·모둠)</button>
+      <button class="btn btn-ghost mt" onclick="copyInvite()">🔗 학생 초대 링크 복사</button>
+      <button class="btn btn-ghost mt" onclick="switchRoom()">🚪 방 변경 (다른 반)</button>
+      <button class="btn btn-ghost mt" onclick="go('home')">← 학생 화면으로</button>
+    </div>
   </section>
 
   <!-- ===== 학생 로그인 ===== -->
@@ -275,7 +303,7 @@ textarea{resize:vertical; min-height:70px;}
     <div class="rank" id="bigRank" style="font-size:18px;"></div>
     <div class="card">
       <button class="btn btn-primary btn-big" onclick="teacherStart()">▶ 퍼즐 시작 (모두 동시에!)</button>
-      <button class="btn btn-ghost mt" onclick="go('home')">← 뒤로</button>
+      <button class="btn btn-ghost mt" onclick="go('teacherhub')">← 뒤로</button>
       <p class="hint center">학생들이 감상·대기실에 모이면 이 버튼을 눌러 다같이 시작하세요. 다시 누르면 새 판이 시작돼요.</p>
     </div>
   </section>
@@ -286,6 +314,7 @@ textarea{resize:vertical; min-height:70px;}
     <div class="card">
       <label>예시 작품 불러오기 (버튼을 누르면 설명·퀴즈가 자동으로 채워져요)</label>
       <div id="presetBtns" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+      <button class="btn btn-ghost mt" onclick="loadLastCfg()">↩ 지난 수업에서 쓴 설정 그대로 불러오기</button>
       <div class="divider"></div>
 
       <label>오늘의 작품 이미지</label>
@@ -329,7 +358,7 @@ textarea{resize:vertical; min-height:70px;}
       <input id="cfgTeacherPw" placeholder="예: 0000">
 
       <button class="btn btn-primary mt2" onclick="saveConfig()">💾 저장하고 모두에게 적용</button>
-      <button class="btn btn-ghost mt" onclick="go('home')">← 뒤로</button>
+      <button class="btn btn-ghost mt" onclick="go('teacherhub')">← 뒤로</button>
       <p class="hint" id="saveMsg"></p>
     </div>
   </section>
@@ -344,7 +373,7 @@ textarea{resize:vertical; min-height:70px;}
 /* =========================================================
    0) 모드 판별 + 저장소(store) 추상화
    ========================================================= */
-const ROOM='main';
+let ROOM='main';
 const isLive = FIREBASE_CONFIG && FIREBASE_CONFIG.apiKey && !FIREBASE_CONFIG.apiKey.includes('여기에') && FIREBASE_CONFIG.databaseURL;
 let store, firebaseAuth=null;
 if(isLive){
@@ -786,6 +815,16 @@ function loadPreset(i){
   openTeacher();
   document.getElementById('saveMsg').textContent=`"${p.title}" 예시를 불러왔어요. 실제 작품 사진이 있으면 위에서 업로드로 바꾸고, 아래 저장을 눌러주세요.`;
 }
+function loadLastCfg(){
+  const c=lsGet('lastCfg');
+  if(!c){ document.getElementById('saveMsg').textContent='아직 저장된 지난 설정이 없어요. (한 번 저장하면 다음부터 불러올 수 있어요)'; return; }
+  CONFIG.title=c.title; CONFIG.description=c.description; CONFIG.imageDataUrl=c.imageDataUrl;
+  CONFIG.pieces=c.pieces||'3x4'; CONFIG.previewSeconds=c.previewSeconds||5;
+  CONFIG.quizzes=JSON.parse(JSON.stringify(c.quizzes||[]));
+  if(c.groups) CONFIG.groups=JSON.parse(JSON.stringify(c.groups));
+  pickedImg=c.imageDataUrl; openTeacher();
+  document.getElementById('saveMsg').textContent='지난 수업 설정을 불러왔어요. 확인 후 저장을 눌러주세요.';
+}
 function openTeacher(){
   go('teacher');
   renderPresetBtns();
@@ -853,24 +892,89 @@ function saveConfig(){
     quizzes, groups:CONFIG.groups
   };
   store.set(`rooms/${ROOM}/config`,cfg);
+  lsSet('lastCfg',cfg);
   // 새 작품 → 기록 초기화
   store.remove(`rooms/${ROOM}/play`); store.remove(`rooms/${ROOM}/waiting`);
   store.remove(`rooms/${ROOM}/likes`); store.remove(`rooms/${ROOM}/comments`);
   store.set(`rooms/${ROOM}/game`,{round:0,startedAt:null});
   document.getElementById('saveMsg').textContent='✅ 저장했어요! 학생들이 접속하면 오늘의 작품이 보여요.';
-  setTimeout(()=>go('home'),900);
+  setTimeout(()=>go('teacherhub'),900);
 }
 
 /* =========================================================
-   11) 앱 시작 (실시간 모드면 익명 로그인 후 시작)
+   11) 방(room) + 앱 시작
    ========================================================= */
+/* 브라우저 기억(로컬 저장) */
+function lsGet(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+
+/* 방 이름 만들기 (Firebase 금지문자 제거) */
+function sanitizeKey(s){ return (s||'').trim().replace(/[.#$\[\]\/]/g,'-'); }
+function buildRoomKey(school,teacher,cls){ return [school,teacher,cls].map(sanitizeKey).filter(Boolean).join('_'); }
+function inviteLinkFor(key){ return location.origin+location.pathname+'?room='+encodeURIComponent(key); }
+function inviteLink(){ return inviteLinkFor(ROOM); }
+
+let authReady=!(isLive&&firebaseAuth), roomReady=false, appStarted=false;
+function maybeStart(){ if(authReady && roomReady && !appStarted){ appStarted=true; startApp(); } }
+
 if(isLive && firebaseAuth){
   firebaseAuth.signInAnonymously().catch(e=>console.error('익명 로그인 오류',e));
-  let started=false;
-  firebaseAuth.onAuthStateChanged(u=>{ if(u && !started){ started=true; startApp(); } });
-}else{
-  startApp();
+  firebaseAuth.onAuthStateChanged(u=>{ if(u){ authReady=true; maybeStart(); } });
 }
+
+let roomDisplay='';
+function updateRoomLabels(){
+  const hub=document.getElementById('hubRoomLabel'); if(hub) hub.textContent=roomDisplay?('📍 '+roomDisplay):'';
+  const tag=document.getElementById('homeRoomTag'); if(tag) tag.textContent=roomDisplay?('📍 '+roomDisplay+' 방'):'';
+}
+function enterRoom(key, meta, dest){
+  ROOM=key||'main'; roomReady=true;
+  roomDisplay = meta? [meta.school,meta.teacher,meta.cls].filter(Boolean).join(' · ') : decodeURIComponent(ROOM);
+  if(meta) lsSet('lastRoom', {key:ROOM, meta});
+  updateRoomLabels();
+  maybeStart();
+  go(dest||'home');
+}
+function createRoom(){
+  const school=document.getElementById('rgSchool').value.trim();
+  const teacher=document.getElementById('rgTeacher').value.trim();
+  const cls=document.getElementById('rgClass').value.trim();
+  if(!school&&!teacher&&!cls){ document.getElementById('rgMsg').textContent='학교명·닉네임·반 중 하나 이상 입력해 주세요.'; return; }
+  const key=buildRoomKey(school,teacher,cls);
+  if(appStarted && key!==ROOM){ lsSet('lastRoom',{key,meta:{school,teacher,cls}}); location.href=inviteLinkFor(key); return; }
+  enterRoom(key,{school,teacher,cls},'teacherhub');
+}
+function switchRoom(){
+  const last=lsGet('lastRoom');
+  if(last&&last.meta){ document.getElementById('rgSchool').value=last.meta.school||''; document.getElementById('rgTeacher').value=last.meta.teacher||''; document.getElementById('rgClass').value=last.meta.cls||''; }
+  go('roomgate');
+}
+function studentEnter(){
+  if(!roomReady){ alert('선생님께 받은 초대 링크로 들어와 주세요.'); return; }
+  go('login');
+}
+function teacherLogin(){
+  const pw=prompt('교사 비밀번호를 입력하세요 (기본 0000)'); if(pw===null) return;
+  const expected=(CONFIG&&CONFIG.teacherPassword)||'0000';
+  if(pw!==expected){ alert('비밀번호가 맞지 않아요.'); return; }
+  teacherAuthed=true;
+  if(roomReady) go('teacherhub'); else switchRoom();
+}
+function copyInvite(){
+  const url=inviteLink();
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(()=>alert('학생 초대 링크를 복사했어요!\n\n'+url)).catch(()=>prompt('이 링크를 복사해 학생들에게 공유하세요:',url));
+  } else prompt('이 링크를 복사해 학생들에게 공유하세요:',url);
+}
+
+/* 시작: URL에 ?room= 있으면 학생은 바로 학생 화면. 없으면 학생 화면(교사는 로그인으로 방 생성) */
+(function initRoom(){
+  const urlRoom=new URLSearchParams(location.search).get('room');
+  if(urlRoom){ enterRoom(sanitizeKey(decodeURIComponent(urlRoom)), null, 'home'); return; }
+  const last=lsGet('lastRoom');
+  if(last&&last.meta){ document.getElementById('rgSchool').value=last.meta.school||''; document.getElementById('rgTeacher').value=last.meta.teacher||''; document.getElementById('rgClass').value=last.meta.cls||''; }
+  go('home');
+})();
 </script>
 </body>
 </html>
