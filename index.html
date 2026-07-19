@@ -1,795 +1,876 @@
-:Art Hong Puzzle:index.html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ART HONG PUZZLE</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    
-    <!-- Firebase SDK v9 호환성 버전 라이브러리 추가 -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>미술 작품 모둠 퍼즐</title>
 
-    <style>
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-        .puzzle-piece {
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
-            cursor: grab;
-        }
-        .puzzle-piece:active {
-            cursor: grabbing;
-        }
-        
-        /* 칭찬 문구 플로팅 애니메이션 효과 */
-        @keyframes floatUp {
-            0% { transform: translate(-50%, -50%) translateY(0) scale(0.7); opacity: 0; }
-            20% { transform: translate(-50%, -50%) translateY(-20px) scale(1.2); opacity: 1; }
-            100% { transform: translate(-50%, -50%) translateY(-70px) scale(1); opacity: 0; }
-        }
-        .float-effect {
-            animation: floatUp 1.2s ease-out forwards;
-        }
-    </style>
+<!-- ================================================================
+     [ 창고 열쇠 넣는 곳 ]  ← firebaseConfig를 여기에 넣습니다.
+     아래 값이 그대로면 '데모 모드'(이 기기 안에서만) 로 실행됩니다.
+     실제 열쇠를 넣으면 자동으로 '실시간 모드'로 바뀝니다.
+================================================================= -->
+<script>
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCIJG0d63_J3RQ5uLCkUMzQ6Z4CZ2QADbI",
+  authDomain: "arthong1-23052.firebaseapp.com",
+  databaseURL: "https://arthong1-23052-default-rtdb.firebaseio.com",
+  projectId: "arthong1-23052",
+  storageBucket: "arthong1-23052.firebasestorage.app",
+  messagingSenderId: "228109777514",
+  appId: "1:228109777514:web:93d8d5114282874ff2e813"
+};
+</script>
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+
+<style>
+:root{
+  --bg1:#4f46e5; --bg2:#7c3aed; --bg3:#db2777;
+  --card:#ffffff; --ink:#1f2340; --muted:#6b7280;
+  --accent:#6d28d9; --accent2:#ec4899; --good:#10b981; --warn:#f59e0b;
+  --line:#e5e7eb; --soft:#f4f4fb;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; height:100%;}
+body{
+  font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  color:var(--ink);
+  background:linear-gradient(135deg,var(--bg1),var(--bg2) 55%,var(--bg3));
+  background-attachment:fixed; min-height:100%; overflow-x:hidden;
+}
+.wrap{max-width:1000px; margin:0 auto; padding:16px 16px 50px;}
+.screen{display:none; animation:fade .35s ease;}
+.screen.on{display:block;}
+@keyframes fade{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;}}
+
+.card{background:var(--card); border-radius:22px; padding:22px; box-shadow:0 18px 45px rgba(30,20,80,.28);}
+h1,h2,h3{margin:0 0 10px;}
+.title{color:#fff; text-align:center; margin:10px 0 16px;}
+.title h1{font-size:25px; font-weight:800; letter-spacing:-.5px;}
+.title p{margin:6px 0 0; color:#eae7ff; font-size:14px;}
+
+.btn{border:0; border-radius:16px; padding:15px 18px; font-size:16px; font-weight:700;
+  cursor:pointer; font-family:inherit; transition:transform .08s, box-shadow .2s; width:100%;}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; box-shadow:0 8px 20px rgba(124,58,237,.35);}
+.btn-ghost{background:var(--soft); color:var(--accent);}
+.btn-line{background:#fff; color:var(--accent); border:2px solid var(--accent);}
+.btn-big{font-size:20px; padding:20px;}
+.mt{margin-top:12px;} .mt2{margin-top:20px;}
+
+label{display:block; font-size:13px; font-weight:700; color:var(--muted); margin:14px 0 6px;}
+input,textarea,select{width:100%; padding:13px 14px; border:1.5px solid var(--line); border-radius:13px;
+  font-size:15px; font-family:inherit; color:var(--ink); background:#fff;}
+input:focus,textarea:focus,select:focus{outline:none; border-color:var(--accent);}
+textarea{resize:vertical; min-height:70px;}
+
+.pill{display:inline-block; padding:5px 12px; border-radius:999px; font-size:12px; font-weight:700;}
+.pill-demo{background:#fff3cd; color:#8a6d1a;}
+.pill-live{background:#dcfce7; color:#166534;}
+.mode-bar{display:flex; justify-content:center; margin-bottom:10px;}
+
+.rank{background:rgba(255,255,255,.14); border-radius:18px; padding:14px 16px; color:#fff; margin-bottom:16px;}
+.rank h3{color:#fff; font-size:15px; margin-bottom:10px;}
+.rank ol{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:7px;}
+.rank li{display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.16); padding:9px 12px; border-radius:12px; font-weight:700;}
+.rank .medal{font-size:18px; width:26px; text-align:center;}
+.rank .who{flex:1;}
+.rank .time{font-variant-numeric:tabular-nums; opacity:.9; font-size:13px;}
+.rank .empty{opacity:.85; font-size:13px; font-weight:500;}
+
+/* 2단 레이아웃 (태블릿·PC: 좌우 / 폰: 위아래) */
+.split{display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start;}
+@media(max-width:680px){ .split{grid-template-columns:1fr; gap:14px;} }
+.side-img{width:100%; border-radius:16px; object-fit:contain; box-shadow:0 8px 20px rgba(0,0,0,.15); background:#f4f4fb;}
+.quiz-split .side-img{max-height:60vh;}
+.view-split .side-img{max-height:74vh;}
+@media(max-width:680px){ .quiz-split .side-img{max-height:34vh;} .view-split .side-img{max-height:40vh;} }
+.vside{display:flex; flex-direction:column; gap:12px; max-height:74vh; overflow:auto;}
+@media(max-width:680px){ .vside{max-height:none;} }
+
+/* 퀴즈 */
+.quiz-q{font-size:19px; font-weight:800; line-height:1.4; margin:6px 0 14px;}
+.choice{display:block; width:100%; text-align:left; background:var(--soft); border:2px solid transparent;
+  border-radius:14px; padding:14px 16px; font-size:15px; font-weight:600; margin-bottom:10px; cursor:pointer; font-family:inherit; color:var(--ink);}
+.choice.correct{background:#dcfce7; border-color:var(--good); color:#166534;}
+.choice.wrong{background:#fee2e2; border-color:#ef4444; color:#991b1b;}
+.progressbar{height:8px; background:var(--soft); border-radius:99px; overflow:hidden; margin-bottom:14px;}
+.progressbar>div{height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width .3s;}
+
+/* 감상 */
+.desc{background:var(--soft); border-radius:14px; padding:14px 16px; font-size:15px; line-height:1.7;}
+.react-bar{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+.react-bar input{flex:1 1 120px; min-width:0;}
+.react-bar .btn{flex:0 0 auto; white-space:nowrap;}
+.likebtn{background:#fff0f6; color:var(--accent2); border:2px solid #fbcfe8; border-radius:14px; padding:10px 14px; font-weight:800; cursor:pointer; font-family:inherit; font-size:15px; white-space:nowrap;}
+.likebtn.on{background:var(--accent2); color:#fff; border-color:var(--accent2);}
+.comment-list{display:flex; flex-direction:column; gap:8px; max-height:150px; overflow:auto;}
+.comment{background:var(--soft); border-radius:12px; padding:10px 12px; font-size:14px;}
+.comment b{color:var(--accent);}
+.waitbox{background:linear-gradient(135deg,#eef2ff,#fdf2f8); border:2px dashed var(--accent2); border-radius:14px;
+  padding:16px; text-align:center; font-weight:800; color:var(--accent); font-size:16px;}
+.waitbox .sub{display:block; font-size:13px; font-weight:600; color:var(--muted); margin-top:6px;}
+.dots::after{content:'…'; animation:dots 1.2s steps(4,end) infinite; }
+@keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
+
+/* 동시 시작 카운트다운 */
+.big-preview{text-align:center;}
+.big-preview img{max-height:64vh; width:auto; max-width:100%; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.25);}
+.countdown{font-size:44px; font-weight:900; color:#fff; margin:16px 0 4px; font-variant-numeric:tabular-nums; text-shadow:0 3px 12px rgba(0,0,0,.3);}
+.countdown-sub{color:#eae7ff; font-weight:600;}
+
+/* 퍼즐 */
+.puzzle-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:10px;}
+.timer{font-size:22px; font-weight:800; color:var(--accent); font-variant-numeric:tabular-nums;}
+.puzzle-info{font-size:13px; color:var(--muted); font-weight:600;}
+.board-wrap{display:flex; justify-content:center; margin:6px 0 16px;}
+.board{position:relative; display:grid; background:#eef; border-radius:12px; overflow:hidden; box-shadow:inset 0 0 0 2px var(--line);}
+.slot{border:1px dashed #c9c9e6; display:flex; align-items:center; justify-content:center;}
+.slot.filled{border-color:transparent;}
+.tray{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; background:var(--soft); border-radius:16px; padding:12px; min-height:80px;}
+.piece{background-repeat:no-repeat; border-radius:5px; cursor:grab; touch-action:none; box-shadow:0 3px 8px rgba(0,0,0,.18);}
+.piece.dragging{cursor:grabbing; box-shadow:0 12px 26px rgba(0,0,0,.35); border-radius:6px;}
+.piece.locked{box-shadow:none; cursor:default; border-radius:0;}
+.shake{animation:shake .35s;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+.praise{position:fixed; left:50%; top:38%; transform:translate(-50%,-50%); z-index:9998;
+  font-size:44px; font-weight:900; color:#fff; text-shadow:0 4px 16px rgba(0,0,0,.35); pointer-events:none;
+  padding:14px 28px; border-radius:20px; background:linear-gradient(135deg,var(--accent),var(--accent2)); opacity:0;}
+.praise.go{animation:praise 1s ease forwards;}
+@keyframes praise{0%{opacity:0; transform:translate(-50%,-50%) scale(.4) rotate(-8deg);}
+  25%{opacity:1; transform:translate(-50%,-50%) scale(1.15) rotate(3deg);}
+  70%{opacity:1; transform:translate(-50%,-55%) scale(1);}
+  100%{opacity:0; transform:translate(-50%,-75%) scale(.95);}}
+
+.done-emoji{font-size:64px; text-align:center; animation:pop .6s ease;}
+@keyframes pop{from{transform:scale(0);}60%{transform:scale(1.25);}to{transform:scale(1);}}
+.big-time{font-size:34px; font-weight:800; text-align:center; color:var(--accent); margin:6px 0 4px;}
+.confetti{position:fixed; top:-10px; width:10px; height:16px; z-index:9997; pointer-events:none; border-radius:2px;}
+
+.hint{font-size:12.5px; color:var(--muted); margin-top:8px; line-height:1.6;}
+.divider{height:1px; background:var(--line); margin:18px 0;}
+.center{text-align:center;}
+.quiz-cfg{background:var(--soft); border-radius:14px; padding:12px; margin-bottom:12px;}
+.grouprow{display:flex; gap:8px; margin-bottom:8px;}
+.status-line{color:#fff; text-align:center; font-weight:700; margin-bottom:10px;}
+</style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between p-4">
+<body>
+<div class="wrap">
 
-    <!-- 1. 메인 화면 (대기방) -->
-    <div id="lobby-view" class="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-6 my-6 flex flex-col items-center">
-        <!-- 상단 갤러리 썸네일 (크기 제한 유지하여 화면을 넘치지 않게 조절) -->
-        <div class="grid grid-cols-4 gap-2 w-full max-w-md mb-6">
-            <img class="w-full h-16 object-cover rounded-lg shadow-sm border border-slate-100" src="https://gongu.copyright.or.kr/gongu/wrt/cmmn/wrtFileImageView.do?wrtSn=13215201&filePath=L2Rpc2sxL25ld2RhdGEvMjAxOS85Ny9DTFMxMDAwNC8xMzIxNTIwMV9XUlRfMjAxOTExMDhfMQ==&thumbAt=Y&thumbSe=b_tbumb&wrtTy=10004" alt="Art 1">
-            <img class="w-full h-16 object-cover rounded-lg shadow-sm border border-slate-100" src="https://gongu.copyright.or.kr/gongu/wrt/cmmn/wrtFileImageView.do?wrtSn=9022677&filePath=L2Rpc2sxL25ld2RhdGEvMjAxMS85Ny9DTFM0L2V4cGlyYXRpb25fc3VuXzY5Mg==&thumbAt=Y&thumbSe=b_tbumb&wrtTy=10004" alt="Art 2">
-            <img class="w-full h-16 object-cover rounded-lg shadow-sm border border-slate-100" src="https://gongu.copyright.or.kr/gongu/wrt/cmmn/wrtFileImageView.do?wrtSn=13266923&filePath=L2Rpc2sxL25ld2RhdGEvMjAyMC8yMS9DTFMxMDAwNC8xMzI2NjkyM19XUlRfMjFfQ0xTMTAwMDRfMjAyMDEyMThfMQ==&thumbAt=Y&thumbSe=b_tbumb&wrtTy=10004" alt="Art 3">
-            <img class="w-full h-16 object-cover rounded-lg shadow-sm border border-slate-100" src="https://gongu.copyright.or.kr/gongu/wrt/cmmn/wrtFileImageView.do?wrtSn=13364846&filePath=L2Rpc2sxL25ld2RhdGEvMjAyMy8xMC9DTFMxMDA0LzAwL2UyNmU0MDQzZjI5YjdmNmNmYTgwYmRiZmYyYzE4YWQxYWNjZGJhN2RlNjIwZTRkODFmODFlNjI0NGNhYTc4NGM=&thumbAt=Y&thumbSe=b_tbumb&wrtTy=10004" alt="Art 4">
-        </div>
+  <div class="mode-bar"><span id="modePill" class="pill pill-demo">● 데모 모드</span></div>
 
-        <!-- 메인 타이틀 -->
-        <h1 class="text-4xl font-black text-blue-600 mb-4 tracking-tight text-center">ART HONG PUZZLE</h1>
-
-        <!-- 작품 설명글 영역 (로비) -->
-        <div id="lobby-desc-box" class="w-full max-w-xl bg-amber-50 border border-amber-100 rounded-xl p-4 mb-6 hidden">
-            <p class="text-xs font-bold text-amber-800 flex items-center gap-1">🎨 작품 설명</p>
-            <p id="lobby-desc-text" class="text-sm text-slate-700 mt-1 whitespace-pre-wrap leading-relaxed"></p>
-        </div>
-
-        <!-- 실시간 랭킹 현황 -->
-        <div class="w-full max-w-xl bg-blue-50 border border-blue-100 rounded-2xl p-5 mb-8">
-            <h2 class="text-lg font-bold text-blue-800 text-center flex items-center justify-center gap-2 mb-3">
-                🏆 MISSION RANKING
-            </h2>
-            <div id="ranking-container" class="space-y-2 text-center text-sm text-slate-600">
-                <p>로딩 중이거나 퍼즐 완성 시 실시간 랭킹이 표시됩니다!</p>
-            </div>
-        </div>
-
-        <!-- 조별 입장 구역 -->
-        <div class="w-full max-w-xl mb-8">
-            <h2 class="text-xl font-bold text-slate-700 text-center mb-4 border-b pb-2 flex items-center justify-center gap-2">
-                🚀 MISSION START
-            </h2>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <button onclick="openPasswordModal(1)" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition transform active:scale-95">1조 입장</button>
-                <button onclick="openPasswordModal(2)" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition transform active:scale-95">2조 입장</button>
-                <button onclick="openPasswordModal(3)" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition transform active:scale-95">3조 입장</button>
-                <button onclick="openPasswordModal(4)" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition transform active:scale-95">4조 입장</button>
-                <button onclick="openPasswordModal(5)" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition transform active:scale-95">5조 입장</button>
-                <button onclick="openPasswordModal(6)" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition transform active:scale-95">6조 입장</button>
-                <button onclick="openPasswordModal(7)" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition transform active:scale-95">7조 입장</button>
-            </div>
-            <p class="text-center text-xs text-slate-400 mt-4">원하는 조를 선택하여 입장하세요!</p>
-        </div>
-
-        <!-- 선생님 관리 도구 -->
-        <div class="w-full max-w-xl bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-inner">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold text-slate-700 flex items-center gap-1.5">
-                    🔐 선생님 관리 도구
-                </h2>
-                <button id="teacher-login-btn" onclick="toggleTeacherControls()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-lg transition">
-                    로그인
-                </button>
-            </div>
-
-            <!-- 선생님 제어반 -->
-            <div id="teacher-content" class="hidden space-y-4 pt-2 border-t border-slate-200">
-                <!-- 설정 파트 -->
-                <div class="flex items-center justify-between bg-white p-3 rounded-xl border">
-                    <label class="text-sm font-semibold text-slate-600">미리보기 시간 (초):</label>
-                    <input type="number" id="setup-preview-time" onchange="saveConfigToFirebase()" value="5" min="1" class="w-20 p-1.5 border rounded-lg text-center font-bold text-blue-600 focus:outline-blue-500">
-                </div>
-
-                <!-- 작품 설명글 작성 패널 -->
-                <div class="bg-white p-4 rounded-xl border">
-                    <label class="text-sm font-semibold text-slate-600 block mb-1">📝 작품 설명글 입력</label>
-                    <textarea id="setup-description" onchange="saveConfigToFirebase()" placeholder="학생들에게 보여줄 작품 설명을 여기에 입력해주세요." class="w-full p-2.5 border rounded-lg text-sm text-slate-700 focus:outline-blue-500 h-20 resize-none"></textarea>
-                </div>
-
-                <!-- 조별 암호 변경 판넬 -->
-                <div class="bg-white p-4 rounded-xl border">
-                    <span class="text-sm font-semibold text-slate-600 block mb-2">🔑 조별 입장 비밀번호 설정</span>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-                        <div class="flex items-center gap-1"><span>1조:</span><input type="text" id="pw-team-1" onchange="savePasswordsToFirebase()" class="w-full p-1 border rounded" value="1111"></div>
-                        <div class="flex items-center gap-1"><span>2조:</span><input type="text" id="pw-team-2" onchange="savePasswordsToFirebase()" class="w-full p-1 border rounded" value="2222"></div>
-                        <div class="flex items-center gap-1"><span>3조:</span><input type="text" id="pw-team-3" onchange="savePasswordsToFirebase()" class="w-full p-1 border rounded" value="3333"></div>
-                        <div class="flex items-center gap-1"><span>4조:</span><input type="text" id="pw-team-4" onchange="savePasswordsToFirebase()" class="w-full p-1 border rounded" value="4444"></div>
-                        <div class="flex items-center gap-1"><span>5조:</span><input type="text" id="pw-team-5" onchange="savePasswordsToFirebase()" class="w-full p-1 border rounded" value="5555"></div>
-                        <div class="flex items-center gap-1"><span>6조:</span><input type="text" id="pw-team-6" onchange="savePasswordsToFirebase()" class="w-full p-1 border rounded" value="6666"></div>
-                        <div class="flex items-center gap-1"><span>7조:</span><input type="text" id="pw-team-7" onchange="savePasswordsToFirebase()" class="w-full p-1 border rounded" value="7777"></div>
-                    </div>
-                </div>
-
-                <!-- 이미지 및 조각 난이도 선택 -->
-                <div class="bg-white p-4 rounded-xl border flex flex-col gap-3">
-                    <span class="text-sm font-semibold text-slate-600 block">🖼️ 미션 퍼즐 이미지 설정</span>
-                    
-                    <!-- 이미지 업로드 버튼 및 디폴트 이미지 -->
-                    <div class="flex flex-col gap-2 p-2 bg-slate-50 rounded-xl border border-dashed">
-                        <span class="text-xs text-slate-500 font-medium">📷 컴퓨터에 있는 사진으로 퍼즐 만들기:</span>
-                        <div class="flex gap-2 items-center">
-                            <label for="image-upload-input" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-lg cursor-pointer transition">
-                                내 컴퓨터에서 사진 올리기
-                            </label>
-                            <input type="file" id="image-upload-input" accept="image/*" onchange="handleImageUpload(event)" class="hidden">
-                            <span id="upload-status" class="text-xs text-slate-400">파일을 업로드하면 바로 적용됩니다.</span>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="selectPuzzleImage(1)" id="img-select-1" class="p-1 border-2 border-blue-500 rounded-lg overflow-hidden relative"><img class="w-full h-12 object-cover" src="https://gongu.copyright.or.kr/gongu/wrt/cmmn/wrtFileImageView.do?wrtSn=13215201&filePath=L2Rpc2sxL25ld2RhdGEvMjAxOS85Ny9DTFMxMDAwNC8xMzIxNTIwMV9XUlRfMjAxOTExMDhfMQ==&thumbAt=Y&thumbSe=b_tbumb&wrtTy=10004"></button>
-                        <button onclick="selectPuzzleImage(2)" id="img-select-2" class="p-1 border border-slate-200 rounded-lg overflow-hidden relative"><img class="w-full h-12 object-cover" src="https://gongu.copyright.or.kr/gongu/wrt/cmmn/wrtFileImageView.do?wrtSn=9022677&filePath=L2Rpc2sxL25ld2RhdGEvMjAxMS85Ny9DTFM0L2V4cGlyYXRpb25fc3VuXzY5Mg==&thumbAt=Y&thumbSe=b_tbumb&wrtTy=10004"></button>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 mt-1">
-                        <button onclick="setDifficulty(15)" id="diff-15" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded-xl text-sm transition">🧩 15조각으로 플레이</button>
-                        <button onclick="setDifficulty(30)" id="diff-30" class="border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-2 rounded-xl text-sm transition">🧩 30조각으로 플레이</button>
-                    </div>
-                    <div class="text-center text-xs font-semibold text-blue-600" id="current-config-summary">
-                        설정 로딩 중...
-                    </div>
-                    <div class="flex justify-end">
-                        <button onclick="clearRankings()" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-lg transition font-medium">
-                            🚨 실시간 랭킹 초기화
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <!-- ===== 홈 ===== -->
+  <section id="home" class="screen on">
+    <div class="title">
+      <h1>🧩 미술 작품 모둠 퍼즐</h1>
+      <p>작품을 감상하고, 모둠이 함께 퍼즐을 완성해요!</p>
     </div>
-
-    <!-- 2. 퍼즐 게임 플레이 화면 (조별 인증 완료 시 나타남) -->
-    <div id="game-view" class="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-6 my-6 hidden flex flex-col items-center">
-        <div class="w-full flex items-center justify-between border-b pb-4 mb-4">
-            <h2 id="game-title" class="text-2xl font-black text-slate-800">1조 퍼즐 미션 진행중</h2>
-            <div class="flex items-center gap-3">
-                <span id="game-timer" class="text-xl font-mono font-bold bg-rose-50 text-rose-600 px-3 py-1 rounded-lg border border-rose-100">00:00.0</span>
-                <button onclick="giveUpGame()" class="text-sm bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1 rounded-lg">포기하기</button>
-            </div>
-        </div>
-
-        <!-- 작품 설명글 영역 (게임 화면) -->
-        <div id="game-desc-box" class="w-full max-w-2xl bg-amber-50/50 border border-amber-100 rounded-xl p-3 mb-4 hidden">
-            <p class="text-xs font-bold text-amber-800 flex items-center gap-1">🎨 작품 설명</p>
-            <p id="game-desc-text" class="text-xs text-slate-600 mt-1 whitespace-pre-wrap leading-relaxed"></p>
-        </div>
-
-        <!-- 미리보기 오버레이 카운트다운 알림판 -->
-        <div id="preview-alert" class="w-full max-w-md bg-amber-50 border border-amber-100 p-3 rounded-xl text-center text-sm text-amber-800 mb-4 animate-pulse">
-            👀 <span id="preview-countdown">5</span>초간 퍼즐 완성본의 형태를 미리 보여줍니다!
-        </div>
-
-        <!-- 퍼즐 게임 보드 영역 -->
-        <div class="w-full flex flex-col md:flex-row gap-6 items-center justify-center mt-2 relative">
-            <!-- 완성 이미지 가이드라인 및 배치 공간 -->
-            <div class="relative bg-slate-100 p-2 rounded-2xl border-2 border-dashed border-slate-300 shadow-inner" style="width: 340px; height: 340px;">
-                <!-- 정답 배경 투명 이미지 (가이드) -->
-                <img id="puzzle-guide-img" class="w-full h-full object-cover rounded-xl opacity-20 pointer-events-none" src="" alt="Guide">
-                <!-- 실제 조각들을 떨어뜨리거나 맞춰가는 영역 -->
-                <div id="puzzle-board" class="absolute inset-2 grid gap-0.5"></div>
-            </div>
-
-            <!-- 조각들을 늘어놓는 테이블 공급 영역 -->
-            <div class="flex flex-col items-center w-full max-w-sm">
-                <span class="text-xs text-slate-400 font-semibold mb-2">🧩 퍼즐 조각을 드래그해서 보드의 알맞은 자리에 채우세요!</span>
-                <div id="puzzle-pieces-pool" class="w-full bg-slate-50 border rounded-2xl p-4 flex flex-wrap gap-2 justify-center content-start min-h-[220px] max-h-[340px] overflow-y-auto">
-                    <!-- 퍼즐 조각이 무작위로 생성되는 영역 -->
-                </div>
-            </div>
-        </div>
+    <div class="rank" id="homeRank"></div>
+    <div class="card">
+      <button class="btn btn-primary" onclick="go('login')">🙋 학생 입장</button>
+      <button class="btn btn-ghost mt" onclick="openControl()">📺 교사 진행 화면 (교실 앞 화면)</button>
+      <button class="btn btn-line mt" onclick="teacherGate()">🔑 교사 설정</button>
     </div>
+    <p class="hint center">데모 모드에서는 이 기기 안에서만 작동해요. 창고 열쇠를 넣으면 여러 기기가 실시간으로 연결돼요.</p>
+  </section>
 
-    <!-- 3. 암호 입력 팝업 모달 -->
-    <div id="password-modal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl transform scale-95 transition-all">
-            <h3 class="text-xl font-bold text-slate-800 mb-1 text-center"><span id="selected-team-name">1조</span> 암호 입력</h3>
-            <p class="text-xs text-slate-400 text-center mb-4">선생님이 설정해 준 조별 패스워드를 입력하세요.</p>
-            <input type="password" id="team-password" placeholder="••••" class="w-full p-3.5 border-2 border-slate-200 rounded-xl mb-4 text-center text-2xl font-bold tracking-widest focus:outline-none focus:border-indigo-500 transition">
-            <div class="grid grid-cols-2 gap-2">
-                <button onclick="closePasswordModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 rounded-xl transition">취소</button>
-                <button onclick="submitPassword()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition">확인</button>
-            </div>
-        </div>
+  <!-- ===== 학생 로그인 ===== -->
+  <section id="login" class="screen">
+    <div class="title"><h1>학생 입장</h1></div>
+    <div class="card">
+      <label>학번</label>
+      <input id="inStudentId" inputmode="numeric" placeholder="예: 10203">
+      <label>이름</label>
+      <input id="inName" placeholder="예: 홍길동">
+      <label>우리 모둠 선택</label>
+      <select id="inGroup"></select>
+      <label>모둠 비밀번호</label>
+      <input id="inGroupPw" placeholder="선생님이 알려준 비번">
+      <button class="btn btn-primary mt2" onclick="doLogin()">입장하기</button>
+      <button class="btn btn-ghost mt" onclick="go('home')">← 뒤로</button>
+      <p class="hint" id="loginMsg"></p>
     </div>
-
-    <!-- 4. 하단 고정 홈 푸터 -->
-    <footer class="w-full max-w-4xl mx-auto flex justify-center pb-6 mt-4">
-        <button onclick="goToMain()" class="flex items-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-6 py-3 rounded-full shadow-md transition transform active:scale-95">
-            🏠 메인 화면으로 리셋
-        </button>
-    </footer>
-
-    <!-- 자바스크립트 브레인 -->
-    <script>
-        // 1. Firebase 설정 정보
-        const firebaseConfig = {
-            apiKey: "AIzaSyCIJG0d63_J3RQ5uLCkUMzQ6Z4CZ2QADbI",
-            authDomain: "arthong1-23052.firebaseapp.com",
-            projectId: "arthong1-23052",
-            storageBucket: "arthong1-23052.firebasestorage.app",
-            messagingSenderId: "228109777514",
-            appId: "1:228109777514:web:93d8d5114282874ff2e813",
-            measurementId: "G-00E5SXDX0H"
-        };
-
-        // Firebase 초기화
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
-        // 전역 상태 변수들
-        let isTeacherLoggedIn = false;
-        let selectedTeam = null;
-        
-        // 현재 게임 설정 정보 (디폴트값 설정)
-        let configPreviewTime = 5; 
-        let configPuzzleImg = "https://gongu.copyright.or.kr/gongu/wrt/cmmn/wrtFileImageView.do?wrtSn=13215201&filePath=L2Rpc2sxL25ld2RhdGEvMjAxOS85Ny9DTFMxMDAwNC8xMzIxNTIwMV9XUlRfMjAxOTExMDhfMQ==&thumbAt=Y&thumbSe=b_tbumb&wrtTy=10004";
-        let configDifficulty = 15; 
-        let configDescription = "";
-
-        // 조별 암호 데이터
-        let activePasswords = {
-            1: "1111", 2: "2222", 3: "3333", 4: "4444", 5: "5555", 6: "6666", 7: "7777"
-        };
-
-        // 타이머용 변수들
-        let timerInterval = null;
-        let startTime = 0;
-        let elapsedMiliseconds = 0;
-
-        // 드래그 앤 드롭 임시 상태
-        let draggedPieceElement = null;
-        let targetCells = [];
-        let puzzlePieces = [];
-
-        // --- 2. Realtime Database 실시간 데이터 수신 리스너 등록 ---
-
-        // A. 게임 글로벌 설정 실시간 동기화
-        db.ref('puzzleSettings').on('value', (snapshot) => {
-            const settings = snapshot.val();
-            if (settings) {
-                configPreviewTime = settings.previewTime || 5;
-                configPuzzleImg = settings.puzzleImg || configPuzzleImg;
-                configDifficulty = settings.difficulty || 15;
-                configDescription = settings.description || "";
-                
-                // 선생님 설정 패널 내부 입력박스 동기화
-                document.getElementById('setup-preview-time').value = configPreviewTime;
-                document.getElementById('setup-description').value = configDescription;
-                
-                // 갤러리/커스텀 이미지 활성화 테두리 조율
-                const img1 = document.getElementById('img-select-1');
-                const img2 = document.getElementById('img-select-2');
-                if (configPuzzleImg.includes('13215201')) {
-                    img1.className = "p-1 border-2 border-blue-500 rounded-lg overflow-hidden relative";
-                    img2.className = "p-1 border border-slate-200 rounded-lg overflow-hidden relative";
-                } else if (configPuzzleImg.includes('9022677')) {
-                    img2.className = "p-1 border-2 border-blue-500 rounded-lg overflow-hidden relative";
-                    img1.className = "p-1 border border-slate-200 rounded-lg overflow-hidden relative";
-                } else {
-                    // 외부 업로드 이미지인 경우 두 선택 박스 테두리 초기화
-                    img1.className = "p-1 border border-slate-200 rounded-lg overflow-hidden relative";
-                    img2.className = "p-1 border border-slate-200 rounded-lg overflow-hidden relative";
-                }
-
-                // 난이도 선택 버튼 UI 변경
-                const diff15 = document.getElementById('diff-15');
-                const diff30 = document.getElementById('diff-30');
-                if (configDifficulty === 15) {
-                    diff15.className = "bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded-xl text-sm transition";
-                    diff30.className = "border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-2 rounded-xl text-sm transition";
-                } else {
-                    diff30.className = "bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 rounded-xl text-sm transition";
-                    diff15.className = "border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-2 rounded-xl text-sm transition";
-                }
-
-                // 작품 설명글 로비와 게임 화면에 실시간 노출
-                const lobbyBox = document.getElementById('lobby-desc-box');
-                const lobbyText = document.getElementById('lobby-desc-text');
-                const gameBox = document.getElementById('game-desc-box');
-                const gameText = document.getElementById('game-desc-text');
-
-                if (configDescription.trim() !== "") {
-                    lobbyBox.classList.remove('hidden');
-                    lobbyText.innerText = configDescription;
-                    gameBox.classList.remove('hidden');
-                    gameText.innerText = configDescription;
-                } else {
-                    lobbyBox.classList.add('hidden');
-                    gameBox.classList.add('hidden');
-                }
-
-                updateConfigSummary();
-            }
-        });
-
-        // B. 비밀번호 실시간 동기화
-        db.ref('passwords').on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                for (let i = 1; i <= 7; i++) {
-                    if (data[`team_${i}`]) {
-                        activePasswords[i] = data[`team_${i}`];
-                        const pwInput = document.getElementById(`pw-team-${i}`);
-                        if (pwInput) pwInput.value = data[`team_${i}`];
-                    }
-                }
-            }
-        });
-
-        // C. 실시간 랭킹 실시간 동기화
-        db.ref('rankings').on('value', (snapshot) => {
-            const data = snapshot.val();
-            const container = document.getElementById('ranking-container');
-
-            if (data) {
-                const rankingsArray = Object.keys(data).map(key => ({
-                    team: key.replace('조', ''),
-                    time: parseFloat(data[key].time)
-                })).sort((a, b) => a.time - b.time);
-
-                let html = `<div class="grid grid-cols-3 font-bold text-blue-900 border-b pb-1 mb-2">
-                    <span>순위</span>
-                    <span>조이름</span>
-                    <span>클리어 타임</span>
-                </div>`;
-
-                rankingsArray.forEach((rank, index) => {
-                    html += `<div class="grid grid-cols-3 py-1 text-slate-700">
-                        <span class="font-extrabold text-blue-600">${index + 1}등</span>
-                        <span>${rank.team}조</span>
-                        <span class="font-mono">${rank.time.toFixed(1)}초</span>
-                    </div>`;
-                });
-
-                container.innerHTML = html;
-            } else {
-                container.innerHTML = `<p>완성 시 실시간 랭킹이 표시됩니다!</p>`;
-            }
-        });
-
-
-        // --- 3. 데이터 쓰기 (업로드) 함수 모음 ---
-
-        // 설정 변경 저장
-        function saveConfigToFirebase() {
-            const pTime = parseInt(document.getElementById('setup-preview-time').value) || 5;
-            const pDesc = document.getElementById('setup-description').value;
-            db.ref('puzzleSettings').update({
-                previewTime: pTime,
-                puzzleImg: configPuzzleImg,
-                difficulty: configDifficulty,
-                description: pDesc
-            });
-        }
-
-        // 비밀번호 변경 저장
-        function savePasswordsToFirebase() {
-            const updates = {};
-            for (let i = 1; i <= 7; i++) {
-                const val = document.getElementById(`pw-team-${i}`).value;
-                updates[`team_${i}`] = val;
-            }
-            db.ref('passwords').update(updates);
-        }
-
-        // 랭킹 초기화
-        function clearRankings() {
-            if (confirm("🚨 정말로 실시간 랭킹 데이터를 모두 초기화하시겠습니까?")) {
-                db.ref('rankings').remove();
-                alert("랭킹이 초기화되었습니다.");
-            }
-        }
-
-
-        // --- 4. 사용자 인터랙션 함수 ---
-
-        // 선생님 로그인 관리부 (비밀번호: 0115)
-        function toggleTeacherControls() {
-            const content = document.getElementById('teacher-content');
-            const loginBtn = document.getElementById('teacher-login-btn');
-
-            if (!isTeacherLoggedIn) {
-                const pass = prompt('선생님 인증 비밀번호를 입력해주세요:');
-                if (pass === '0115') {
-                    isTeacherLoggedIn = true;
-                    content.classList.remove('hidden');
-                    loginBtn.innerText = "로그아웃";
-                    loginBtn.classList.replace('bg-slate-200', 'bg-rose-100');
-                    loginBtn.classList.add('text-rose-700');
-                } else {
-                    alert('비밀번호가 일치하지 않습니다.');
-                }
-            } else {
-                isTeacherLoggedIn = false;
-                content.classList.add('hidden');
-                loginBtn.innerText = "로그인";
-                loginBtn.classList.replace('bg-rose-100', 'bg-slate-200');
-                loginBtn.classList.remove('text-rose-700');
-            }
-        }
-
-        // 이미지 토글 선택
-        function selectPuzzleImage(imgNum) {
-            document.getElementById('upload-status').innerText = "기본 이미지가 선택되었습니다.";
-            if (imgNum === 1) {
-                configPuzzleImg = "https://gongu.copyright.or.kr/gongu/wrt/cmmn/wrtFileImageView.do?wrtSn=13215201&filePath=L2Rpc2sxL25ld2RhdGEvMjAxOS85Ny9DTFMxMDAwNC8xMzIxNTIwMV9XUlRfMjAxOTExMDhfMQ==&thumbAt=Y&thumbSe=b_tbumb&wrtTy=10004";
-            } else {
-                configPuzzleImg = "https://gongu.copyright.or.kr/gongu/wrt/cmmn/wrtFileImageView.do?wrtSn=9022677&filePath=L2Rpc2sxL25ld2RhdGEvMjAxMS85Ny9DTFM0L2V4cGlyYXRpb25fc3VuXzY5Mg==&thumbAt=Y&thumbSe=b_tbumb&wrtTy=10004";
-            }
-            saveConfigToFirebase();
-        }
-
-        // 교사용 이미지 업로드 가공 및 DB 전송
-        function handleImageUpload(event) {
-            const file = event.target.files[0];
-            const status = document.getElementById('upload-status');
-            if (!file) return;
-
-            status.innerText = "이미지 가공 중...";
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const MAX_SIZE = 600;
-                    let width = img.width;
-                    let height = img.height;
-
-                    if (width > height) {
-                        if (width > MAX_SIZE) {
-                            height *= MAX_SIZE / width;
-                            width = MAX_SIZE;
-                        }
-                    } else {
-                        if (height > MAX_SIZE) {
-                            width *= MAX_SIZE / height;
-                            height = MAX_SIZE;
-                        }
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                    
-                    configPuzzleImg = dataUrl;
-                    saveConfigToFirebase();
-                    status.innerText = "업로드 및 실시간 동기화 완료!";
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // 난이도 토글 선택
-        function setDifficulty(diff) {
-            configDifficulty = diff;
-            saveConfigToFirebase();
-        }
-
-        function updateConfigSummary() {
-            let imgName = "업로드된 개별 이미지";
-            if (configPuzzleImg.includes('13215201')) imgName = "기본 이미지 1";
-            else if (configPuzzleImg.includes('9022677')) imgName = "기본 이미지 2";
-            
-            document.getElementById('current-config-summary').innerText = `설정: ${imgName} / ${configDifficulty}조각 모드 활성`;
-        }
-
-        // 조별 암호 인증 처리 모달 인터랙션
-        function openPasswordModal(teamNum) {
-            selectedTeam = teamNum;
-            document.getElementById('selected-team-name').innerText = teamNum + '조';
-            document.getElementById('team-password').value = '';
-            document.getElementById('password-modal').classList.remove('hidden');
-            document.getElementById('team-password').focus();
-        }
-
-        function closePasswordModal() {
-            document.getElementById('password-modal').classList.add('hidden');
-        }
-
-        // 비밀번호 대조
-        function submitPassword() {
-            const inputPw = document.getElementById('team-password').value;
-            const targetPw = activePasswords[selectedTeam];
-
-            if (inputPw === targetPw) {
-                closePasswordModal();
-                startPuzzleGame(selectedTeam);
-            } else {
-                alert('⚠️ 조별 암호가 틀렸습니다! 다시 입력해 주세요.');
-            }
-        }
-
-        // 5. 퍼즐 핵심 작동 알고리즘
-        function startPuzzleGame(teamNum) {
-            document.getElementById('lobby-view').classList.add('hidden');
-            document.getElementById('game-view').classList.remove('hidden');
-            document.getElementById('game-title').innerText = `🧩 ${teamNum}조 퍼즐 미션 수행 중`;
-
-            // 가이드 이미지 주입
-            document.getElementById('puzzle-guide-img').src = configPuzzleImg;
-
-            const cols = configDifficulty === 15 ? 3 : 5;
-            const rows = configDifficulty === 15 ? 5 : 6;
-
-            const board = document.getElementById('puzzle-board');
-            board.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
-            board.style.gridTemplateRows = `repeat(${rows}, minmax(0, 1fr))`;
-            board.innerHTML = '';
-
-            const piecesPool = document.getElementById('puzzle-pieces-pool');
-            piecesPool.innerHTML = '';
-
-            // 그리드 생성
-            targetCells = [];
-            const totalPieces = cols * rows;
-
-            for (let i = 0; i < totalPieces; i++) {
-                const cell = document.createElement('div');
-                cell.className = "bg-slate-200/50 rounded border border-dashed border-slate-300 relative flex items-center justify-center";
-                cell.dataset.index = i;
-                
-                cell.addEventListener('dragover', (e) => e.preventDefault());
-                cell.addEventListener('drop', (e) => handleDropOnCell(e, cell));
-
-                board.appendChild(cell);
-                targetCells.push({ element: cell, filledWith: null });
-            }
-
-            // 조각 제작
-            puzzlePieces = [];
-            for (let i = 0; i < totalPieces; i++) {
-                const r = Math.floor(i / cols);
-                const c = i % cols;
-
-                const piece = document.createElement('div');
-                piece.className = "puzzle-piece w-16 h-16 rounded shadow border-2 border-white overflow-hidden relative select-none";
-                piece.draggable = true;
-                piece.dataset.correctIndex = i;
-
-                const imgInner = document.createElement('img');
-                imgInner.src = configPuzzleImg;
-                imgInner.className = "absolute pointer-events-none max-w-none";
-                imgInner.style.width = `${cols * 100}%`;
-                imgInner.style.height = `${rows * 100}%`;
-                imgInner.style.left = `-${c * 100}%`;
-                imgInner.style.top = `-${r * 100}%`;
-
-                piece.appendChild(imgInner);
-
-                piece.addEventListener('dragstart', (e) => {
-                    draggedPieceElement = piece;
-                    piece.style.opacity = "0.5";
-                });
-                piece.addEventListener('dragend', () => {
-                    piece.style.opacity = "1";
-                });
-
-                setupTouchEvents(piece);
-                puzzlePieces.push(piece);
-            }
-
-            // 카운트다운 미리보기 연출
-            let previewLeft = configPreviewTime;
-            const previewAlert = document.getElementById('preview-alert');
-            const countdownSpan = document.getElementById('preview-countdown');
-            
-            document.getElementById('puzzle-guide-img').classList.remove('opacity-20');
-            document.getElementById('puzzle-guide-img').classList.add('opacity-90');
-            previewAlert.classList.remove('hidden');
-            countdownSpan.innerText = previewLeft;
-
-            const previewTimer = setInterval(() => {
-                previewLeft--;
-                if (previewLeft <= 0) {
-                    clearInterval(previewTimer);
-                    document.getElementById('puzzle-guide-img').classList.remove('opacity-90');
-                    document.getElementById('puzzle-guide-img').classList.add('opacity-20');
-                    previewAlert.classList.add('hidden');
-                    
-                    shuffleArray(puzzlePieces);
-                    puzzlePieces.forEach(p => piecesPool.appendChild(p));
-
-                    startTimer();
-                } else {
-                    countdownSpan.innerText = previewLeft;
-                }
-            }, 1000);
-        }
-
-        // 모바일 터치이벤트 매칭
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let originalParent = null;
-
-        function setupTouchEvents(piece) {
-            piece.addEventListener('touchstart', (e) => {
-                const touch = e.touches[0];
-                touchStartX = touch.clientX;
-                touchStartY = touch.clientY;
-                draggedPieceElement = piece;
-                originalParent = piece.parentNode;
-                piece.style.zIndex = "100";
-            }, { passive: true });
-
-            piece.addEventListener('touchmove', (e) => {
-                if (draggedPieceElement !== piece) return;
-                const touch = e.touches[0];
-                const deltaX = touch.clientX - touchStartX;
-                const deltaY = touch.clientY - touchStartY;
-                piece.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-            }, { passive: true });
-
-            piece.addEventListener('touchend', (e) => {
-                if (draggedPieceElement !== piece) return;
-                piece.style.zIndex = "";
-                piece.style.transform = "";
-
-                const touch = e.changedTouches[0];
-                const elementUnder = document.elementFromPoint(touch.clientX, touch.clientY);
-                const targetCell = elementUnder ? elementUnder.closest('#puzzle-board > div') : null;
-
-                if (targetCell) {
-                    handleDropOnCell(null, targetCell);
-                } else {
-                    document.getElementById('puzzle-pieces-pool').appendChild(piece);
-                    targetCells.forEach(cell => {
-                        if (cell.filledWith === piece) cell.filledWith = null;
-                    });
-                }
-                draggedPieceElement = null;
-                checkPuzzleCompletion();
-            });
-        }
-
-        // 한 조각을 내려놓았을 때 처리
-        function handleDropOnCell(e, cellElement) {
-            if (e) e.preventDefault();
-            if (!draggedPieceElement) return;
-
-            const targetIdx = parseInt(cellElement.dataset.index);
-            const targetCellData = targetCells[targetIdx];
-
-            if (targetCellData.filledWith) {
-                document.getElementById('puzzle-pieces-pool').appendChild(targetCellData.filledWith);
-                targetCellData.filledWith.className = "puzzle-piece w-16 h-16 rounded shadow border-2 border-white overflow-hidden relative select-none";
-            }
-
-            targetCells.forEach(cell => {
-                if (cell.filledWith === draggedPieceElement) cell.filledWith = null;
-            });
-
-            draggedPieceElement.className = "puzzle-piece w-full h-full rounded-none border-0 overflow-hidden relative select-none";
-            cellElement.appendChild(draggedPieceElement);
-            targetCellData.filledWith = draggedPieceElement;
-
-            // 정답 자리에 맞추었을 때 칭찬 효과 출력
-            if (targetIdx === parseInt(draggedPieceElement.dataset.correctIndex)) {
-                showMatchingEffect();
-            }
-
-            checkPuzzleCompletion();
-        }
-
-        // 한조각 맞췄을 때 GOOD / GREAT 이펙트 출력 함수
-        function showMatchingEffect() {
-            const words = ["GOOD! 👍", "GREAT! 🌟", "PERFECT! 🔥", "NICE! 👏", "AWESOME! ✨", "BRILLIANT! 💎"];
-            const randomWord = words[Math.floor(Math.random() * words.length)];
-            
-            const effectEl = document.createElement('div');
-            effectEl.className = "absolute text-3xl font-black text-amber-500 float-effect pointer-events-none drop-shadow-lg z-50 whitespace-nowrap bg-white/90 px-4 py-1.5 rounded-full border border-amber-100 shadow-md";
-            effectEl.innerText = randomWord;
-            
-            effectEl.style.left = "50%";
-            effectEl.style.top = "50%";
-            
-            document.getElementById('puzzle-board').appendChild(effectEl);
-            
-            setTimeout(() => {
-                effectEl.remove();
-            }, 1200);
-        }
-
-        // 퍼즐 완료 판정 및 Firebase 기록 연동
-        function checkPuzzleCompletion() {
-            let isComplete = true;
-
-            for (let i = 0; i < targetCells.length; i++) {
-                const cell = targetCells[i];
-                if (!cell.filledWith || parseInt(cell.filledWith.dataset.correctIndex) !== i) {
-                    isComplete = false;
-                    break;
-                }
-            }
-
-            if (isComplete) {
-                stopTimer();
-                const recordSecs = parseFloat((elapsedMiliseconds / 1000).toFixed(1));
-                alert(`🎉 성공! ${selectedTeam}조가 퍼즐을 완전히 맞췄습니다!\n기록: ${recordSecs}초`);
-
-                // Firebase Realtime Database 랭킹 데이터 업로드
-                db.ref(`rankings/${selectedTeam}조`).set({
-                    time: recordSecs,
-                    timestamp: Date.now()
-                });
-
-                goToMain();
-            }
-        }
-
-        // 타이머 컨트롤러
-        function startTimer() {
-            startTime = Date.now();
-            elapsedMiliseconds = 0;
-            timerInterval = setInterval(() => {
-                elapsedMiliseconds = Date.now() - startTime;
-                updateTimerDisplay();
-            }, 100);
-        }
-
-        function stopTimer() {
-            if (timerInterval) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-            }
-        }
-
-        function updateTimerDisplay() {
-            const totalSecs = Math.floor(elapsedMiliseconds / 1000);
-            const mins = Math.floor(totalSecs / 60).toString().padStart(2, '0');
-            const secs = (totalSecs % 60).toString().padStart(2, '0');
-            const ms = Math.floor((elapsedMiliseconds % 1000) / 100);
-            document.getElementById('game-timer').innerText = `${mins}:${secs}.${ms}`;
-        }
-
-        function giveUpGame() {
-            if (confirm("미션을 포기하시겠습니까? 현재 기록은 저장되지 않습니다.")) {
-                stopTimer();
-                goToMain();
-            }
-        }
-
-        function goToMain() {
-            stopTimer();
-            document.getElementById('game-view').classList.add('hidden');
-            document.getElementById('lobby-view').classList.remove('hidden');
-            selectedTeam = null;
-        }
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-    </script>
+  </section>
+
+  <!-- ===== 퀴즈 (작품 이미지 옆에) ===== -->
+  <section id="quiz" class="screen">
+    <div class="title"><h1>작품 퀴즈</h1></div>
+    <div class="card">
+      <div class="split quiz-split">
+        <img id="quizImg" class="side-img" alt="작품">
+        <div>
+          <div class="progressbar"><div id="quizProg" style="width:0%"></div></div>
+          <div class="quiz-q" id="quizQ"></div>
+          <div id="quizChoices"></div>
+          <button class="btn btn-primary mt" id="quizNext" style="display:none" onclick="nextQuiz()">다음 →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 감상 + 대기실 (작품 한눈에, 설명·감상평 옆에) ===== -->
+  <section id="view" class="screen">
+    <div class="title"><h1>작품 감상</h1></div>
+    <div class="card">
+      <div class="split view-split">
+        <img id="viewImg" class="side-img" alt="작품">
+        <div class="vside">
+          <div class="desc" id="viewDesc"></div>
+          <div class="react-bar">
+            <button class="likebtn" id="likeBtn" onclick="toggleLike()">🤍 좋아요 <span id="likeCount">0</span></button>
+            <input id="commentInput" placeholder="작품 감상평을 남겨보세요">
+            <button class="btn btn-primary" style="width:auto; padding:11px 16px;" onclick="addComment()">남기기</button>
+          </div>
+          <div class="comment-list" id="commentList"></div>
+          <div class="waitbox" id="waitBox">⏳ 선생님이 시작하면 퍼즐이 시작돼요<span class="sub" id="waitSub"></span></div>
+        </div>
+      </div>
+      <button class="btn btn-ghost mt" onclick="leaveStudent()">← 나가기</button>
+    </div>
+  </section>
+
+  <!-- ===== 동시 시작 카운트다운 ===== -->
+  <section id="preview" class="screen">
+    <div class="title"><h1>준비!</h1></div>
+    <div class="big-preview">
+      <img id="previewImg" alt="작품">
+      <div class="countdown" id="countdown"></div>
+      <div class="countdown-sub">작품을 눈에 담아두세요! 곧 퍼즐이 섞여요.</div>
+    </div>
+  </section>
+
+  <!-- ===== 퍼즐 ===== -->
+  <section id="puzzle" class="screen">
+    <div class="card">
+      <div class="puzzle-top">
+        <div class="timer" id="timer">00:00</div>
+        <div class="puzzle-info" id="puzzleInfo"></div>
+      </div>
+      <div class="board-wrap"><div class="board" id="board"></div></div>
+      <div class="tray" id="tray"></div>
+      <p class="hint center">조각을 끌어서 알맞은 칸에 놓으면 딱 맞춰져요. 모둠 친구들과 함께 완성해요!</p>
+    </div>
+  </section>
+
+  <!-- ===== 완료 ===== -->
+  <section id="done" class="screen">
+    <div class="title"><h1>완성!</h1></div>
+    <div class="card center">
+      <div class="done-emoji">🎉</div>
+      <div class="big-time" id="doneTime"></div>
+      <p id="doneMsg" style="font-weight:600; color:var(--muted);"></p>
+      <div class="rank" id="doneRank" style="background:var(--soft); color:var(--ink);"></div>
+      <button class="btn btn-primary mt" onclick="go('home')">처음으로</button>
+    </div>
+  </section>
+
+  <!-- ===== 교사 진행 화면 (교실 앞) ===== -->
+  <section id="control" class="screen">
+    <div class="title"><h1>🏆 모둠 순위 · 진행</h1></div>
+    <div class="status-line" id="ctrlStatus"></div>
+    <div class="rank" id="bigRank" style="font-size:18px;"></div>
+    <div class="card">
+      <button class="btn btn-primary btn-big" onclick="teacherStart()">▶ 퍼즐 시작 (모두 동시에!)</button>
+      <button class="btn btn-ghost mt" onclick="go('home')">← 뒤로</button>
+      <p class="hint center">학생들이 감상·대기실에 모이면 이 버튼을 눌러 다같이 시작하세요. 다시 누르면 새 판이 시작돼요.</p>
+    </div>
+  </section>
+
+  <!-- ===== 교사 설정 ===== -->
+  <section id="teacher" class="screen">
+    <div class="title"><h1>교사 설정</h1></div>
+    <div class="card">
+      <label>예시 작품 불러오기 (버튼을 누르면 설명·퀴즈가 자동으로 채워져요)</label>
+      <div id="presetBtns" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+      <div class="divider"></div>
+
+      <label>오늘의 작품 이미지</label>
+      <input type="file" id="imgFile" accept="image/*" onchange="onImgPick(event)">
+      <img id="cfgImgPreview" class="side-img mt" style="display:none; max-height:220px;">
+
+      <label>작품 제목</label>
+      <input id="cfgTitle" placeholder="예: 별이 빛나는 밤 (반 고흐)">
+
+      <label>작품 설명 (학생이 감상 시간에 읽어요)</label>
+      <textarea id="cfgDesc" placeholder="작가, 시대, 표현 기법, 감상 포인트 등을 적어주세요."></textarea>
+
+      <div class="split">
+        <div>
+          <label>조각 수</label>
+          <select id="cfgPieces">
+            <option value="2x3">6조각 (2×3) 쉬움</option>
+            <option value="3x4" selected>12조각 (3×4) 보통</option>
+            <option value="3x5">15조각 (3×5)</option>
+            <option value="4x6">24조각 (4×6) 어려움</option>
+            <option value="5x6">30조각 (5×6) 도전</option>
+          </select>
+        </div>
+        <div>
+          <label>동시 시작 전 미리보기(초)</label>
+          <input id="cfgPreview" type="number" min="1" max="60" value="5">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <label>작품 퀴즈 (5문제) — 정답 보기를 눌러 표시하세요</label>
+      <div id="quizCfgList"></div>
+
+      <div class="divider"></div>
+      <label>모둠과 비밀번호</label>
+      <div id="groupCfgList"></div>
+      <button class="btn btn-ghost mt" onclick="addGroupRow()">＋ 모둠 추가</button>
+
+      <div class="divider"></div>
+      <label>교사 설정 비밀번호 (학생이 못 들어오게)</label>
+      <input id="cfgTeacherPw" placeholder="예: 0000">
+
+      <button class="btn btn-primary mt2" onclick="saveConfig()">💾 저장하고 모두에게 적용</button>
+      <button class="btn btn-ghost mt" onclick="go('home')">← 뒤로</button>
+      <p class="hint" id="saveMsg"></p>
+    </div>
+  </section>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<script>
+/* =========================================================
+   0) 모드 판별 + 저장소(store) 추상화
+   ========================================================= */
+const ROOM='main';
+const isLive = FIREBASE_CONFIG && FIREBASE_CONFIG.apiKey && !FIREBASE_CONFIG.apiKey.includes('여기에') && FIREBASE_CONFIG.databaseURL;
+let store, firebaseAuth=null;
+if(isLive){
+  try{
+    firebase.initializeApp(FIREBASE_CONFIG);
+    const db=firebase.database();
+    firebaseAuth=firebase.auth();
+    store={
+      onValue(p,cb){ db.ref(p).on('value',s=>cb(s.val())); },
+      set(p,v){ return db.ref(p).set(v); },
+      update(p,o){ return db.ref(p).update(o); },
+      remove(p){ return db.ref(p).remove(); },
+      push(p,v){ const r=db.ref(p).push(); r.set(v); return r.key; },
+      stamp(){ return Date.now(); }
+    };
+    const mp=document.getElementById('modePill'); mp.className='pill pill-live'; mp.textContent='● 실시간 모드';
+  }catch(e){ console.error(e); }
+}
+if(!store){
+  const data={},subs={};
+  const get=p=>p.split('/').reduce((o,k)=>(o&&o[k]!=null)?o[k]:undefined,data);
+  const setP=(p,v)=>{const ks=p.split('/');let o=data;for(let i=0;i<ks.length-1;i++){o[ks[i]]=o[ks[i]]||{};o=o[ks[i]];}if(v===null)delete o[ks[ks.length-1]];else o[ks[ks.length-1]]=v;};
+  const notify=p=>{Object.keys(subs).forEach(sp=>{if(sp===p||p.startsWith(sp+'/')||sp.startsWith(p+'/'))subs[sp].forEach(cb=>cb(get(sp)));});};
+  store={
+    onValue(p,cb){(subs[p]=subs[p]||[]).push(cb);cb(get(p));},
+    set(p,v){setP(p,v);notify(p);},
+    update(p,o){Object.keys(o).forEach(k=>setP(p+'/'+k,o[k]));notify(p);},
+    remove(p){setP(p,null);notify(p);},
+    push(p,v){const id='k'+Date.now()+Math.floor(Math.random()*999);setP(p+'/'+id,v);notify(p);return id;},
+    stamp(){return Date.now();}
+  };
+}
+
+/* =========================================================
+   1) 기본(데모용) 설정값
+   ========================================================= */
+const DEFAULT_IMG='data:image/svg+xml;utf8,'+encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#6d28d9"/><stop offset="0.5" stop-color="#db2777"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs>
+<rect width="600" height="450" fill="url(#g)"/>
+<circle cx="470" cy="110" r="55" fill="#fff8"/>
+<path d="M0 360 Q150 300 300 350 T600 340 L600 450 L0 450 Z" fill="#00000022"/>
+<path d="M0 400 Q200 350 400 400 T600 390 L600 450 L0 450 Z" fill="#00000033"/>
+<text x="300" y="240" font-family="sans-serif" font-size="34" fill="#ffffffcc" text-anchor="middle" font-weight="bold">SAMPLE ARTWORK</text>
+<text x="300" y="285" font-family="sans-serif" font-size="17" fill="#ffffffaa" text-anchor="middle">교사 설정에서 오늘의 작품으로 바꿔주세요</text></svg>`);
+
+const svgURL=s=>'data:image/svg+xml;utf8,'+encodeURIComponent(s);
+
+/* 예시 작품 4개 (저작권 걱정 없는 원작 일러스트 + 설명 + 쉬운 퀴즈) */
+const PRESETS=[
+  {
+    title:'씨름 (김홍도)',
+    desc:'조선 시대 화가 김홍도가 그린 풍속화예요. 씨름판에서 두 사람이 힘을 겨루고, 둘레에는 다양한 표정의 구경꾼들이 둥글게 둘러앉아 있어요. 엿장수의 모습까지 담겨 있어 옛날 사람들의 생활을 생생하게 엿볼 수 있답니다.',
+    image:svgURL(`<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450"><rect width="600" height="450" fill="#efe4c9"/><ellipse cx="300" cy="255" rx="255" ry="175" fill="#e6d5ab"/><g fill="#8a6d3b"><circle cx="120" cy="150" r="16"/><rect x="104" y="164" width="32" height="42" rx="12"/><circle cx="185" cy="108" r="16"/><rect x="169" y="122" width="32" height="42" rx="12"/><circle cx="415" cy="108" r="16"/><rect x="399" y="122" width="32" height="42" rx="12"/><circle cx="480" cy="150" r="16"/><rect x="464" y="164" width="32" height="42" rx="12"/><circle cx="120" cy="360" r="16"/><rect x="104" y="306" width="32" height="42" rx="12"/><circle cx="480" cy="360" r="16"/><rect x="464" y="306" width="32" height="42" rx="12"/></g><circle cx="272" cy="185" r="24" fill="#c8925a"/><circle cx="332" cy="190" r="24" fill="#b97b45"/><path d="M272 208 Q250 260 288 308 L322 308 Q348 258 332 212 Q300 236 272 208 Z" fill="#d9a066"/><path d="M332 212 Q366 258 332 312" fill="none" stroke="#a9683a" stroke-width="16" stroke-linecap="round"/><text x="300" y="420" font-family="serif" font-size="26" fill="#5b4321" text-anchor="middle" font-weight="bold">씨름 · 김홍도</text></svg>`),
+    quizzes:[
+      {q:'이 그림을 그린 조선 시대 화가는 누구일까요?',choices:['김홍도','신윤복','겸재 정선','피카소'],answer:0},
+      {q:'그림 속 두 사람은 무엇을 하고 있나요?',choices:['씨름','그네타기','낚시','달리기'],answer:0},
+      {q:'옛사람들의 생활 모습을 담은 이런 그림을 무엇이라 할까요?',choices:['풍속화','산수화','추상화','정물화'],answer:0},
+      {q:'구경꾼들은 어떤 모습으로 있나요?',choices:['둥글게 둘러앉아 구경','모두 등을 돌림','한 줄로 서 있음','잠을 잠'],answer:0},
+      {q:'이 그림에서 알 수 있는 것은 무엇일까요?',choices:['옛날 사람들의 생활 모습','바다 속 풍경','우주의 모습','미래 도시'],answer:0},
+    ]
+  },
+  {
+    title:'우는 여인 (피카소)',
+    desc:'스페인 화가 피카소가 그린 작품이에요. 슬퍼서 우는 여인의 얼굴을 여러 각도에서 본 모습으로 쪼개어 한 화면에 담았어요. 강렬한 색과 조각난 형태로 깊은 슬픔을 표현한 입체파(큐비즘) 그림이에요.',
+    image:svgURL(`<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450"><rect width="600" height="450" fill="#2f6f7a"/><polygon points="195,60 430,80 405,305 235,345" fill="#f2c14e"/><polygon points="235,345 405,305 365,415 250,405" fill="#e07a5f"/><polygon points="195,60 300,72 262,225 210,205" fill="#7fb069"/><ellipse cx="270" cy="165" rx="30" ry="20" fill="#fff"/><circle cx="270" cy="165" r="10" fill="#222"/><ellipse cx="362" cy="152" rx="30" ry="20" fill="#fff"/><circle cx="362" cy="152" r="10" fill="#222"/><path d="M262 186 q-6 34 0 66 q6 -34 0 -66" fill="#4aa3df"/><path d="M356 174 q-6 30 0 58 q6 -30 0 -58" fill="#4aa3df"/><polygon points="268,300 300,284 332,306 362,286 356,322 300,332 274,318" fill="#fff"/><path d="M276,310 L354,310" stroke="#333" stroke-width="3"/><text x="300" y="432" font-family="sans-serif" font-size="24" fill="#fff" text-anchor="middle" font-weight="bold">우는 여인 · 피카소</text></svg>`),
+    quizzes:[
+      {q:'이 작품을 그린 화가는 누구일까요?',choices:['피카소','반 고흐','김홍도','겸재 정선'],answer:0},
+      {q:'그림 속 여인은 어떤 감정을 표현하고 있나요?',choices:['슬픔','기쁨','졸림','신남'],answer:0},
+      {q:'얼굴을 여러 각도로 쪼개어 표현한 이런 미술을 무엇이라 할까요?',choices:['입체파(큐비즘)','인상파','사실주의','풍속화'],answer:0},
+      {q:'피카소는 어느 나라의 화가일까요?',choices:['스페인','한국','일본','미국'],answer:0},
+      {q:'이 작품에서 강하게 느껴지는 것은 무엇일까요?',choices:['강렬한 색과 슬픈 감정','잔잔한 바다','조용한 숲','밝은 웃음'],answer:0},
+    ]
+  },
+  {
+    title:'인왕제색도 (겸재 정선)',
+    desc:'조선 시대 화가 겸재 정선이 비 온 뒤의 인왕산을 그린 그림이에요. 실제 우리나라의 산을 직접 보고 그린 진경산수화로, 물기를 머금은 바위산이 먹의 짙고 옅음으로 웅장하게 표현되어 있어요.',
+    image:svgURL(`<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450"><rect width="600" height="450" fill="#f3efe6"/><path d="M0 330 L110 180 L200 270 L300 120 L400 260 L500 175 L600 300 L600 450 L0 450 Z" fill="#3a3a3a"/><path d="M150 330 L280 205 L360 305 Z" fill="#565656"/><path d="M300 120 L340 200 L260 200 Z" fill="#4a4a4a"/><path d="M0 300 Q150 282 300 300 T600 300" stroke="#f3efe6" stroke-width="26" fill="none" opacity="0.9"/><path d="M0 362 Q150 348 300 362 T600 356" stroke="#f3efe6" stroke-width="20" fill="none" opacity="0.75"/><text x="300" y="425" font-family="serif" font-size="24" fill="#333" text-anchor="middle" font-weight="bold">인왕제색도 · 겸재 정선</text></svg>`),
+    quizzes:[
+      {q:'이 그림을 그린 조선 시대 화가는 누구일까요?',choices:['겸재 정선','김홍도','신사임당','피카소'],answer:0},
+      {q:'그림에 그려진 산은 어느 산일까요?',choices:['인왕산','한라산','설악산','후지산'],answer:0},
+      {q:'우리나라의 실제 경치를 직접 보고 그린 산수화를 무엇이라 하나요?',choices:['진경산수화','풍속화','초상화','추상화'],answer:0},
+      {q:'이 그림은 어떤 날씨 뒤의 모습을 그렸을까요?',choices:['비 온 뒤','눈 오는 날','맑은 여름날','바람 부는 밤'],answer:0},
+      {q:'이 그림은 주로 무엇으로 그렸을까요?',choices:['먹(수묵)','크레파스','스프레이','색연필'],answer:0},
+    ]
+  },
+  {
+    title:'별이 빛나는 밤 (고흐)',
+    desc:'네덜란드 화가 반 고흐가 그린 밤 풍경이에요. 소용돌이치는 밤하늘과 빛나는 별, 노란 달이 인상적이에요. 붓의 움직임이 그대로 느껴지는 힘찬 붓질로 마음속 감정을 표현했어요.',
+    image:svgURL(`<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450"><rect width="600" height="450" fill="#16305c"/><path d="M250 165 m-72,0 a72,72 0 1,1 144,0 a46,46 0 1,1 -92,0 a24,24 0 1,1 48,0" fill="none" stroke="#6fa8dc" stroke-width="11" opacity="0.85"/><g fill="#ffd966"><circle cx="110" cy="90" r="14"/><circle cx="470" cy="120" r="12"/><circle cx="380" cy="66" r="10"/><circle cx="180" cy="58" r="9"/><circle cx="520" cy="235" r="12"/><circle cx="300" cy="300" r="8"/></g><circle cx="505" cy="88" r="30" fill="#ffe599"/><path d="M70 450 Q92 250 70 148 Q112 260 92 450 Z" fill="#12351f"/><rect x="0" y="382" width="600" height="70" fill="#1f3a2e"/><polygon points="250,382 270,350 290,382" fill="#12351f"/><rect x="256" y="382" width="28" height="30" fill="#2a4a3a"/><text x="310" y="432" font-family="sans-serif" font-size="24" fill="#fff" text-anchor="middle" font-weight="bold">별이 빛나는 밤 · 고흐</text></svg>`),
+    quizzes:[
+      {q:'이 작품을 그린 화가는 누구일까요?',choices:['반 고흐','피카소','김홍도','겸재 정선'],answer:0},
+      {q:'그림의 배경은 언제일까요?',choices:['밤','한낮','새벽','한여름 바다'],answer:0},
+      {q:'하늘은 어떤 모양으로 표현되었나요?',choices:['소용돌이치는 모양','네모난 격자','일직선','텅 빈 하늘'],answer:0},
+      {q:'그림에서 많이 쓰인 색은 무엇일까요?',choices:['파랑과 노랑','검정과 회색','분홍과 연두','갈색과 흰색'],answer:0},
+      {q:'고흐의 붓질은 어떤 느낌인가요?',choices:['힘차고 움직이는 느낌','자로 잰 듯 반듯한 느낌','아주 흐릿한 느낌','점만 찍은 느낌'],answer:0},
+    ]
+  },
+];
+
+const DEFAULT_CONFIG={
+  title:PRESETS[0].title,
+  imageDataUrl:PRESETS[0].image,
+  description:PRESETS[0].desc,
+  pieces:'3x4', previewSeconds:5, teacherPassword:'0000',
+  quizzes:JSON.parse(JSON.stringify(PRESETS[0].quizzes)),
+  groups:[
+    {name:'1모둠',password:'1111'},{name:'2모둠',password:'2222'},
+    {name:'3모둠',password:'3333'},{name:'4모둠',password:'4444'},
+    {name:'5모둠',password:'5555'},{name:'6모둠',password:'6666'},
+  ]
+};
+
+/* =========================================================
+   2) 전역 상태 + 화면 전환
+   ========================================================= */
+let CONFIG=null, me={studentId:'',name:'',groupId:null};
+let quizIdx=0, quizAnswered=false;
+let curScreen='home', gameState=null, curRound=0;
+let waitBaseline=null, starting=false, teacherAuthed=false;
+
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  curScreen=id; window.scrollTo(0,0);
+}
+
+function attachLeaderboard(r){
+  store.onValue(`rooms/${ROOM}/play/${r}/leaderboard`, lb=>{
+    renderRank('homeRank',lb,'아직 완성한 모둠이 없어요');
+    renderRank('bigRank',lb,'아직 완성한 모둠이 없어요');
+    renderRank('doneRank',lb,'');
+  });
+}
+/* 앱 시작(구독 연결) — 실시간 모드에서는 익명 로그인 완료 후 호출됨 */
+function startApp(){
+  store.onValue(`rooms/${ROOM}/config`, val=>{
+    CONFIG=val||DEFAULT_CONFIG;
+    if(!val) store.set(`rooms/${ROOM}/config`, DEFAULT_CONFIG);
+    refreshGroupSelect();
+  });
+  store.onValue(`rooms/${ROOM}/game`, g=>{
+    gameState=g;
+    const r=(g&&g.round)||0;
+    if(r!==curRound){ curRound=r; attachLeaderboard(r); }
+    updateControlStatus();
+    maybeSyncedStart(g);
+  });
+  attachLeaderboard(0);
+}
+
+/* =========================================================
+   3) 순위표
+   ========================================================= */
+function fmt(ms){const s=Math.max(0,Math.round(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function renderRank(elId,lb,emptyMsg){
+  const el=document.getElementById(elId); if(!el) return;
+  const arr=Object.values(lb||{}).filter(x=>x&&x.finishTs).sort((a,b)=>a.finishTs-b.finishTs);
+  let html='<h3>🏆 모둠 순위</h3>';
+  if(!arr.length){ html+=`<div class="empty">${emptyMsg}</div>`; el.innerHTML=html; return; }
+  const medals=['🥇','🥈','🥉'];
+  html+='<ol>'+arr.map((x,i)=>{
+    const dur=x.startTs?fmt(x.finishTs-x.startTs):'';
+    return `<li><span class="medal">${medals[i]||(i+1)}</span><span class="who">${x.name||''}</span><span class="time">${dur}</span></li>`;
+  }).join('')+'</ol>';
+  el.innerHTML=html;
+}
+
+/* =========================================================
+   4) 로그인
+   ========================================================= */
+function refreshGroupSelect(){
+  const sel=document.getElementById('inGroup'); if(!sel||!CONFIG) return;
+  const cur=sel.value;
+  sel.innerHTML=CONFIG.groups.map((g,i)=>`<option value="${i}">${g.name}</option>`).join('');
+  if(cur) sel.value=cur;
+}
+function doLogin(){
+  const sid=document.getElementById('inStudentId').value.trim();
+  const nm=document.getElementById('inName').value.trim();
+  const gi=+document.getElementById('inGroup').value;
+  const pw=document.getElementById('inGroupPw').value.trim();
+  const msg=document.getElementById('loginMsg');
+  if(!sid||!nm){msg.textContent='학번과 이름을 입력해 주세요.';return;}
+  if(!CONFIG.groups[gi]){msg.textContent='모둠을 선택해 주세요.';return;}
+  if(CONFIG.groups[gi].password!==pw){msg.textContent='모둠 비밀번호가 맞지 않아요.';return;}
+  me={studentId:sid,name:nm,groupId:gi}; msg.textContent='';
+  store.set(`rooms/${ROOM}/members/${gi}/${sid}`,{name:nm,ts:store.stamp()});
+  startQuiz();
+}
+function leaveStudent(){
+  if(me.studentId) store.remove(`rooms/${ROOM}/waiting/${me.studentId}`);
+  me={studentId:'',name:'',groupId:null}; go('home');
+}
+
+/* =========================================================
+   5) 퀴즈
+   ========================================================= */
+function startQuiz(){ quizIdx=0; go('quiz'); document.getElementById('quizImg').src=CONFIG.imageDataUrl; showQuiz(); }
+function showQuiz(){
+  const q=CONFIG.quizzes[quizIdx];
+  document.getElementById('quizProg').style.width=(quizIdx/CONFIG.quizzes.length*100)+'%';
+  document.getElementById('quizQ').textContent=`Q${quizIdx+1}. ${q.q}`;
+  const box=document.getElementById('quizChoices'); box.innerHTML=''; quizAnswered=false;
+  document.getElementById('quizNext').style.display='none';
+  q.choices.forEach((c,i)=>{const b=document.createElement('button');b.className='choice';b.textContent=c;b.onclick=()=>answerQuiz(i,b,q);box.appendChild(b);});
+}
+function answerQuiz(i,btn,q){
+  if(quizAnswered) return; quizAnswered=true;
+  document.querySelectorAll('#quizChoices .choice').forEach((b,idx)=>{if(idx===q.answer)b.classList.add('correct');else if(idx===i)b.classList.add('wrong');});
+  const nx=document.getElementById('quizNext'); nx.style.display='block';
+  nx.textContent=(quizIdx<CONFIG.quizzes.length-1)?'다음 →':'감상하러 가기 →';
+}
+function nextQuiz(){
+  if(quizIdx<CONFIG.quizzes.length-1){quizIdx++;showQuiz();}
+  else{document.getElementById('quizProg').style.width='100%';enterView();}
+}
+
+/* =========================================================
+   6) 감상 + 대기실
+   ========================================================= */
+function enterView(){
+  go('view');
+  document.getElementById('viewImg').src=CONFIG.imageDataUrl;
+  document.getElementById('viewDesc').innerHTML=`<b>${CONFIG.title||''}</b><br>${(CONFIG.description||'').replace(/\n/g,'<br>')}`;
+  bindReactions();
+  // 대기 등록 + 동시시작 기준점
+  if(me.studentId) store.set(`rooms/${ROOM}/waiting/${me.studentId}`,{name:me.name,gi:me.groupId,ts:store.stamp()});
+  waitBaseline=(gameState&&gameState.round)||0; starting=false;
+  document.getElementById('waitBox').firstChild.textContent='⏳ 선생님이 시작하면 퍼즐이 시작돼요';
+  store.onValue(`rooms/${ROOM}/waiting`, w=>{
+    const mine=Object.values(w||{}).filter(x=>x&&x.gi===me.groupId).length;
+    const sub=document.getElementById('waitSub');
+    if(sub&&curScreen==='view') sub.textContent=`우리 모둠 대기 인원: ${mine}명`;
+  });
+}
+function bindReactions(){
+  store.onValue(`rooms/${ROOM}/likes`, likes=>{
+    document.getElementById('likeCount').textContent=Object.keys(likes||{}).length;
+    const mine=likes&&me.studentId&&likes[me.studentId];
+    const b=document.getElementById('likeBtn'); b.classList.toggle('on',!!mine);
+    b.firstChild.textContent=mine?'❤️ 좋아요 ':'🤍 좋아요 ';
+  });
+  store.onValue(`rooms/${ROOM}/comments`, cs=>{
+    const arr=Object.values(cs||{}).sort((a,b)=>(b.ts||0)-(a.ts||0));
+    document.getElementById('commentList').innerHTML=arr.map(c=>`<div class="comment"><b>${c.name||''}</b> ${c.text||''}</div>`).join('');
+  });
+}
+function toggleLike(){ if(me.studentId) store.update(`rooms/${ROOM}/likes`,{[me.studentId]:true}); }
+function addComment(){
+  const el=document.getElementById('commentInput'); const t=el.value.trim();
+  if(!t||!me.name) return;
+  store.push(`rooms/${ROOM}/comments`,{name:me.name,sid:me.studentId,text:t,ts:store.stamp()});
+  el.value='';
+}
+
+/* =========================================================
+   7) 교사 시작 → 동시 카운트다운 → 퍼즐
+   ========================================================= */
+function teacherStart(){
+  if(!teacherAuthed){
+    const pw=prompt('교사 비밀번호를 입력하세요'); if(pw===null) return;
+    if(pw!==((CONFIG&&CONFIG.teacherPassword)||'0000')){ alert('비밀번호가 맞지 않아요.'); return; }
+    teacherAuthed=true;
+  }
+  const round=((gameState&&gameState.round)||0)+1;
+  store.set(`rooms/${ROOM}/game`,{round,startedAt:store.stamp()});
+  store.remove(`rooms/${ROOM}/waiting`);
+  document.getElementById('ctrlStatus').textContent=`▶ ${round}번째 판 시작! 학생 화면에서 카운트다운이 떠요.`;
+}
+function maybeSyncedStart(g){
+  if(curScreen!=='view'||!g||!g.startedAt||starting) return;
+  if(g.round>(waitBaseline||0)){ starting=true; syncedStart(g); }
+}
+let puzzleStartTs=0, playRound=0;
+function syncedStart(g){
+  playRound=g.round;
+  puzzleStartTs=g.startedAt+((CONFIG.previewSeconds||5)*1000);
+  go('preview');
+  document.getElementById('previewImg').src=CONFIG.imageDataUrl;
+  (function tick(){
+    const remain=puzzleStartTs-store.stamp();
+    if(remain>0){ document.getElementById('countdown').textContent=`${Math.ceil(remain/1000)}`; setTimeout(tick,150); }
+    else beginPuzzle();
+  })();
+}
+
+/* =========================================================
+   8) 퍼즐 (모둠 실시간 협동, 라운드별)
+   ========================================================= */
+let PZ=null, timerHandle=null;
+function beginPuzzle(){
+  go('puzzle');
+  const [rows,cols]=CONFIG.pieces.split('x').map(Number);
+  const gi=me.groupId;
+  const img=new Image();
+  img.onload=()=>{
+    const maxW=Math.min(460,window.innerWidth-72),maxH=440;
+    let bw=img.naturalWidth,bh=img.naturalHeight;
+    const sc=Math.min(maxW/bw,maxH/bh,1.3); bw=Math.round(bw*sc); bh=Math.round(bh*sc);
+    const pw=Math.floor(bw/cols),ph=Math.floor(bh/rows); bw=pw*cols; bh=ph*rows;
+    PZ={rows,cols,total:rows*cols,pieceW:pw,pieceH:ph,bw,bh,locked:{},count:0,done:false,url:CONFIG.imageDataUrl};
+    buildBoard(); buildTray();
+    document.getElementById('puzzleInfo').textContent=`${CONFIG.groups[gi].name} · ${rows*cols}조각`;
+    startTimer();
+    store.onValue(`rooms/${ROOM}/play/${playRound}/${gi}/placed`, placed=>{
+      Object.keys(placed||{}).forEach(idx=>lockPiece(+idx,false));
+    });
+  };
+  img.src=CONFIG.imageDataUrl;
+}
+function buildBoard(){
+  const b=document.getElementById('board');
+  b.style.width=PZ.bw+'px'; b.style.height=PZ.bh+'px';
+  b.style.gridTemplateColumns=`repeat(${PZ.cols},${PZ.pieceW}px)`;
+  b.style.gridTemplateRows=`repeat(${PZ.rows},${PZ.pieceH}px)`;
+  b.innerHTML='';
+  for(let i=0;i<PZ.total;i++){const s=document.createElement('div');s.className='slot';s.dataset.idx=i;s.style.width=PZ.pieceW+'px';s.style.height=PZ.pieceH+'px';b.appendChild(s);}
+}
+function makePieceEl(i){
+  const r=Math.floor(i/PZ.cols),c=i%PZ.cols;
+  const p=document.createElement('div'); p.className='piece'; p.dataset.idx=i;
+  p.style.width=PZ.pieceW+'px'; p.style.height=PZ.pieceH+'px';
+  p.style.backgroundImage=`url("${PZ.url}")`; p.style.backgroundSize=`${PZ.bw}px ${PZ.bh}px`;
+  p.style.backgroundPosition=`-${c*PZ.pieceW}px -${r*PZ.pieceH}px`;
+  p.addEventListener('pointerdown',e=>onPiecePointerDown(e,p));
+  return p;
+}
+function buildTray(){
+  const tray=document.getElementById('tray'); tray.innerHTML='';
+  const order=[...Array(PZ.total).keys()];
+  for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
+  order.forEach(i=>tray.appendChild(makePieceEl(i)));
+}
+let drag=null;
+function onPiecePointerDown(e,piece){
+  if(piece.classList.contains('locked')) return;
+  e.preventDefault();
+  const rect=piece.getBoundingClientRect();
+  drag={piece,ox:e.clientX-rect.left,oy:e.clientY-rect.top};
+  piece.classList.add('dragging'); piece.style.position='fixed'; piece.style.zIndex=9999;
+  document.body.appendChild(piece); moveDrag(e.clientX,e.clientY);
+  window.addEventListener('pointermove',onDragMove); window.addEventListener('pointerup',onDragUp);
+}
+function moveDrag(x,y){drag.piece.style.left=(x-drag.ox)+'px';drag.piece.style.top=(y-drag.oy)+'px';}
+function onDragMove(e){if(drag)moveDrag(e.clientX,e.clientY);}
+function onDragUp(e){
+  if(!drag) return;
+  const piece=drag.piece,idx=+piece.dataset.idx;
+  piece.style.pointerEvents='none';
+  const under=document.elementFromPoint(e.clientX,e.clientY);
+  piece.style.pointerEvents='';
+  const slot=under&&under.closest('.slot');
+  window.removeEventListener('pointermove',onDragMove); window.removeEventListener('pointerup',onDragUp);
+  piece.classList.remove('dragging'); drag=null;
+  if(slot&&+slot.dataset.idx===idx&&!slot.classList.contains('filled')){
+    store.update(`rooms/${ROOM}/play/${playRound}/${me.groupId}/placed`,{[idx]:me.name||true});
+    lockPiece(idx,true);
+  }else returnToTray(piece);
+}
+function returnToTray(piece){
+  piece.style.position='';piece.style.left='';piece.style.top='';piece.style.zIndex='';
+  piece.classList.add('shake'); setTimeout(()=>piece.classList.remove('shake'),350);
+  document.getElementById('tray').appendChild(piece);
+}
+function lockPiece(idx,praise){
+  if(!PZ||PZ.locked[idx]) return; PZ.locked[idx]=true;
+  let piece=document.querySelector(`.piece[data-idx="${idx}"]`); if(!piece) piece=makePieceEl(idx);
+  piece.style.position='';piece.style.left='';piece.style.top='';piece.style.zIndex='';
+  piece.classList.remove('dragging'); piece.classList.add('locked');
+  const slot=document.querySelector(`.slot[data-idx="${idx}"]`); slot.classList.add('filled'); slot.innerHTML=''; slot.appendChild(piece);
+  PZ.count++; if(praise) showPraise();
+  if(PZ.count>=PZ.total&&!PZ.done) finishPuzzle();
+}
+const PRAISES=['Good! 👍','Great! ⭐','멋져요! 🎨','좋아요! 😊','Nice! ✨','최고! 🙌'];
+function showPraise(){
+  const el=document.createElement('div'); el.className='praise';
+  el.textContent=PRAISES[Math.floor(Math.random()*PRAISES.length)];
+  document.body.appendChild(el); requestAnimationFrame(()=>el.classList.add('go'));
+  setTimeout(()=>el.remove(),1000);
+}
+function startTimer(){
+  clearInterval(timerHandle);
+  timerHandle=setInterval(()=>{document.getElementById('timer').textContent=fmt(store.stamp()-puzzleStartTs);},400);
+}
+function finishPuzzle(){
+  PZ.done=true; clearInterval(timerHandle);
+  const gi=me.groupId, finishTs=store.stamp();
+  store.update(`rooms/${ROOM}/play/${playRound}/leaderboard/${gi}`,{name:CONFIG.groups[gi].name,startTs:puzzleStartTs,finishTs});
+  document.getElementById('doneTime').textContent=`걸린 시간 ${fmt(finishTs-puzzleStartTs)}`;
+  document.getElementById('doneMsg').textContent=`${CONFIG.groups[gi].name}, 멋지게 완성했어요!`;
+  burstConfetti(); setTimeout(()=>go('done'),700);
+}
+function burstConfetti(){
+  const colors=['#6d28d9','#ec4899','#f59e0b','#10b981','#3b82f6'];
+  for(let i=0;i<60;i++){
+    const c=document.createElement('div'); c.className='confetti';
+    c.style.left=Math.random()*100+'vw'; c.style.background=colors[i%colors.length];
+    c.style.transform=`rotate(${Math.random()*360}deg)`; document.body.appendChild(c);
+    const dur=1500+Math.random()*1500;
+    c.animate([{transform:c.style.transform,top:'-10px',opacity:1},{top:'100vh',opacity:.9}],{duration:dur,easing:'ease-in'});
+    setTimeout(()=>c.remove(),dur);
+  }
+}
+
+/* =========================================================
+   9) 교사 진행 화면
+   ========================================================= */
+function openControl(){ go('control'); updateControlStatus(); }
+function updateControlStatus(){
+  const el=document.getElementById('ctrlStatus'); if(!el) return;
+  store.onValue(`rooms/${ROOM}/waiting`, w=>{
+    if(curScreen!=='control') return;
+    const n=Object.keys(w||{}).length;
+    const round=(gameState&&gameState.round)||0;
+    el.textContent = round? `현재 ${round}번째 판 진행 중 · 대기 인원 ${n}명` : `대기 인원 ${n}명 — 준비되면 아래 버튼을 누르세요`;
+  });
+}
+
+/* =========================================================
+   10) 교사 설정
+   ========================================================= */
+function teacherGate(){
+  const pw=prompt('교사 설정 비밀번호를 입력하세요'); if(pw===null) return;
+  if(pw===((CONFIG&&CONFIG.teacherPassword)||'0000')){ teacherAuthed=true; openTeacher(); }
+  else alert('비밀번호가 맞지 않아요.');
+}
+let pickedImg=null;
+function renderPresetBtns(){
+  const pb=document.getElementById('presetBtns'); if(!pb) return;
+  pb.innerHTML=PRESETS.map((p,i)=>`<button class="btn btn-line" style="flex:1 1 46%; padding:11px; font-size:14px;" onclick="loadPreset(${i})">${p.title}</button>`).join('');
+}
+function loadPreset(i){
+  const p=PRESETS[i];
+  CONFIG.title=p.title; CONFIG.description=p.desc; CONFIG.imageDataUrl=p.image;
+  CONFIG.quizzes=JSON.parse(JSON.stringify(p.quizzes));
+  pickedImg=p.image;
+  openTeacher();
+  document.getElementById('saveMsg').textContent=`"${p.title}" 예시를 불러왔어요. 실제 작품 사진이 있으면 위에서 업로드로 바꾸고, 아래 저장을 눌러주세요.`;
+}
+function openTeacher(){
+  go('teacher');
+  renderPresetBtns();
+  document.getElementById('cfgTitle').value=CONFIG.title||'';
+  document.getElementById('cfgDesc').value=CONFIG.description||'';
+  document.getElementById('cfgPieces').value=CONFIG.pieces||'3x4';
+  document.getElementById('cfgPreview').value=CONFIG.previewSeconds||5;
+  document.getElementById('cfgTeacherPw').value=CONFIG.teacherPassword||'0000';
+  pickedImg=CONFIG.imageDataUrl;
+  const ip=document.getElementById('cfgImgPreview'); ip.src=pickedImg; ip.style.display='block';
+  const ql=document.getElementById('quizCfgList'); ql.innerHTML='';
+  (CONFIG.quizzes||[]).forEach((q,qi)=>{
+    const d=document.createElement('div'); d.className='quiz-cfg';
+    d.innerHTML=`<input data-q="${qi}" class="qq" value="${(q.q||'').replace(/"/g,'&quot;')}" placeholder="질문 ${qi+1}">
+      ${q.choices.map((c,ci)=>`<div class="grouprow" style="margin-top:6px">
+        <input class="qc" data-q="${qi}" data-c="${ci}" value="${(c||'').replace(/"/g,'&quot;')}" placeholder="보기 ${ci+1}">
+        <button class="btn ${q.answer===ci?'btn-primary':'btn-ghost'}" style="flex:0 0 78px" onclick="setAns(${qi},${ci})">정답</button>
+      </div>`).join('')}`;
+    ql.appendChild(d);
+  });
+  renderGroupCfg();
+}
+function setAns(qi,ci){ CONFIG.quizzes[qi].answer=ci; openTeacher(); }
+function renderGroupCfg(){
+  const gl=document.getElementById('groupCfgList'); gl.innerHTML='';
+  (CONFIG.groups||[]).forEach((g,i)=>{
+    const d=document.createElement('div'); d.className='grouprow';
+    d.innerHTML=`<input class="gname" value="${g.name}" placeholder="모둠 이름">
+      <input class="gpw" value="${g.password}" placeholder="비번">
+      <button class="btn btn-ghost" style="flex:0 0 46px" onclick="delGroup(${i})">✕</button>`;
+    gl.appendChild(d);
+  });
+}
+function addGroupRow(){ collectGroups(); CONFIG.groups.push({name:(CONFIG.groups.length+1)+'모둠',password:''}); renderGroupCfg(); }
+function delGroup(i){ collectGroups(); CONFIG.groups.splice(i,1); renderGroupCfg(); }
+function collectGroups(){
+  const names=[...document.querySelectorAll('.gname')],pws=[...document.querySelectorAll('.gpw')];
+  CONFIG.groups=names.map((n,i)=>({name:n.value.trim()||((i+1)+'모둠'),password:pws[i].value.trim()}));
+}
+function onImgPick(ev){
+  const f=ev.target.files[0]; if(!f) return;
+  const img=new Image(),rd=new FileReader();
+  rd.onload=e=>{img.onload=()=>{
+    const max=1000; let w=img.width,h=img.height; const sc=Math.min(1,max/Math.max(w,h));
+    w=Math.round(w*sc); h=Math.round(h*sc);
+    const cv=document.createElement('canvas'); cv.width=w; cv.height=h; cv.getContext('2d').drawImage(img,0,0,w,h);
+    pickedImg=cv.toDataURL('image/jpeg',0.72);
+    const ip=document.getElementById('cfgImgPreview'); ip.src=pickedImg; ip.style.display='block';
+  }; img.src=e.target.result;}; rd.readAsDataURL(f);
+}
+function saveConfig(){
+  collectGroups();
+  const quizzes=(CONFIG.quizzes||[]).map((q,qi)=>({
+    q:document.querySelector(`.qq[data-q="${qi}"]`).value.trim(),
+    choices:[0,1,2,3].map(ci=>document.querySelector(`.qc[data-q="${qi}"][data-c="${ci}"]`).value.trim()),
+    answer:q.answer||0
+  }));
+  const cfg={
+    title:document.getElementById('cfgTitle').value.trim(),
+    imageDataUrl:pickedImg||DEFAULT_IMG,
+    description:document.getElementById('cfgDesc').value.trim(),
+    pieces:document.getElementById('cfgPieces').value,
+    previewSeconds:+document.getElementById('cfgPreview').value||5,
+    teacherPassword:document.getElementById('cfgTeacherPw').value.trim()||'0000',
+    quizzes, groups:CONFIG.groups
+  };
+  store.set(`rooms/${ROOM}/config`,cfg);
+  // 새 작품 → 기록 초기화
+  store.remove(`rooms/${ROOM}/play`); store.remove(`rooms/${ROOM}/waiting`);
+  store.remove(`rooms/${ROOM}/likes`); store.remove(`rooms/${ROOM}/comments`);
+  store.set(`rooms/${ROOM}/game`,{round:0,startedAt:null});
+  document.getElementById('saveMsg').textContent='✅ 저장했어요! 학생들이 접속하면 오늘의 작품이 보여요.';
+  setTimeout(()=>go('home'),900);
+}
+
+/* =========================================================
+   11) 앱 시작 (실시간 모드면 익명 로그인 후 시작)
+   ========================================================= */
+if(isLive && firebaseAuth){
+  firebaseAuth.signInAnonymously().catch(e=>console.error('익명 로그인 오류',e));
+  let started=false;
+  firebaseAuth.onAuthStateChanged(u=>{ if(u && !started){ started=true; startApp(); } });
+}else{
+  startApp();
+}
+</script>
 </body>
 </html>
