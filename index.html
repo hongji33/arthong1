@@ -58,6 +58,10 @@ h1,h2,h3{margin:0 0 10px;}
 .btn-ghost{background:var(--soft); color:var(--accent);}
 .btn-line{background:#fff; color:var(--accent); border:2px solid var(--accent);}
 .btn-big{font-size:20px; padding:20px;}
+.topback{display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,.92); color:var(--accent);
+  border:0; border-radius:12px; padding:9px 15px; font-weight:800; font-size:14px; cursor:pointer; font-family:inherit;
+  margin-bottom:10px; box-shadow:0 4px 12px rgba(30,20,80,.18);}
+.topback:active{transform:scale(.96);}
 .mt{margin-top:12px;} .mt2{margin-top:20px;}
 
 label{display:block; font-size:13px; font-weight:700; color:var(--muted); margin:14px 0 6px;}
@@ -187,14 +191,15 @@ textarea{resize:vertical; min-height:70px;}
     <div id="homeRoomTag" class="status-line"></div>
     <div class="rank" id="homeRank"></div>
     <div class="card">
-      <button class="btn btn-primary btn-big" onclick="studentEnter()">🙋 학생 입장</button>
-      <button class="btn btn-ghost mt" onclick="teacherLogin()">🔑 교사용 로그인</button>
+      <button id="btnStudentEnter" class="btn btn-primary btn-big" onclick="studentEnter()">🙋 학생 입장</button>
+      <button id="btnTeacherLogin" class="btn btn-line btn-big" onclick="teacherLogin()">🔑 교사용 로그인</button>
     </div>
-    <p class="hint center">학생은 선생님이 준 <b>초대 링크</b>로 들어오면 바로 입장할 수 있어요.</p>
+    <p class="hint center" id="homeHint"></p>
   </section>
 
   <!-- ===== 교사 메뉴 (로그인 후) ===== -->
   <section id="teacherhub" class="screen">
+    <button class="topback" onclick="go('home')">← 처음 화면으로 (로그아웃)</button>
     <div class="title"><h1>교사 메뉴</h1></div>
     <div class="card">
       <div id="hubRoomLabel" style="font-weight:800; color:var(--accent); margin-bottom:10px;"></div>
@@ -202,12 +207,12 @@ textarea{resize:vertical; min-height:70px;}
       <button class="btn btn-line mt" onclick="openTeacher()">🔑 교사 설정 (작품·퀴즈·모둠)</button>
       <button class="btn btn-ghost mt" onclick="copyInvite()">🔗 학생 초대 링크 복사</button>
       <button class="btn btn-ghost mt" onclick="switchRoom()">🚪 방 변경 (다른 반)</button>
-      <button class="btn btn-ghost mt" onclick="go('home')">← 학생 화면으로</button>
     </div>
   </section>
 
   <!-- ===== 학생 로그인 ===== -->
   <section id="login" class="screen">
+    <button class="topback" onclick="go('home')">← 뒤로</button>
     <div class="title"><h1>학생 입장</h1></div>
     <div class="card">
       <label>학번</label>
@@ -219,7 +224,6 @@ textarea{resize:vertical; min-height:70px;}
       <label>모둠 비밀번호</label>
       <input id="inGroupPw" placeholder="선생님이 알려준 비번">
       <button class="btn btn-primary mt2" onclick="doLogin()">입장하기</button>
-      <button class="btn btn-ghost mt" onclick="go('home')">← 뒤로</button>
       <p class="hint" id="loginMsg"></p>
     </div>
   </section>
@@ -242,6 +246,7 @@ textarea{resize:vertical; min-height:70px;}
 
   <!-- ===== 감상 + 대기실 (작품 한눈에, 설명·감상평 옆에) ===== -->
   <section id="view" class="screen">
+    <button class="topback" onclick="leaveStudent()">← 나가기</button>
     <div class="title"><h1>작품 감상</h1></div>
     <div class="card">
       <div class="split view-split">
@@ -257,7 +262,6 @@ textarea{resize:vertical; min-height:70px;}
           <div class="waitbox" id="waitBox">⏳ 선생님이 시작하면 퍼즐이 시작돼요<span class="sub" id="waitSub"></span></div>
         </div>
       </div>
-      <button class="btn btn-ghost mt" onclick="leaveStudent()">← 나가기</button>
     </div>
   </section>
 
@@ -298,18 +302,19 @@ textarea{resize:vertical; min-height:70px;}
 
   <!-- ===== 교사 진행 화면 (교실 앞) ===== -->
   <section id="control" class="screen">
+    <button class="topback" onclick="go('teacherhub')">← 뒤로</button>
     <div class="title"><h1>🏆 모둠 순위 · 진행</h1></div>
     <div class="status-line" id="ctrlStatus"></div>
     <div class="rank" id="bigRank" style="font-size:18px;"></div>
     <div class="card">
       <button class="btn btn-primary btn-big" onclick="teacherStart()">▶ 퍼즐 시작 (모두 동시에!)</button>
-      <button class="btn btn-ghost mt" onclick="go('teacherhub')">← 뒤로</button>
       <p class="hint center">학생들이 감상·대기실에 모이면 이 버튼을 눌러 다같이 시작하세요. 다시 누르면 새 판이 시작돼요.</p>
     </div>
   </section>
 
   <!-- ===== 교사 설정 ===== -->
   <section id="teacher" class="screen">
+    <button class="topback" onclick="go('teacherhub')">← 뒤로</button>
     <div class="title"><h1>교사 설정</h1></div>
     <div class="card">
       <label>예시 작품 불러오기 (버튼을 누르면 설명·퀴즈가 자동으로 채워져요)</label>
@@ -358,7 +363,6 @@ textarea{resize:vertical; min-height:70px;}
       <input id="cfgTeacherPw" placeholder="예: 0000">
 
       <button class="btn btn-primary mt2" onclick="saveConfig()">💾 저장하고 모두에게 적용</button>
-      <button class="btn btn-ghost mt" onclick="go('teacherhub')">← 뒤로</button>
       <p class="hint" id="saveMsg"></p>
     </div>
   </section>
@@ -914,8 +918,22 @@ function buildRoomKey(school,teacher,cls){ return [school,teacher,cls].map(sanit
 function inviteLinkFor(key){ return location.origin+location.pathname+'?room='+encodeURIComponent(key); }
 function inviteLink(){ return inviteLinkFor(ROOM); }
 
-let authReady=!(isLive&&firebaseAuth), roomReady=false, appStarted=false;
+let authReady=!(isLive&&firebaseAuth), roomReady=false, appStarted=false, enteredViaLink=false;
 function maybeStart(){ if(authReady && roomReady && !appStarted){ appStarted=true; startApp(); } }
+function applyHomeMode(){
+  const s=document.getElementById('btnStudentEnter'), t=document.getElementById('btnTeacherLogin');
+  const hint=document.getElementById('homeHint'), rank=document.getElementById('homeRank');
+  if(!s||!t) return;
+  if(enteredViaLink){
+    s.style.display=''; t.style.display='none';
+    if(hint) hint.textContent='곧 시작해요! 아래 버튼으로 입장하세요.';
+    if(rank) rank.style.display='';
+  }else{
+    s.style.display='none'; t.style.display='';
+    if(hint) hint.textContent='선생님용 시작 화면이에요. 교사용 로그인으로 시작하고, 학생에게는 초대 링크를 나눠주세요.';
+    if(rank) rank.style.display='none';
+  }
+}
 
 if(isLive && firebaseAuth){
   firebaseAuth.signInAnonymously().catch(e=>console.error('익명 로그인 오류',e));
@@ -970,7 +988,8 @@ function copyInvite(){
 /* 시작: URL에 ?room= 있으면 학생은 바로 학생 화면. 없으면 학생 화면(교사는 로그인으로 방 생성) */
 (function initRoom(){
   const urlRoom=new URLSearchParams(location.search).get('room');
-  if(urlRoom){ enterRoom(sanitizeKey(decodeURIComponent(urlRoom)), null, 'home'); return; }
+  if(urlRoom){ enteredViaLink=true; applyHomeMode(); enterRoom(sanitizeKey(decodeURIComponent(urlRoom)), null, 'home'); return; }
+  enteredViaLink=false; applyHomeMode();
   const last=lsGet('lastRoom');
   if(last&&last.meta){ document.getElementById('rgSchool').value=last.meta.school||''; document.getElementById('rgTeacher').value=last.meta.teacher||''; document.getElementById('rgClass').value=last.meta.cls||''; }
   go('home');
