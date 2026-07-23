@@ -28,66 +28,92 @@ const FIREBASE_CONFIG = {
 <style>
 :root{
   --bg1:#4f46e5; --bg2:#7c3aed; --bg3:#db2777;
-  --card:#ffffff; --ink:#1f2340; --muted:#6b7280;
+  --card:#ffffff; --ink:#1e213a; --muted:#6b7280;
   --accent:#6d28d9; --accent2:#ec4899; --good:#10b981; --warn:#f59e0b;
-  --line:#e5e7eb; --soft:#f4f4fb;
+  --line:#e6e6f0; --soft:#f5f5fb; --soft2:#eef0fb;
+  --r-lg:22px; --r-md:16px; --r-sm:12px;
+  --shadow-card:0 14px 40px rgba(28,20,70,.22);
+  --shadow-btn:0 8px 18px rgba(124,58,237,.30);
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
 html,body{margin:0; height:100%;}
 body{
   font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
   color:var(--ink);
-  background:linear-gradient(135deg,var(--bg1),var(--bg2) 55%,var(--bg3));
+  background:
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22900%22%20height%3D%22600%22%20viewBox%3D%220%200%20900%20600%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g1%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%2316305c%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23f4c542%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22g2%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23c9a13a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%237a5c1e%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22g3%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%232f8f9d%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%238fd0ca%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22g4%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23c94f7c%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23f2b3c8%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22g5%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%232f6f3e%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%2396c46c%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22g6%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23e8873a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23c9432a%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22g7%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%236d5bd0%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23b39ae8%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22g8%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%232f8f9d%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%238fd0ca%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22g9%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%2316305c%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23f4c542%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22g10%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23c94f7c%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23f2b3c8%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20x%3D%227%22%20y%3D%227%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22url%28%23g1%29%22%20fill-opacity%3D%220.5%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%222%22%2F%3E%3Ccircle%20cx%3D%22143%22%20cy%3D%2275%22%20r%3D%2222%22%20fill%3D%22url%28%23g1%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%2275%22%20cy%3D%22143%22%20r%3D%2222%22%20fill%3D%22url%28%23g1%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Crect%20x%3D%22157%22%20y%3D%227%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.08%22%20stroke-width%3D%222%22%2F%3E%3Crect%20x%3D%22307%22%20y%3D%227%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22url%28%23g2%29%22%20fill-opacity%3D%220.5%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%222%22%2F%3E%3Ccircle%20cx%3D%22443%22%20cy%3D%2275%22%20r%3D%2222%22%20fill%3D%22url%28%23g2%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%22375%22%20cy%3D%22143%22%20r%3D%2222%22%20fill%3D%22url%28%23g2%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Crect%20x%3D%22457%22%20y%3D%227%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.08%22%20stroke-width%3D%222%22%2F%3E%3Crect%20x%3D%22607%22%20y%3D%227%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22url%28%23g3%29%22%20fill-opacity%3D%220.5%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%222%22%2F%3E%3Ccircle%20cx%3D%22743%22%20cy%3D%2275%22%20r%3D%2222%22%20fill%3D%22url%28%23g3%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%22675%22%20cy%3D%22143%22%20r%3D%2222%22%20fill%3D%22url%28%23g3%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Crect%20x%3D%22757%22%20y%3D%227%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.08%22%20stroke-width%3D%222%22%2F%3E%3Crect%20x%3D%227%22%20y%3D%22157%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.08%22%20stroke-width%3D%222%22%2F%3E%3Crect%20x%3D%22157%22%20y%3D%22157%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22url%28%23g4%29%22%20fill-opacity%3D%220.5%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%222%22%2F%3E%3Ccircle%20cx%3D%22293%22%20cy%3D%22225%22%20r%3D%2222%22%20fill%3D%22url%28%23g4%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%22225%22%20cy%3D%22293%22%20r%3D%2222%22%20fill%3D%22url%28%23g4%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Crect%20x%3D%22307%22%20y%3D%22157%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.08%22%20stroke-width%3D%222%22%2F%3E%3Crect%20x%3D%22457%22%20y%3D%22157%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.08%22%20stroke-width%3D%222%22%2F%3E%3Crect%20x%3D%22607%22%20y%3D%22157%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.08%22%20stroke-width%3D%222%22%2F%3E%3Crect%20x%3D%22757%22%20y%3D%22157%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22url%28%23g5%29%22%20fill-opacity%3D%220.5%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%222%22%2F%3E%3Ccircle%20cx%3D%22893%22%20cy%3D%22225%22%20r%3D%2222%22%20fill%3D%22url%28%23g5%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%22825%22%20cy%3D%22293%22%20r%3D%2222%22%20fill%3D%22url%28%23g5%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Crect%20x%3D%227%22%20y%3D%22307%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22url%28%23g7%29%22%20fill-opacity%3D%220.5%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%222%22%2F%3E%3Ccircle%20cx%3D%22143%22%20cy%3D%22375%22%20r%3D%2222%22%20fill%3D%22url%28%23g7%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%2275%22%20cy%3D%22443%22%20r%3D%2222%22%20fill%3D%22url%28%23g7%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Crect%20x%3D%22157%22%20y%3D%22307%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.08%22%20stroke-width%3D%222%22%2F%3E%3Crect%20x%3D%22307%22%20y%3D%22307%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.08%22%20stroke-width%3D%222%22%2F%3E%3Crect%20x%3D%22457%22%20y%3D%22307%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22url%28%23g6%29%22%20fill-opacity%3D%220.5%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%222%22%2F%3E%3Ccircle%20cx%3D%22593%22%20cy%3D%22375%22%20r%3D%2222%22%20fill%3D%22url%28%23g6%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%22525%22%20cy%3D%22443%22%20r%3D%2222%22%20fill%3D%22url%28%23g6%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Crect%20x%3D%22607%22%20y%3D%22307%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.08%22%20stroke-width%3D%222%22%2F%3E%3Crect%20x%3D%22757%22%20y%3D%22307%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.08%22%20stroke-width%3D%222%22%2F%3E%3Crect%20x%3D%227%22%20y%3D%22457%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.08%22%20stroke-width%3D%222%22%2F%3E%3Crect%20x%3D%22157%22%20y%3D%22457%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.08%22%20stroke-width%3D%222%22%2F%3E%3Crect%20x%3D%22307%22%20y%3D%22457%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22url%28%23g8%29%22%20fill-opacity%3D%220.5%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%222%22%2F%3E%3Ccircle%20cx%3D%22443%22%20cy%3D%22525%22%20r%3D%2222%22%20fill%3D%22url%28%23g8%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%22375%22%20cy%3D%22593%22%20r%3D%2222%22%20fill%3D%22url%28%23g8%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Crect%20x%3D%22457%22%20y%3D%22457%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.08%22%20stroke-width%3D%222%22%2F%3E%3Crect%20x%3D%22607%22%20y%3D%22457%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22url%28%23g9%29%22%20fill-opacity%3D%220.5%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%222%22%2F%3E%3Ccircle%20cx%3D%22743%22%20cy%3D%22525%22%20r%3D%2222%22%20fill%3D%22url%28%23g9%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%22675%22%20cy%3D%22593%22%20r%3D%2222%22%20fill%3D%22url%28%23g9%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Crect%20x%3D%22757%22%20y%3D%22457%22%20width%3D%22136%22%20height%3D%22136%22%20rx%3D%2216%22%20fill%3D%22url%28%23g10%29%22%20fill-opacity%3D%220.5%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%222%22%2F%3E%3Ccircle%20cx%3D%22893%22%20cy%3D%22525%22%20r%3D%2222%22%20fill%3D%22url%28%23g10%29%22%20fill-opacity%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%22825%22%20cy%3D%22593%22%20r%3D%2222%22%20fill%3D%22url%28%23g10%29%22%20fill-opacity%3D%220.5%22%2F%3E%3C%2Fsvg%3E") center center / cover no-repeat,
+    radial-gradient(1100px 520px at 50% -12%, rgba(255,255,255,.20), transparent 60%),
+    linear-gradient(160deg,var(--bg1),var(--bg2) 52%,var(--bg3));
   background-attachment:fixed; min-height:100%; overflow-x:hidden;
+  line-height:1.5;
 }
-.wrap{max-width:1000px; margin:0 auto; padding:16px 16px 50px;}
+.wrap{max-width:960px; margin:0 auto; padding:14px 16px 56px;}
 .screen{display:none; animation:fade .35s ease;}
 .screen.on{display:block;}
-@keyframes fade{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;}}
+@keyframes fade{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;}}
 
-.card{background:var(--card); border-radius:22px; padding:22px; box-shadow:0 18px 45px rgba(30,20,80,.28);}
+.card{
+  background:var(--card); border-radius:var(--r-lg); padding:24px;
+  box-shadow:var(--shadow-card); border:1px solid rgba(255,255,255,.6);
+}
 h1,h2,h3{margin:0 0 10px;}
-.title{color:#fff; text-align:center; margin:10px 0 16px;}
-.title h1{font-size:25px; font-weight:800; letter-spacing:-.5px;}
-.title p{margin:6px 0 0; color:#eae7ff; font-size:14px;}
+.title{color:#fff; text-align:center; margin:12px 0 18px;}
+.title h1{font-size:26px; font-weight:800; letter-spacing:-.5px; text-shadow:0 2px 10px rgba(0,0,0,.18);}
+.title p{margin:8px 0 0; color:#efeaff; font-size:14.5px;}
 
-.btn{border:0; border-radius:16px; padding:15px 18px; font-size:16px; font-weight:700;
-  cursor:pointer; font-family:inherit; transition:transform .08s, box-shadow .2s; width:100%;}
+/* 버튼 */
+.btn{border:0; border-radius:var(--r-md); padding:15px 18px; font-size:16px; font-weight:700;
+  cursor:pointer; font-family:inherit; transition:transform .08s ease, box-shadow .2s ease, filter .2s ease; width:100%;
+  display:inline-flex; align-items:center; justify-content:center; gap:8px; line-height:1.25;}
 .btn:active{transform:scale(.97);}
-.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; box-shadow:0 8px 20px rgba(124,58,237,.35);}
-.btn-ghost{background:var(--soft); color:var(--accent);}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; box-shadow:var(--shadow-btn);}
+.btn-primary:hover{filter:brightness(1.04);}
+.btn-ghost{background:var(--soft2); color:var(--accent);}
+.btn-ghost:hover{background:#e6e9fa;}
 .btn-line{background:#fff; color:var(--accent); border:2px solid var(--accent);}
-.btn-big{font-size:20px; padding:20px;}
-.topback{display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,.92); color:var(--accent);
-  border:0; border-radius:12px; padding:9px 15px; font-weight:800; font-size:14px; cursor:pointer; font-family:inherit;
-  margin-bottom:10px; box-shadow:0 4px 12px rgba(30,20,80,.18);}
+.btn-line:hover{background:var(--soft);}
+.btn-big{font-size:19px; padding:19px;}
+.topback{display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,.94); color:var(--accent);
+  border:0; border-radius:12px; padding:10px 15px; font-weight:800; font-size:14px; cursor:pointer; font-family:inherit;
+  margin-bottom:12px; box-shadow:0 4px 12px rgba(30,20,80,.16);}
 .topback:active{transform:scale(.96);}
 .mt{margin-top:12px;} .mt2{margin-top:20px;}
 
-label{display:block; font-size:13px; font-weight:700; color:var(--muted); margin:14px 0 6px;}
-input,textarea,select{width:100%; padding:13px 14px; border:1.5px solid var(--line); border-radius:13px;
-  font-size:15px; font-family:inherit; color:var(--ink); background:#fff;}
-input:focus,textarea:focus,select:focus{outline:none; border-color:var(--accent);}
-textarea{resize:vertical; min-height:70px;}
+/* 입력 */
+label{display:block; font-size:13.5px; font-weight:700; color:#4b5063; margin:16px 0 7px;}
+input,textarea,select{width:100%; padding:13px 14px; border:1.5px solid var(--line); border-radius:var(--r-sm);
+  font-size:15px; font-family:inherit; color:var(--ink); background:#fff; transition:border-color .15s, box-shadow .15s;}
+input:focus,textarea:focus,select:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(109,40,217,.12);}
+textarea{resize:vertical; min-height:78px;}
 
-.pill{display:inline-block; padding:5px 12px; border-radius:999px; font-size:12px; font-weight:700;}
+.pill{display:inline-block; padding:6px 13px; border-radius:999px; font-size:12px; font-weight:700;}
 .pill-demo{background:#fff3cd; color:#8a6d1a;}
 .pill-live{background:#dcfce7; color:#166534;}
-.mode-bar{display:flex; justify-content:center; margin-bottom:10px;}
+.mode-bar{display:flex; justify-content:center; margin-bottom:12px;}
 
-.rank{background:rgba(255,255,255,.14); border-radius:18px; padding:14px 16px; color:#fff; margin-bottom:16px;}
-.rank h3{color:#fff; font-size:15px; margin-bottom:10px;}
-.rank ol{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:7px;}
-.rank li{display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.16); padding:9px 12px; border-radius:12px; font-weight:700;}
+/* 진행 단계 표시 (학생용) */
+.steps{display:flex; align-items:center; justify-content:center; gap:6px; margin:0 auto 14px; max-width:420px;}
+.step{flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; color:#e7e2ff; font-size:12px; font-weight:700; opacity:.7;}
+.step .num{width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background:rgba(255,255,255,.22); color:#fff; font-weight:800; font-size:14px; border:2px solid transparent;}
+.step.active{opacity:1;}
+.step.active .num{background:#fff; color:var(--accent); border-color:#fff; box-shadow:0 4px 12px rgba(0,0,0,.2);}
+.step-line{width:22px; height:2px; background:rgba(255,255,255,.35); margin-bottom:16px; border-radius:2px;}
+
+/* 순위표 */
+.rank{background:rgba(255,255,255,.15); border-radius:18px; padding:15px 16px; color:#fff; margin-bottom:16px; backdrop-filter:blur(2px);}
+.rank h3{color:#fff; font-size:15px; margin-bottom:11px;}
+.rank ol{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px;}
+.rank li{display:flex; align-items:center; gap:11px; background:rgba(255,255,255,.17); padding:10px 13px; border-radius:12px; font-weight:700;}
 .rank .medal{font-size:18px; width:26px; text-align:center;}
 .rank .who{flex:1;}
-.rank .time{font-variant-numeric:tabular-nums; opacity:.9; font-size:13px;}
+.rank .time{font-variant-numeric:tabular-nums; opacity:.92; font-size:13px;}
 .rank .empty{opacity:.85; font-size:13px; font-weight:500;}
 
-/* 2단 레이아웃 (태블릿·PC: 좌우 / 폰: 위아래) */
-.split{display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start;}
-@media(max-width:680px){ .split{grid-template-columns:1fr; gap:14px;} }
-.side-img{width:100%; border-radius:16px; object-fit:contain; box-shadow:0 8px 20px rgba(0,0,0,.15); background:#f4f4fb;}
+/* 2단 레이아웃 */
+.split{display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start;}
+@media(max-width:680px){ .split{grid-template-columns:1fr; gap:16px;} }
+.side-img{width:100%; border-radius:var(--r-md); object-fit:contain; box-shadow:0 8px 20px rgba(0,0,0,.14); background:var(--soft);}
 .quiz-split .side-img{max-height:60vh;}
 .view-split .side-img{max-height:74vh;}
 @media(max-width:680px){ .quiz-split .side-img{max-height:34vh;} .view-split .side-img{max-height:40vh;} }
@@ -95,45 +121,49 @@ textarea{resize:vertical; min-height:70px;}
 @media(max-width:680px){ .vside{max-height:none;} }
 
 /* 퀴즈 */
-.quiz-q{font-size:19px; font-weight:800; line-height:1.4; margin:6px 0 14px;}
+.quiz-q{font-size:19px; font-weight:800; line-height:1.45; margin:8px 0 15px;}
 .choice{display:block; width:100%; text-align:left; background:var(--soft); border:2px solid transparent;
-  border-radius:14px; padding:14px 16px; font-size:15px; font-weight:600; margin-bottom:10px; cursor:pointer; font-family:inherit; color:var(--ink);}
+  border-radius:14px; padding:15px 16px; font-size:15px; font-weight:600; margin-bottom:10px; cursor:pointer; font-family:inherit; color:var(--ink);
+  transition:background .15s, border-color .15s, transform .08s;}
+.choice:hover{background:var(--soft2);}
+.choice:active{transform:scale(.99);}
 .choice.correct{background:#dcfce7; border-color:var(--good); color:#166534;}
 .choice.wrong{background:#fee2e2; border-color:#ef4444; color:#991b1b;}
-.progressbar{height:8px; background:var(--soft); border-radius:99px; overflow:hidden; margin-bottom:14px;}
+.progressbar{height:9px; background:var(--soft2); border-radius:99px; overflow:hidden; margin-bottom:15px;}
 .progressbar>div{height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width .3s;}
 
 /* 감상 */
-.desc{background:var(--soft); border-radius:14px; padding:14px 16px; font-size:15px; line-height:1.7;}
+.desc{background:var(--soft); border-radius:14px; padding:15px 17px; font-size:15px; line-height:1.75;}
 .react-bar{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
 .react-bar input{flex:1 1 120px; min-width:0;}
 .react-bar .btn{flex:0 0 auto; white-space:nowrap;}
-.likebtn{background:#fff0f6; color:var(--accent2); border:2px solid #fbcfe8; border-radius:14px; padding:10px 14px; font-weight:800; cursor:pointer; font-family:inherit; font-size:15px; white-space:nowrap;}
+.likebtn{background:#fff0f6; color:var(--accent2); border:2px solid #fbcfe8; border-radius:14px; padding:11px 15px; font-weight:800; cursor:pointer; font-family:inherit; font-size:15px; white-space:nowrap; transition:background .15s;}
 .likebtn.on{background:var(--accent2); color:#fff; border-color:var(--accent2);}
 .comment-list{display:flex; flex-direction:column; gap:8px; max-height:150px; overflow:auto;}
-.comment{background:var(--soft); border-radius:12px; padding:10px 12px; font-size:14px;}
+.comment{background:var(--soft); border-radius:12px; padding:10px 13px; font-size:14px;}
 .comment b{color:var(--accent);}
 .waitbox{background:linear-gradient(135deg,#eef2ff,#fdf2f8); border:2px dashed var(--accent2); border-radius:14px;
-  padding:16px; text-align:center; font-weight:800; color:var(--accent); font-size:16px;}
-.waitbox .sub{display:block; font-size:13px; font-weight:600; color:var(--muted); margin-top:6px;}
+  padding:17px; text-align:center; font-weight:800; color:var(--accent); font-size:16px;}
+.waitbox .sub{display:block; font-size:13px; font-weight:600; color:var(--muted); margin-top:7px;}
 .dots::after{content:'…'; animation:dots 1.2s steps(4,end) infinite; }
 @keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
 
 /* 동시 시작 카운트다운 */
 .big-preview{text-align:center;}
-.big-preview img{max-height:64vh; width:auto; max-width:100%; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.25);}
-.countdown{font-size:44px; font-weight:900; color:#fff; margin:16px 0 4px; font-variant-numeric:tabular-nums; text-shadow:0 3px 12px rgba(0,0,0,.3);}
-.countdown-sub{color:#eae7ff; font-weight:600;}
+.big-preview img{max-height:62vh; width:auto; max-width:100%; border-radius:var(--r-md); box-shadow:0 10px 30px rgba(0,0,0,.25);}
+.countdown{font-size:48px; font-weight:900; color:#fff; margin:18px 0 4px; font-variant-numeric:tabular-nums; text-shadow:0 3px 12px rgba(0,0,0,.3);}
+.countdown-sub{color:#efeaff; font-weight:600;}
 
 /* 퍼즐 */
-.puzzle-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:10px;}
-.timer{font-size:22px; font-weight:800; color:var(--accent); font-variant-numeric:tabular-nums;}
-.puzzle-info{font-size:13px; color:var(--muted); font-weight:600;}
+.puzzle-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:10px;}
+.timer{font-size:23px; font-weight:800; color:var(--accent); font-variant-numeric:tabular-nums;
+  background:var(--soft2); padding:6px 14px; border-radius:12px;}
+.puzzle-info{font-size:13px; color:var(--muted); font-weight:700; text-align:right;}
 .board-wrap{display:flex; justify-content:center; margin:6px 0 16px;}
-.board{position:relative; display:grid; background:#eef; border-radius:12px; overflow:hidden; box-shadow:inset 0 0 0 2px var(--line);}
+.board{position:relative; display:grid; background:var(--soft2); border-radius:12px; overflow:hidden; box-shadow:inset 0 0 0 2px var(--line);}
 .slot{border:1px dashed #c9c9e6; display:flex; align-items:center; justify-content:center;}
 .slot.filled{border-color:transparent;}
-.tray{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; background:var(--soft); border-radius:16px; padding:12px; min-height:80px;}
+.tray{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; background:var(--soft); border-radius:16px; padding:13px; min-height:80px;}
 .piece{background-repeat:no-repeat; border-radius:5px; cursor:grab; touch-action:none; box-shadow:0 3px 8px rgba(0,0,0,.18);}
 .piece.dragging{cursor:grabbing; box-shadow:0 12px 26px rgba(0,0,0,.35); border-radius:6px;}
 .piece.locked{box-shadow:none; cursor:default; border-radius:0;}
@@ -149,17 +179,45 @@ textarea{resize:vertical; min-height:70px;}
   70%{opacity:1; transform:translate(-50%,-55%) scale(1);}
   100%{opacity:0; transform:translate(-50%,-75%) scale(.95);}}
 
-.done-emoji{font-size:64px; text-align:center; animation:pop .6s ease;}
+.done-emoji{font-size:66px; text-align:center; animation:pop .6s ease;}
 @keyframes pop{from{transform:scale(0);}60%{transform:scale(1.25);}to{transform:scale(1);}}
-.big-time{font-size:34px; font-weight:800; text-align:center; color:var(--accent); margin:6px 0 4px;}
+.big-time{font-size:35px; font-weight:800; text-align:center; color:var(--accent); margin:8px 0 4px;}
 .confetti{position:fixed; top:-10px; width:10px; height:16px; z-index:9997; pointer-events:none; border-radius:2px;}
 
-.hint{font-size:12.5px; color:var(--muted); margin-top:8px; line-height:1.6;}
-.divider{height:1px; background:var(--line); margin:18px 0;}
+.hint{font-size:12.5px; color:var(--muted); margin-top:10px; line-height:1.65;}
+.divider{height:1px; background:var(--line); margin:20px 0;}
 .center{text-align:center;}
-.quiz-cfg{background:var(--soft); border-radius:14px; padding:12px; margin-bottom:12px;}
+
+/* 교사 메뉴 버튼(설명 포함) */
+.menu-btn{display:flex; align-items:center; gap:13px; width:100%; text-align:left; background:var(--soft);
+  border:1.5px solid var(--line); border-radius:var(--r-md); padding:15px 16px; cursor:pointer; font-family:inherit;
+  color:var(--ink); margin-bottom:11px; transition:border-color .15s, background .15s, transform .08s;}
+.menu-btn:hover{border-color:var(--accent); background:#fff;}
+.menu-btn:active{transform:scale(.99);}
+.menu-btn .ic{font-size:24px; flex:0 0 auto;}
+.menu-btn .tx{flex:1;}
+.menu-btn .tx b{display:block; font-size:16px; font-weight:800; color:var(--ink);}
+.menu-btn .tx span{display:block; font-size:12.5px; color:var(--muted); margin-top:2px; font-weight:600;}
+.menu-btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2)); border-color:transparent; color:#fff; box-shadow:var(--shadow-btn);}
+.menu-btn.primary .tx b{color:#fff;} .menu-btn.primary .tx span{color:rgba(255,255,255,.9);}
+
+/* 교사 설정 단계 섹션 */
+.section{border:1.5px solid var(--line); border-radius:var(--r-md); padding:16px 16px 6px; margin-bottom:14px; background:#fff;}
+.section-title{display:flex; align-items:center; gap:9px; font-size:15.5px; font-weight:800; color:var(--ink); margin-bottom:4px;}
+.section-title .num-badge{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff; font-size:14px; font-weight:800; display:flex; align-items:center; justify-content:center;}
+.section-desc{font-size:12.5px; color:var(--muted); margin:2px 0 4px; font-weight:600;}
+.section label:first-of-type{margin-top:10px;}
+
+.quiz-cfg{background:var(--soft); border-radius:14px; padding:13px; margin-bottom:12px;}
 .grouprow{display:flex; gap:8px; margin-bottom:8px;}
-.status-line{color:#fff; text-align:center; font-weight:700; margin-bottom:10px;}
+.status-line{color:#fff; text-align:center; font-weight:700; margin-bottom:12px; text-shadow:0 1px 6px rgba(0,0,0,.2);}
+
+/* 초대 링크 + QR */
+.qr-box{display:inline-block; padding:14px; background:#fff; border:1.5px solid var(--line); border-radius:16px; box-shadow:0 6px 18px rgba(28,20,70,.12);}
+.qr-box img{display:block; width:230px; height:230px; image-rendering:pixelated;}
+@media(max-width:680px){ .qr-box img{width:200px; height:200px;} }
+.invite-link{margin-top:16px; word-break:break-all; background:var(--soft); border:1.5px solid var(--line); border-radius:12px; padding:12px 14px; font-size:13px; color:#4b5063; font-weight:600; text-align:left; line-height:1.5;}
 </style>
 </head>
 <body>
@@ -202,11 +260,33 @@ textarea{resize:vertical; min-height:70px;}
     <button class="topback" onclick="go('home')">← 처음 화면으로 (로그아웃)</button>
     <div class="title"><h1>교사 메뉴</h1></div>
     <div class="card">
-      <div id="hubRoomLabel" style="font-weight:800; color:var(--accent); margin-bottom:10px;"></div>
-      <button class="btn btn-primary" onclick="openControl()">📺 교사 진행 화면 (교실 앞 화면)</button>
-      <button class="btn btn-line mt" onclick="openTeacher()">🔑 교사 설정 (작품·퀴즈·모둠)</button>
-      <button class="btn btn-ghost mt" onclick="copyInvite()">🔗 학생 초대 링크 복사</button>
-      <button class="btn btn-ghost mt" onclick="switchRoom()">🚪 방 변경 (다른 반)</button>
+      <div id="hubRoomLabel" style="font-weight:800; color:var(--accent); margin-bottom:14px;"></div>
+      <button class="menu-btn primary" onclick="openControl()">
+        <span class="ic">📺</span><span class="tx"><b>교사 진행 화면</b><span>교실 앞에 순위를 띄우고, 퍼즐을 다같이 시작해요</span></span>
+      </button>
+      <button class="menu-btn" onclick="openTeacher()">
+        <span class="ic">⚙️</span><span class="tx"><b>교사 설정</b><span>오늘의 작품·퀴즈·모둠·비밀번호를 정해요</span></span>
+      </button>
+      <button class="menu-btn" onclick="openInvite()">
+        <span class="ic">🔗</span><span class="tx"><b>학생 초대 (링크·QR)</b><span>QR코드나 링크를 학생에게 보여주면 바로 입장해요</span></span>
+      </button>
+      <button class="menu-btn" onclick="switchRoom()">
+        <span class="ic">🚪</span><span class="tx"><b>방 변경 (다른 반)</b><span>3-1, 3-2처럼 다른 반 공간으로 바꿔요</span></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ===== 학생 초대 (링크 + QR) ===== -->
+  <section id="invite" class="screen">
+    <button class="topback" onclick="go('teacherhub')">← 뒤로</button>
+    <div class="title"><h1>🔗 학생 초대</h1></div>
+    <div class="card center">
+      <div id="inviteRoomLabel" style="font-weight:800; color:var(--accent); margin-bottom:14px;"></div>
+      <div class="qr-box"><img id="inviteQRimg" alt="학생 초대 QR코드"></div>
+      <p class="hint" style="margin-top:12px;">학생이 휴대폰 카메라로 이 QR코드를 비추면 바로 입장 화면이 열려요.</p>
+      <div class="invite-link" id="inviteLinkText"></div>
+      <button class="btn btn-primary mt" onclick="copyInvite()">📋 링크 복사하기</button>
+      <p class="hint" id="inviteMsg"></p>
     </div>
   </section>
 
@@ -231,6 +311,13 @@ textarea{resize:vertical; min-height:70px;}
   <!-- ===== 퀴즈 (작품 이미지 옆에) ===== -->
   <section id="quiz" class="screen">
     <div class="title"><h1>작품 퀴즈</h1></div>
+    <div class="steps">
+      <div class="step active"><div class="num">1</div>퀴즈</div>
+      <div class="step-line"></div>
+      <div class="step"><div class="num">2</div>감상</div>
+      <div class="step-line"></div>
+      <div class="step"><div class="num">3</div>퍼즐</div>
+    </div>
     <div class="card">
       <div class="split quiz-split">
         <img id="quizImg" class="side-img" alt="작품">
@@ -248,6 +335,13 @@ textarea{resize:vertical; min-height:70px;}
   <section id="view" class="screen">
     <button class="topback" onclick="leaveStudent()">← 나가기</button>
     <div class="title"><h1>작품 감상</h1></div>
+    <div class="steps">
+      <div class="step"><div class="num">1</div>퀴즈</div>
+      <div class="step-line"></div>
+      <div class="step active"><div class="num">2</div>감상</div>
+      <div class="step-line"></div>
+      <div class="step"><div class="num">3</div>퍼즐</div>
+    </div>
     <div class="card">
       <div class="split view-split">
         <img id="viewImg" class="side-img" alt="작품">
@@ -277,6 +371,13 @@ textarea{resize:vertical; min-height:70px;}
 
   <!-- ===== 퍼즐 ===== -->
   <section id="puzzle" class="screen">
+    <div class="steps">
+      <div class="step"><div class="num">1</div>퀴즈</div>
+      <div class="step-line"></div>
+      <div class="step"><div class="num">2</div>감상</div>
+      <div class="step-line"></div>
+      <div class="step active"><div class="num">3</div>퍼즐</div>
+    </div>
     <div class="card">
       <div class="puzzle-top">
         <div class="timer" id="timer">00:00</div>
@@ -317,52 +418,66 @@ textarea{resize:vertical; min-height:70px;}
     <button class="topback" onclick="go('teacherhub')">← 뒤로</button>
     <div class="title"><h1>교사 설정</h1></div>
     <div class="card">
-      <label>예시 작품 불러오기 (버튼을 누르면 설명·퀴즈가 자동으로 채워져요)</label>
-      <div id="presetBtns" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
-      <button class="btn btn-ghost mt" onclick="loadLastCfg()">↩ 지난 수업에서 쓴 설정 그대로 불러오기</button>
-      <div class="divider"></div>
+      <p class="hint" style="margin-top:0;">아래 순서대로 채운 뒤, 맨 아래 <b>저장</b>을 누르면 학생 화면에 적용돼요.</p>
 
-      <label>오늘의 작품 이미지</label>
-      <input type="file" id="imgFile" accept="image/*" onchange="onImgPick(event)">
-      <img id="cfgImgPreview" class="side-img mt" style="display:none; max-height:220px;">
+      <div class="section">
+        <div class="section-title"><span class="num-badge">1</span>빠르게 채우기</div>
+        <div class="section-desc">예시를 누르면 제목·설명·퀴즈가 채워져요. 작품 사진은 아래 ②에서 직접 올려주세요.</div>
+        <div id="presetBtns" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+        <button class="btn btn-ghost mt" onclick="loadLastCfg()">↩ 지난 수업에서 쓴 설정 그대로 불러오기</button>
+      </div>
 
-      <label>작품 제목</label>
-      <input id="cfgTitle" placeholder="예: 별이 빛나는 밤 (반 고흐)">
+      <div class="section">
+        <div class="section-title"><span class="num-badge">2</span>오늘의 작품</div>
+        <label>작품 이미지</label>
+        <input type="file" id="imgFile" accept="image/*" onchange="onImgPick(event)">
+        <img id="cfgImgPreview" class="side-img mt" style="display:none; max-height:220px;">
+        <label>작품 제목</label>
+        <input id="cfgTitle" placeholder="예: 별이 빛나는 밤 (반 고흐)">
+        <label>작품 설명 (학생이 감상 시간에 읽어요)</label>
+        <textarea id="cfgDesc" placeholder="작가, 시대, 표현 기법, 감상 포인트 등을 적어주세요."></textarea>
+      </div>
 
-      <label>작품 설명 (학생이 감상 시간에 읽어요)</label>
-      <textarea id="cfgDesc" placeholder="작가, 시대, 표현 기법, 감상 포인트 등을 적어주세요."></textarea>
-
-      <div class="split">
-        <div>
-          <label>조각 수</label>
-          <select id="cfgPieces">
-            <option value="2x3">6조각 (2×3) 쉬움</option>
-            <option value="3x4" selected>12조각 (3×4) 보통</option>
-            <option value="3x5">15조각 (3×5)</option>
-            <option value="4x6">24조각 (4×6) 어려움</option>
-            <option value="5x6">30조각 (5×6) 도전</option>
-          </select>
-        </div>
-        <div>
-          <label>동시 시작 전 미리보기(초)</label>
-          <input id="cfgPreview" type="number" min="1" max="60" value="5">
+      <div class="section">
+        <div class="section-title"><span class="num-badge">3</span>퍼즐 난이도</div>
+        <div class="split">
+          <div>
+            <label>조각 수</label>
+            <select id="cfgPieces">
+              <option value="2x3">6조각 (2×3) 쉬움</option>
+              <option value="3x4" selected>12조각 (3×4) 보통</option>
+              <option value="3x5">15조각 (3×5)</option>
+              <option value="4x6">24조각 (4×6) 어려움</option>
+              <option value="5x6">30조각 (5×6) 도전</option>
+            </select>
+          </div>
+          <div>
+            <label>시작 전 미리보기 시간(초)</label>
+            <input id="cfgPreview" type="number" min="1" max="60" value="5">
+          </div>
         </div>
       </div>
 
-      <div class="divider"></div>
-      <label>작품 퀴즈 (5문제) — 정답 보기를 눌러 표시하세요</label>
-      <div id="quizCfgList"></div>
+      <div class="section">
+        <div class="section-title"><span class="num-badge">4</span>작품 퀴즈</div>
+        <div class="section-desc">5문제예요. 각 문제에서 정답 보기 옆의 <b>정답</b> 버튼을 눌러 표시하세요.</div>
+        <div id="quizCfgList"></div>
+      </div>
 
-      <div class="divider"></div>
-      <label>모둠과 비밀번호</label>
-      <div id="groupCfgList"></div>
-      <button class="btn btn-ghost mt" onclick="addGroupRow()">＋ 모둠 추가</button>
+      <div class="section">
+        <div class="section-title"><span class="num-badge">5</span>모둠과 비밀번호</div>
+        <div class="section-desc">모둠 이름과, 학생이 입장할 때 쓸 비밀번호를 정해요.</div>
+        <div id="groupCfgList"></div>
+        <button class="btn btn-ghost mt" onclick="addGroupRow()">＋ 모둠 추가</button>
+      </div>
 
-      <div class="divider"></div>
-      <label>교사 설정 비밀번호 (학생이 못 들어오게)</label>
-      <input id="cfgTeacherPw" placeholder="예: 0000">
+      <div class="section">
+        <div class="section-title"><span class="num-badge">6</span>교사 비밀번호</div>
+        <div class="section-desc">학생이 교사 화면에 못 들어오게 막아줘요.</div>
+        <input id="cfgTeacherPw" placeholder="예: 0000">
+      </div>
 
-      <button class="btn btn-primary mt2" onclick="saveConfig()">💾 저장하고 모두에게 적용</button>
+      <button class="btn btn-primary btn-big mt2" onclick="saveConfig()">💾 저장하고 모두에게 적용</button>
       <p class="hint" id="saveMsg"></p>
     </div>
   </section>
@@ -372,6 +487,7 @@ textarea{resize:vertical; min-height:70px;}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 
 <script>
 /* =========================================================
@@ -416,14 +532,13 @@ if(!store){
    ========================================================= */
 const DEFAULT_IMG='data:image/svg+xml;utf8,'+encodeURIComponent(`
 <svg xmlns="http://www.w3.org/2000/svg" width="600" height="450">
-<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#6d28d9"/><stop offset="0.5" stop-color="#db2777"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs>
-<rect width="600" height="450" fill="url(#g)"/>
-<circle cx="470" cy="110" r="55" fill="#fff8"/>
-<path d="M0 360 Q150 300 300 350 T600 340 L600 450 L0 450 Z" fill="#00000022"/>
-<path d="M0 400 Q200 350 400 400 T600 390 L600 450 L0 450 Z" fill="#00000033"/>
-<text x="300" y="240" font-family="sans-serif" font-size="34" fill="#ffffffcc" text-anchor="middle" font-weight="bold">SAMPLE ARTWORK</text>
-<text x="300" y="285" font-family="sans-serif" font-size="17" fill="#ffffffaa" text-anchor="middle">교사 설정에서 오늘의 작품으로 바꿔주세요</text></svg>`);
+<rect width="600" height="450" fill="#f4f4fb"/>
+<rect x="160" y="120" width="280" height="200" rx="18" fill="#ffffff" stroke="#dcd9ef" stroke-width="3"/>
+<circle cx="238" cy="188" r="24" fill="#e7e3f7"/>
+<path d="M190 300 L272 220 L330 272 L378 232 L410 300 Z" fill="#ddd8f2"/>
+<text x="300" y="362" font-family="sans-serif" font-size="22" fill="#8a8aa6" text-anchor="middle" font-weight="bold">작품 이미지를 올려주세요</text>
+<text x="300" y="392" font-family="sans-serif" font-size="15" fill="#a7a7be" text-anchor="middle">교사 설정 → 오늘의 작품에서 사진을 넣어요</text>
+</svg>`);
 
 const svgURL=s=>'data:image/svg+xml;utf8,'+encodeURIComponent(s);
 
@@ -432,7 +547,6 @@ const PRESETS=[
   {
     title:'씨름 (김홍도)',
     desc:'조선 시대 화가 김홍도가 그린 풍속화예요. 씨름판에서 두 사람이 힘을 겨루고, 둘레에는 다양한 표정의 구경꾼들이 둥글게 둘러앉아 있어요. 엿장수의 모습까지 담겨 있어 옛날 사람들의 생활을 생생하게 엿볼 수 있답니다.',
-    image:svgURL(`<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450"><rect width="600" height="450" fill="#efe4c9"/><ellipse cx="300" cy="255" rx="255" ry="175" fill="#e6d5ab"/><g fill="#8a6d3b"><circle cx="120" cy="150" r="16"/><rect x="104" y="164" width="32" height="42" rx="12"/><circle cx="185" cy="108" r="16"/><rect x="169" y="122" width="32" height="42" rx="12"/><circle cx="415" cy="108" r="16"/><rect x="399" y="122" width="32" height="42" rx="12"/><circle cx="480" cy="150" r="16"/><rect x="464" y="164" width="32" height="42" rx="12"/><circle cx="120" cy="360" r="16"/><rect x="104" y="306" width="32" height="42" rx="12"/><circle cx="480" cy="360" r="16"/><rect x="464" y="306" width="32" height="42" rx="12"/></g><circle cx="272" cy="185" r="24" fill="#c8925a"/><circle cx="332" cy="190" r="24" fill="#b97b45"/><path d="M272 208 Q250 260 288 308 L322 308 Q348 258 332 212 Q300 236 272 208 Z" fill="#d9a066"/><path d="M332 212 Q366 258 332 312" fill="none" stroke="#a9683a" stroke-width="16" stroke-linecap="round"/><text x="300" y="420" font-family="serif" font-size="26" fill="#5b4321" text-anchor="middle" font-weight="bold">씨름 · 김홍도</text></svg>`),
     quizzes:[
       {q:'이 그림을 그린 조선 시대 화가는 누구일까요?',choices:['김홍도','신윤복','겸재 정선','피카소'],answer:0},
       {q:'그림 속 두 사람은 무엇을 하고 있나요?',choices:['씨름','그네타기','낚시','달리기'],answer:0},
@@ -444,7 +558,6 @@ const PRESETS=[
   {
     title:'우는 여인 (피카소)',
     desc:'스페인 화가 피카소가 그린 작품이에요. 슬퍼서 우는 여인의 얼굴을 여러 각도에서 본 모습으로 쪼개어 한 화면에 담았어요. 강렬한 색과 조각난 형태로 깊은 슬픔을 표현한 입체파(큐비즘) 그림이에요.',
-    image:svgURL(`<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450"><rect width="600" height="450" fill="#2f6f7a"/><polygon points="195,60 430,80 405,305 235,345" fill="#f2c14e"/><polygon points="235,345 405,305 365,415 250,405" fill="#e07a5f"/><polygon points="195,60 300,72 262,225 210,205" fill="#7fb069"/><ellipse cx="270" cy="165" rx="30" ry="20" fill="#fff"/><circle cx="270" cy="165" r="10" fill="#222"/><ellipse cx="362" cy="152" rx="30" ry="20" fill="#fff"/><circle cx="362" cy="152" r="10" fill="#222"/><path d="M262 186 q-6 34 0 66 q6 -34 0 -66" fill="#4aa3df"/><path d="M356 174 q-6 30 0 58 q6 -30 0 -58" fill="#4aa3df"/><polygon points="268,300 300,284 332,306 362,286 356,322 300,332 274,318" fill="#fff"/><path d="M276,310 L354,310" stroke="#333" stroke-width="3"/><text x="300" y="432" font-family="sans-serif" font-size="24" fill="#fff" text-anchor="middle" font-weight="bold">우는 여인 · 피카소</text></svg>`),
     quizzes:[
       {q:'이 작품을 그린 화가는 누구일까요?',choices:['피카소','반 고흐','김홍도','겸재 정선'],answer:0},
       {q:'그림 속 여인은 어떤 감정을 표현하고 있나요?',choices:['슬픔','기쁨','졸림','신남'],answer:0},
@@ -456,7 +569,6 @@ const PRESETS=[
   {
     title:'인왕제색도 (겸재 정선)',
     desc:'조선 시대 화가 겸재 정선이 비 온 뒤의 인왕산을 그린 그림이에요. 실제 우리나라의 산을 직접 보고 그린 진경산수화로, 물기를 머금은 바위산이 먹의 짙고 옅음으로 웅장하게 표현되어 있어요.',
-    image:svgURL(`<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450"><rect width="600" height="450" fill="#f3efe6"/><path d="M0 330 L110 180 L200 270 L300 120 L400 260 L500 175 L600 300 L600 450 L0 450 Z" fill="#3a3a3a"/><path d="M150 330 L280 205 L360 305 Z" fill="#565656"/><path d="M300 120 L340 200 L260 200 Z" fill="#4a4a4a"/><path d="M0 300 Q150 282 300 300 T600 300" stroke="#f3efe6" stroke-width="26" fill="none" opacity="0.9"/><path d="M0 362 Q150 348 300 362 T600 356" stroke="#f3efe6" stroke-width="20" fill="none" opacity="0.75"/><text x="300" y="425" font-family="serif" font-size="24" fill="#333" text-anchor="middle" font-weight="bold">인왕제색도 · 겸재 정선</text></svg>`),
     quizzes:[
       {q:'이 그림을 그린 조선 시대 화가는 누구일까요?',choices:['겸재 정선','김홍도','신사임당','피카소'],answer:0},
       {q:'그림에 그려진 산은 어느 산일까요?',choices:['인왕산','한라산','설악산','후지산'],answer:0},
@@ -468,7 +580,6 @@ const PRESETS=[
   {
     title:'별이 빛나는 밤 (고흐)',
     desc:'네덜란드 화가 반 고흐가 그린 밤 풍경이에요. 소용돌이치는 밤하늘과 빛나는 별, 노란 달이 인상적이에요. 붓의 움직임이 그대로 느껴지는 힘찬 붓질로 마음속 감정을 표현했어요.',
-    image:svgURL(`<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450"><rect width="600" height="450" fill="#16305c"/><path d="M250 165 m-72,0 a72,72 0 1,1 144,0 a46,46 0 1,1 -92,0 a24,24 0 1,1 48,0" fill="none" stroke="#6fa8dc" stroke-width="11" opacity="0.85"/><g fill="#ffd966"><circle cx="110" cy="90" r="14"/><circle cx="470" cy="120" r="12"/><circle cx="380" cy="66" r="10"/><circle cx="180" cy="58" r="9"/><circle cx="520" cy="235" r="12"/><circle cx="300" cy="300" r="8"/></g><circle cx="505" cy="88" r="30" fill="#ffe599"/><path d="M70 450 Q92 250 70 148 Q112 260 92 450 Z" fill="#12351f"/><rect x="0" y="382" width="600" height="70" fill="#1f3a2e"/><polygon points="250,382 270,350 290,382" fill="#12351f"/><rect x="256" y="382" width="28" height="30" fill="#2a4a3a"/><text x="310" y="432" font-family="sans-serif" font-size="24" fill="#fff" text-anchor="middle" font-weight="bold">별이 빛나는 밤 · 고흐</text></svg>`),
     quizzes:[
       {q:'이 작품을 그린 화가는 누구일까요?',choices:['반 고흐','피카소','김홍도','겸재 정선'],answer:0},
       {q:'그림의 배경은 언제일까요?',choices:['밤','한낮','새벽','한여름 바다'],answer:0},
@@ -481,7 +592,7 @@ const PRESETS=[
 
 const DEFAULT_CONFIG={
   title:PRESETS[0].title,
-  imageDataUrl:PRESETS[0].image,
+  imageDataUrl:DEFAULT_IMG,
   description:PRESETS[0].desc,
   pieces:'3x4', previewSeconds:5, teacherPassword:'0000',
   quizzes:JSON.parse(JSON.stringify(PRESETS[0].quizzes)),
@@ -813,9 +924,9 @@ function renderPresetBtns(){
 }
 function loadPreset(i){
   const p=PRESETS[i];
-  CONFIG.title=p.title; CONFIG.description=p.desc; CONFIG.imageDataUrl=p.image;
+  CONFIG.title=p.title; CONFIG.description=p.desc; CONFIG.imageDataUrl=DEFAULT_IMG;
   CONFIG.quizzes=JSON.parse(JSON.stringify(p.quizzes));
-  pickedImg=p.image;
+  pickedImg=DEFAULT_IMG;
   openTeacher();
   document.getElementById('saveMsg').textContent=`"${p.title}" 예시를 불러왔어요. 실제 작품 사진이 있으면 위에서 업로드로 바꾸고, 아래 저장을 눌러주세요.`;
 }
@@ -978,10 +1089,31 @@ function teacherLogin(){
   teacherAuthed=true;
   if(roomReady) go('teacherhub'); else switchRoom();
 }
+function openInvite(){
+  go('invite');
+  const url=inviteLink();
+  const lt=document.getElementById('inviteLinkText'); if(lt) lt.textContent=url;
+  const lbl=document.getElementById('inviteRoomLabel'); if(lbl) lbl.textContent=roomDisplay?('📍 '+roomDisplay+' 방'):'';
+  const msg=document.getElementById('inviteMsg'); if(msg) msg.textContent='';
+  renderInviteQR(url);
+}
+function renderInviteQR(url){
+  const img=document.getElementById('inviteQRimg'); if(!img) return;
+  const msg=document.getElementById('inviteMsg');
+  try{
+    if(typeof qrcode==='undefined') throw new Error('no qr lib');
+    const t=qrcode(0,'M'); t.addData(url); t.make();
+    img.src=t.createDataURL(6,4); img.style.display='';
+  }catch(e){
+    img.style.display='none';
+    if(msg) msg.textContent='(QR코드를 만들지 못했어요. 아래 링크를 복사해 학생들에게 보내주세요.)';
+  }
+}
 function copyInvite(){
   const url=inviteLink();
+  const inline=()=>{ const m=document.getElementById('inviteMsg'); if(m&&curScreen==='invite'){ m.textContent='✅ 링크를 복사했어요! 학생들에게 붙여넣어 보내세요.'; return true; } return false; };
   if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(url).then(()=>alert('학생 초대 링크를 복사했어요!\n\n'+url)).catch(()=>prompt('이 링크를 복사해 학생들에게 공유하세요:',url));
+    navigator.clipboard.writeText(url).then(()=>{ if(!inline()) alert('학생 초대 링크를 복사했어요!\n\n'+url); }).catch(()=>prompt('이 링크를 복사해 학생들에게 공유하세요:',url));
   } else prompt('이 링크를 복사해 학생들에게 공유하세요:',url);
 }
 
