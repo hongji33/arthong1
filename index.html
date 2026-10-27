@@ -224,9 +224,12 @@ textarea{resize:vertical; min-height:78px;}
 /* ===== 첫 화면: 자유 퍼즐 + 로그인 패널 ===== */
 body.is-home .wrap{max-width:1240px;}
 .home-layout{display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:20px; align-items:start;}
-.home-head{color:#fff; margin:4px 0 14px; display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap;}
-.home-head h1{margin:0; font-size:28px; font-weight:800; letter-spacing:-.5px; text-shadow:0 2px 10px rgba(0,0,0,.2);}
-.home-head p{margin:4px 0 0; color:#efeaff; font-size:14.5px;}
+.home-head{color:#fff; margin:0 0 10px; display:flex; align-items:baseline; gap:12px; min-width:0; padding-right:120px;}
+.home-head h1{margin:0; font-size:22px; font-weight:800; letter-spacing:-.5px; text-shadow:0 2px 10px rgba(0,0,0,.2); white-space:nowrap;}
+.home-head p{margin:0; color:#efeaff; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;}
+body.is-home .wrap{padding-top:10px;}
+body.is-home .mode-bar{justify-content:flex-end; align-items:flex-start; height:0; margin:0; position:relative; top:2px; z-index:2;}
+@media (max-width:600px){ .home-head p{display:none;} }
 .fp-card{padding:20px;}
 .fp-bar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; margin-bottom:14px;}
 .fp-arts{display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin;}
@@ -304,10 +307,8 @@ body.is-home .wrap{max-width:1240px;}
   <!-- ===== 홈: 자유 퍼즐(왼쪽) + 로그인 패널(오른쪽) ===== -->
   <section id="home" class="screen on">
     <div class="home-head">
-      <div>
-        <h1>🧩 미술 작품 퍼즐</h1>
-        <p>작품을 골라 바로 맞춰 보세요. 수업에 참여하려면 오른쪽에서 입장해요!</p>
-      </div>
+      <h1>🧩 미술 작품 퍼즐</h1>
+      <p>작품을 골라 바로 맞춰 보세요 · 수업 참여는 오른쪽에서 입장!</p>
     </div>
     <div class="home-layout">
       <!-- 왼쪽: 바로 하는 퍼즐 -->
@@ -370,7 +371,7 @@ body.is-home .wrap{max-width:1240px;}
           <ul class="tips">
             <li>아래 조각을 <b>끌어서</b> 알맞은 칸에 놓아요.</li>
             <li>맞는 자리면 딱 붙고, 아니면 돌아와요.</li>
-            <li>어려우면 <b>👀 힌트</b>로 흐린 그림을 켜요.</li>
+            <li>어려우면 <b>👀 힌트</b>를 눌러 흐린 그림을 2초 동안 봐요.</li>
             <li>➕ 버튼으로 <b>내 사진</b>도 퍼즐로 만들 수 있어요.</li>
           </ul>
         </div>
@@ -1424,7 +1425,7 @@ function fpStart(){
     const [rows,cols]=fpLevel.split('x').map(Number);
     const stage=document.querySelector('.fp-card');
     const wide=window.innerWidth>700, avail=stage.clientWidth-40;
-    const maxW=wide? Math.min(640, avail*0.62) : avail, maxH=wide? Math.min(560, Math.max(320, window.innerHeight-300)) : Math.min(420, avail*1.1);
+    const maxW=wide? Math.min(640, avail*0.62) : avail, maxH=wide? Math.min(620, Math.max(260, window.innerHeight-(document.getElementById('fpBoard').getBoundingClientRect().top+window.scrollY)-24)) : Math.min(420, avail*1.1);
     let bw=im.naturalWidth||800, bh=im.naturalHeight||600;
     const sc=Math.min(maxW/bw, maxH/bh); bw=Math.round(bw*sc); bh=Math.round(bh*sc);
     const pw=Math.floor(bw/cols), ph=Math.floor(bh/rows); bw=pw*cols; bh=ph*rows;
@@ -1498,14 +1499,19 @@ function fpFinish(){
   if(soundOn) playCheer(); burstConfetti();
   setTimeout(()=>document.getElementById('fpDone').classList.add('on'),500);
 }
+let fpGhostT=null;
 function fpToggleGhost(){
-  const b=document.getElementById('fpBoard'), on=b.classList.toggle('show-ghost');
-  document.getElementById('fpGhostBtn').classList.toggle('on',on);
+  // 힌트: 흐린 그림을 2초 동안만 보여줌
+  const b=document.getElementById('fpBoard'), btn=document.getElementById('fpGhostBtn');
+  if(!b||!FP) return;
+  clearTimeout(fpGhostT);
+  b.classList.add('show-ghost'); btn.classList.add('on');
+  fpGhostT=setTimeout(()=>{ b.classList.remove('show-ghost'); btn.classList.remove('on'); },2000);
 }
 function fpPeek(){
   const b=document.getElementById('fpBoard'); if(!b||!FP) return;
-  const had=b.classList.contains('show-ghost'); const g=b.querySelector('.ghost'); if(!g) return;
-  g.style.opacity='1'; g.style.zIndex='3'; setTimeout(()=>{ g.style.opacity=''; g.style.zIndex=''; if(had) b.classList.add('show-ghost'); },1500);
+  const g=b.querySelector('.ghost'); if(!g) return;
+  g.style.opacity='1'; g.style.zIndex='3'; setTimeout(()=>{ g.style.opacity=''; g.style.zIndex=''; },1500);
 }
 (function fpInit(){
   document.querySelectorAll('#fpLevel button').forEach(btn=>btn.onclick=()=>{
