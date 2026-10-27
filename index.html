@@ -220,6 +220,65 @@ textarea{resize:vertical; min-height:78px;}
 .invite-link{margin-top:16px; word-break:break-all; background:var(--soft); border:1.5px solid var(--line); border-radius:12px; padding:12px 14px; font-size:13px; color:#4b5063; font-weight:600; text-align:left; line-height:1.5;}
 .sound-toggle{background:var(--soft2); border:0; border-radius:10px; padding:6px 11px; font-size:16px; cursor:pointer; font-family:inherit; line-height:1;}
 .sound-toggle:active{transform:scale(.94);}
+
+/* ===== 첫 화면: 자유 퍼즐 + 로그인 패널 ===== */
+body.is-home .wrap{max-width:1240px;}
+.home-layout{display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:20px; align-items:start;}
+.home-head{color:#fff; margin:4px 0 14px; display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap;}
+.home-head h1{margin:0; font-size:28px; font-weight:800; letter-spacing:-.5px; text-shadow:0 2px 10px rgba(0,0,0,.2);}
+.home-head p{margin:4px 0 0; color:#efeaff; font-size:14.5px;}
+.fp-card{padding:20px;}
+.fp-bar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; margin-bottom:14px;}
+.fp-arts{display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin;}
+.fp-art{flex:0 0 auto; display:flex; align-items:center; gap:8px; border:2px solid var(--line); background:#fff; border-radius:14px; padding:5px 12px 5px 5px; cursor:pointer; font:inherit; font-size:13.5px; font-weight:700; color:var(--ink); transition:.15s;}
+.fp-art img{width:38px; height:38px; object-fit:cover; border-radius:9px; background:var(--soft2);}
+.fp-art:hover{border-color:#c4b5fd;}
+.fp-art.on{border-color:var(--accent); background:var(--soft2); color:var(--accent);}
+.fp-art.upload{border-style:dashed; padding:5px 12px;}
+.fp-ctrl{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+.fp-seg{display:inline-flex; background:var(--soft); border-radius:12px; padding:3px;}
+.fp-seg button{border:0; background:transparent; font:inherit; font-size:13px; font-weight:700; color:var(--muted); padding:7px 11px; border-radius:9px; cursor:pointer;}
+.fp-seg button.on{background:#fff; color:var(--accent); box-shadow:0 2px 6px rgba(0,0,0,.08);}
+.fp-small{border:0; background:var(--soft2); color:var(--accent); font:inherit; font-size:13px; font-weight:700; padding:9px 12px; border-radius:11px; cursor:pointer;}
+.fp-small:hover{background:#e3e6fb;}
+.fp-small.on{background:var(--accent); color:#fff;}
+.fp-status{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-weight:700;}
+.fp-status .fp-title{font-size:16px;}
+.fp-status .fp-meta{font-variant-numeric:tabular-nums; color:var(--muted); font-size:14px;}
+.fp-play{display:flex; gap:14px; align-items:flex-start;}
+.fp-stage{position:relative; display:flex; justify-content:center; flex:0 0 auto;}
+.fp-play .fp-tray{flex:1; align-content:flex-start; overflow-y:auto; overscroll-behavior:contain;}
+@media (max-width:700px){ .fp-play{flex-direction:column; align-items:stretch;} .fp-play .fp-tray{max-height:none!important;} }
+.fp-board{position:relative; display:grid; background:var(--soft2); border-radius:12px; overflow:hidden; box-shadow:inset 0 0 0 2px var(--line);}
+.fp-board .ghost{position:absolute; inset:0; background-size:cover; opacity:0; transition:opacity .25s; pointer-events:none; z-index:0;}
+.fp-board.show-ghost .ghost{opacity:.28;}
+.fp-board .slot{position:relative; z-index:1;}
+.fp-tray{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; background:var(--soft); border-radius:16px; padding:12px; min-height:70px;}
+.fp-tray:empty::before{content:"🎨 모든 조각을 맞췄어요!"; color:var(--muted); font-weight:700; font-size:13px; margin:auto;}
+.fp-done{position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:5;}
+.fp-done.on{display:flex; animation:fade .4s ease;}
+.fp-done .box{background:rgba(255,255,255,.95); border-radius:20px; padding:22px 28px; text-align:center; box-shadow:var(--shadow-card);}
+.fp-done .box b{display:block; font-size:24px; margin-bottom:4px;}
+.fp-done .box span{color:var(--muted); font-size:14px;}
+.fp-done .box .row{display:flex; gap:8px; justify-content:center; margin-top:14px;}
+.fp-loading{padding:60px 0; text-align:center; color:var(--muted); font-weight:700;}
+
+.side{position:sticky; top:14px; display:flex; flex-direction:column; gap:14px;}
+.side .card{padding:20px;}
+.side h2{font-size:17px; margin:0 0 4px;}
+.side .sub{font-size:13px; color:var(--muted); margin:0 0 14px;}
+.side .btn{width:100%; margin-bottom:10px; display:flex; align-items:center; gap:10px; text-align:left;}
+.side .btn .bt{display:flex; flex-direction:column; line-height:1.3;}
+.side .btn .bt small{font-size:12px; font-weight:500; opacity:.85;}
+.side .btn .ic{font-size:22px;}
+.side .btn.locked{opacity:.55;}
+.side .rank{margin:0;}
+.side .status-line{margin:0; text-align:left;}
+.side .tips{font-size:13px; color:var(--muted); line-height:1.7; margin:0; padding-left:18px;}
+@media (max-width:860px){
+  .home-layout{grid-template-columns:1fr;}
+  .side{position:static;}
+}
 </style>
 </head>
 <body>
@@ -242,19 +301,81 @@ textarea{resize:vertical; min-height:78px;}
     </div>
   </section>
 
-  <!-- ===== 홈 (학생 화면) ===== -->
+  <!-- ===== 홈: 자유 퍼즐(왼쪽) + 로그인 패널(오른쪽) ===== -->
   <section id="home" class="screen on">
-    <div class="title">
-      <h1>🧩 미술 작품 모둠 퍼즐</h1>
-      <p>작품을 감상하고, 모둠이 함께 퍼즐을 완성해요!</p>
+    <div class="home-head">
+      <div>
+        <h1>🧩 미술 작품 퍼즐</h1>
+        <p>작품을 골라 바로 맞춰 보세요. 수업에 참여하려면 오른쪽에서 입장해요!</p>
+      </div>
     </div>
-    <div id="homeRoomTag" class="status-line"></div>
-    <div class="rank" id="homeRank"></div>
-    <div class="card">
-      <button id="btnStudentEnter" class="btn btn-primary btn-big" onclick="studentEnter()">🙋 학생 입장</button>
-      <button id="btnTeacherLogin" class="btn btn-line btn-big" onclick="teacherLogin()">🔑 교사용 로그인</button>
+    <div class="home-layout">
+      <!-- 왼쪽: 바로 하는 퍼즐 -->
+      <div class="card fp-card">
+        <div class="fp-bar">
+          <div class="fp-arts" id="fpArts"></div>
+        </div>
+        <div class="fp-bar">
+          <div class="fp-ctrl">
+            <div class="fp-seg" id="fpLevel">
+              <button data-lv="2x3">쉬움 6</button>
+              <button data-lv="3x4" class="on">보통 12</button>
+              <button data-lv="4x5">어려움 20</button>
+            </div>
+          </div>
+          <div class="fp-ctrl">
+            <button class="fp-small" id="fpGhostBtn" onclick="fpToggleGhost()">👀 힌트</button>
+            <button class="fp-small" onclick="fpPeek()">🖼️ 원본</button>
+            <button class="fp-small" onclick="fpStart()">🔀 다시 섞기</button>
+            <button class="fp-small on" onclick="fpRandomArt()">🎲 랜덤 명화</button>
+          </div>
+        </div>
+        <div class="fp-status">
+          <span class="fp-title" id="fpTitle"></span>
+          <span class="fp-meta"><span id="fpCount">0/0</span> · ⏱ <span id="fpTimer">00:00</span></span>
+        </div>
+        <div class="fp-play">
+        <div class="fp-stage">
+          <div class="fp-board" id="fpBoard"></div>
+          <div class="fp-done" id="fpDone"><div class="box">
+            <b>🎉 완성!</b><span id="fpDoneTime"></span>
+            <div class="row"><button class="fp-small on" onclick="fpStart()">한 번 더</button><button class="fp-small" onclick="fpRandomArt()">🎲 다른 명화</button></div>
+          </div></div>
+        </div>
+        <div class="fp-tray" id="fpTray"></div>
+        </div>
+        <input type="file" id="fpFile" accept="image/*" style="display:none" onchange="fpUpload(event)">
+      </div>
+
+      <!-- 오른쪽: 로그인 패널 -->
+      <aside class="side">
+        <div class="card">
+          <h2>수업 참여하기</h2>
+          <p class="sub">모둠과 함께 퍼즐 대결을 하려면 입장하세요.</p>
+          <div id="homeRoomTag" class="status-line" style="color:var(--accent); text-shadow:none; margin-bottom:10px;"></div>
+          <button id="btnStudentEnter" class="btn btn-primary" onclick="studentEnter()">
+            <span class="ic">🙋</span><span class="bt">학생 입장<small id="studentSub">학번·이름·모둠으로 입장</small></span>
+          </button>
+          <button id="btnTeacherLogin" class="btn btn-line" onclick="teacherLogin()">
+            <span class="ic">🔑</span><span class="bt">교사용 로그인<small>작품·퀴즈·모둠 설정, 진행</small></span>
+          </button>
+          <button id="btnRoomGate" class="btn btn-ghost" onclick="switchRoom()">
+            <span class="ic">🚪</span><span class="bt">방 만들기 / 입장<small>반마다 따로 쓰는 공간</small></span>
+          </button>
+          <p class="hint" id="homeHint" style="margin-top:2px;"></p>
+        </div>
+        <div class="rank" id="homeRank"></div>
+        <div class="card">
+          <h2>퍼즐 방법</h2>
+          <ul class="tips">
+            <li>아래 조각을 <b>끌어서</b> 알맞은 칸에 놓아요.</li>
+            <li>맞는 자리면 딱 붙고, 아니면 돌아와요.</li>
+            <li>어려우면 <b>👀 힌트</b>로 흐린 그림을 켜요.</li>
+            <li>➕ 버튼으로 <b>내 사진</b>도 퍼즐로 만들 수 있어요.</li>
+          </ul>
+        </div>
+      </aside>
     </div>
-    <p class="hint center" id="homeHint"></p>
   </section>
 
   <!-- ===== 교사 메뉴 (로그인 후) ===== -->
@@ -620,6 +741,7 @@ function go(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   document.getElementById(id).classList.add('on');
   curScreen=id; window.scrollTo(0,0);
+  document.body.classList.toggle('is-home', id==='home');
 }
 
 function attachLeaderboard(r){
@@ -1126,16 +1248,16 @@ function inviteLink(){ return inviteLinkFor(ROOM); }
 let authReady=!(isLive&&firebaseAuth), roomReady=false, appStarted=false, enteredViaLink=false;
 function maybeStart(){ if(authReady && roomReady && !appStarted){ appStarted=true; startApp(); } }
 function applyHomeMode(){
-  const s=document.getElementById('btnStudentEnter'), t=document.getElementById('btnTeacherLogin');
+  const s=document.getElementById('btnStudentEnter'), sub=document.getElementById('studentSub');
   const hint=document.getElementById('homeHint'), rank=document.getElementById('homeRank');
-  if(!s||!t) return;
+  if(!s) return;
   if(enteredViaLink){
-    s.style.display=''; t.style.display='none';
-    if(hint) hint.textContent='곧 시작해요! 아래 버튼으로 입장하세요.';
+    s.classList.remove('locked'); if(sub) sub.textContent='학번·이름·모둠으로 입장';
+    if(hint) hint.textContent='선생님이 시작하면 모둠 퍼즐이 열려요!';
     if(rank) rank.style.display='';
   }else{
-    s.style.display='none'; t.style.display='';
-    if(hint) hint.textContent='선생님용 시작 화면이에요. 교사용 로그인으로 시작하고, 학생에게는 초대 링크를 나눠주세요.';
+    s.classList.add('locked'); if(sub) sub.textContent='선생님의 초대 링크(QR)로 열려요';
+    if(hint) hint.textContent='선생님은 교사용 로그인으로 시작하고, 학생에게 초대 링크를 나눠주세요.';
     if(rank) rank.style.display='none';
   }
 }
@@ -1210,6 +1332,189 @@ function copyInvite(){
     navigator.clipboard.writeText(url).then(()=>{ if(!inline()) alert('학생 초대 링크를 복사했어요!\n\n'+url); }).catch(()=>prompt('이 링크를 복사해 학생들에게 공유하세요:',url));
   } else prompt('이 링크를 복사해 학생들에게 공유하세요:',url);
 }
+
+
+/* =========================================================
+   첫 화면 자유 퍼즐 (혼자 연습용 · 저장/공유 없음)
+   ========================================================= */
+const WM=(f,w)=>'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(f)+'?width='+(w||900);
+const FREE_FALLBACK=svgURL(`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+<rect width="800" height="600" fill="#f3ead8"/>
+<circle cx="560" cy="170" r="120" fill="#f4b740"/><circle cx="560" cy="170" r="70" fill="#e85d3f"/>
+<rect x="70" y="330" width="300" height="200" fill="#2f5d9a" transform="rotate(-8 220 430)"/>
+<polygon points="380,560 520,280 680,560" fill="#1f8a70"/>
+<circle cx="210" cy="190" r="80" fill="none" stroke="#1e213a" stroke-width="14"/>
+<line x1="60" y1="80" x2="460" y2="300" stroke="#1e213a" stroke-width="8"/>
+<line x1="420" y1="40" x2="760" y2="420" stroke="#c94f7c" stroke-width="18"/>
+<rect x="600" y="400" width="140" height="140" fill="#7c3aed" transform="rotate(12 670 470)"/>
+<circle cx="120" cy="80" r="26" fill="#e85d3f"/><circle cx="740" cy="560" r="20" fill="#f4b740"/>
+</svg>`);
+/* 유명 명화 목록 (저작권이 끝난 작품, 위키미디어 공용에서 불러옴). 못 불러온 작품은 자동으로 숨김 */
+const FREE_ARTS=[
+  {title:'별이 빛나는 밤 · 고흐', files:['Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg']},
+  {title:'해바라기 · 고흐', files:['Vincent_Willem_van_Gogh_127.jpg']},
+  {title:'모나리자 · 레오나르도 다빈치', files:['Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg']},
+  {title:'절규 · 뭉크', files:['Edvard_Munch,_1893,_The_Scream,_oil,_tempera_and_pastel_on_cardboard,_91_x_73_cm,_National_Gallery_of_Norway.jpg']},
+  {title:'진주 귀고리를 한 소녀 · 페르메이르', files:['1665_Girl_with_a_Pearl_Earring.jpg','Meisje_met_de_parel.jpg']},
+  {title:'우유 따르는 여인 · 페르메이르', files:['Johannes_Vermeer_-_Het_melkmeisje_-_Google_Art_Project.jpg']},
+  {title:'가나가와 해변의 높은 파도 · 호쿠사이', files:['Tsunami_by_hokusai_19th_century.jpg','The_Great_Wave_off_Kanagawa.jpg']},
+  {title:'수련 · 모네', files:['Claude_Monet_-_Water_Lilies_-_1906,_Ryerson.jpg']},
+  {title:'인상, 해돋이 · 모네', files:['Monet_-_Impression,_Sunrise.jpg']},
+  {title:'비너스의 탄생 · 보티첼리', files:['Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg','Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project.jpg']},
+  {title:'키스 · 클림트', files:['The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg']},
+  {title:'그랑드자트섬의 일요일 오후 · 쇠라', files:['A_Sunday_on_La_Grande_Jatte,_Georges_Seurat,_1884.jpg']},
+  {title:'이삭 줍는 여인들 · 밀레', files:['Jean-François_Millet_-_Gleaners_-_Google_Art_Project_2.jpg']},
+  {title:'눈 속의 사냥꾼 · 브뤼헐', files:['Pieter_Bruegel_the_Elder_-_Hunters_in_the_Snow_(Winter)_-_Google_Art_Project.jpg']},
+  {title:'물랭 드 라 갈레트의 무도회 · 르누아르', files:['Pierre-Auguste_Renoir,_Le_Moulin_de_la_Galette.jpg']},
+  {title:'씨름 · 김홍도', files:['Kim_Hong-do_-_Ssireum.jpg','Kim_Hong-do-Ssireum.jpg','Ssireum_by_Kim_Hong-do.jpg']},
+  {title:'인왕제색도 · 정선', files:['Inwang_jesaekdo.jpg','Jeong_Seon-Inwang_jesaekdo.jpg','Inwangjesaekdo.jpg']},
+  {title:'색과 모양 · 연습용', src:[FREE_FALLBACK], practice:true},
+];
+FREE_ARTS.forEach(a=>{ if(a.files){ a.src=a.files.map(f=>WM(f,900)); a.thumb=a.files.map(f=>WM(f,120)); } else a.thumb=a.src; });
+let FP=null, fpArtIdx=0, fpLevel='3x4', fpTimerH=null, fpDrag=null;
+
+function fpLoadFirst(list,ok,fail,i=0){
+  if(i>=list.length){ fail&&fail(); return; }
+  const im=new Image();
+  im.onload=()=>ok(list[i],im); im.onerror=()=>fpLoadFirst(list,ok,fail,i+1);
+  im.src=list[i];
+}
+function fpRenderArts(){
+  const box=document.getElementById('fpArts'); if(!box) return;
+  box.innerHTML='';
+  FREE_ARTS.forEach((a,i)=>{
+    if(a.broken) return;
+    const b=document.createElement('button'); b.className='fp-art'+(i===fpArtIdx?' on':'');
+    const im=document.createElement('img'); im.alt='';
+    fpLoadFirst(a.thumb,(url)=>{ im.src=url; },()=>{ a.broken=true; b.remove(); if(i===fpArtIdx) fpRandomArt(); });
+    b.appendChild(im); b.appendChild(document.createTextNode(a.title.split(' · ')[0]));
+    b.title=a.title; b.onclick=()=>{ fpArtIdx=i; fpRenderArts(); fpStart(); };
+    box.appendChild(b);
+  });
+  const sel=box.querySelector('.fp-art.on'); if(sel) box.scrollLeft=sel.offsetLeft-box.offsetLeft-8;
+  const up=document.createElement('button'); up.className='fp-art upload'; up.textContent='➕ 내 사진';
+  up.onclick=()=>document.getElementById('fpFile').click(); box.appendChild(up);
+}
+function fpUpload(ev){
+  const f=ev.target.files&&ev.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ FREE_ARTS.push({title:'내 사진 · 업로드', src:[r.result], thumb:[r.result], mine:true}); fpArtIdx=FREE_ARTS.length-1; fpRenderArts(); fpStart(); };
+  r.readAsDataURL(f); ev.target.value='';
+}
+function fpRandomArt(){
+  // 명화 중에서 지금 작품과 다른 것을 무작위로 고름 (연습용·내 사진 제외)
+  let pool=FREE_ARTS.map((a,i)=>i).filter(i=>!FREE_ARTS[i].broken&&!FREE_ARTS[i].practice&&!FREE_ARTS[i].mine&&i!==fpArtIdx);
+  if(!pool.length) pool=FREE_ARTS.map((a,i)=>i).filter(i=>!FREE_ARTS[i].broken);
+  fpArtIdx=pool[Math.floor(Math.random()*pool.length)];
+  fpRenderArts(); fpStart();
+}
+function fpNextArt(){
+  for(let k=1;k<=FREE_ARTS.length;k++){ const j=(fpArtIdx+k)%FREE_ARTS.length; if(!FREE_ARTS[j].broken){ fpArtIdx=j; break; } }
+  fpRenderArts(); fpStart();
+}
+function fpStart(){
+  const art=FREE_ARTS[fpArtIdx]; const board=document.getElementById('fpBoard'); if(!board) return;
+  document.getElementById('fpDone').classList.remove('on');
+  document.getElementById('fpTitle').textContent=art.title;
+  board.innerHTML='<div class="fp-loading">작품을 불러오는 중…</div>'; board.style.width=''; board.style.height='';
+  document.getElementById('fpTray').innerHTML='';
+  clearInterval(fpTimerH); document.getElementById('fpTimer').textContent='00:00';
+  fpLoadFirst(art.ok?[art.ok]:art.src,(url,im)=>{
+    art.ok=url;
+    const [rows,cols]=fpLevel.split('x').map(Number);
+    const stage=document.querySelector('.fp-card');
+    const wide=window.innerWidth>700, avail=stage.clientWidth-40;
+    const maxW=wide? Math.min(640, avail*0.62) : avail, maxH=wide? Math.min(560, Math.max(320, window.innerHeight-300)) : Math.min(420, avail*1.1);
+    let bw=im.naturalWidth||800, bh=im.naturalHeight||600;
+    const sc=Math.min(maxW/bw, maxH/bh); bw=Math.round(bw*sc); bh=Math.round(bh*sc);
+    const pw=Math.floor(bw/cols), ph=Math.floor(bh/rows); bw=pw*cols; bh=ph*rows;
+    FP={rows,cols,total:rows*cols,pw,ph,bw,bh,url,count:0,startTs:0,done:false};
+    board.innerHTML=`<div class="ghost" style="background-image:url('${url}')"></div>`;
+    board.style.width=bw+'px'; board.style.height=bh+'px';
+    board.style.gridTemplateColumns=`repeat(${cols},${pw}px)`; board.style.gridTemplateRows=`repeat(${rows},${ph}px)`;
+    for(let i=0;i<FP.total;i++){ const sl=document.createElement('div'); sl.className='slot'; sl.dataset.fidx=i; board.appendChild(sl); }
+    const order=[...Array(FP.total).keys()];
+    for(let i=order.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [order[i],order[j]]=[order[j],order[i]]; }
+    const tray=document.getElementById('fpTray'); tray.innerHTML='';
+    tray.style.maxHeight=wide? bh+'px' : '';
+    const tScale=fpTrayScale();
+    order.forEach(i=>tray.appendChild(fpMakePiece(i,tScale)));
+    fpUpdateCount();
+  },()=>{ art.broken=true; fpRandomArt(); });
+}
+function fpTrayScale(){
+  // 남은 조각이 트레이 안에 대충 다 들어가도록 크기를 줄임
+  const t=document.getElementById('fpTray'); const tw=Math.max(120,t.clientWidth-24);
+  const th=window.innerWidth>700? FP.bh-24 : FP.bh*0.8;
+  for(let z=1; z>0.3; z-=0.05){
+    const perRow=Math.max(1,Math.floor(tw/(FP.pw*z+6)));
+    if(Math.ceil(FP.total/perRow)*(FP.ph*z+6)<=th) return z;
+  }
+  return 0.3;
+}
+function fpMakePiece(i,tScale){
+  const r=Math.floor(i/FP.cols), c=i%FP.cols, p=document.createElement('div');
+  p.className='piece'; p.dataset.fidx=i;
+  p.style.backgroundImage=`url("${FP.url}")`; p.style.backgroundSize=`${FP.bw}px ${FP.bh}px`;
+  p.style.backgroundPosition=`-${c*FP.pw}px -${r*FP.ph}px`;
+  p.style.width=FP.pw+'px'; p.style.height=FP.ph+'px';
+  if(tScale<1){ p.style.zoom=tScale; }
+  p.addEventListener('pointerdown',e=>fpDown(e,p));
+  return p;
+}
+function fpDown(e,p){
+  if(p.classList.contains('locked')||!FP) return;
+  e.preventDefault();
+  if(!FP.startTs){ FP.startTs=Date.now(); fpTimerH=setInterval(()=>{ document.getElementById('fpTimer').textContent=fmt(Date.now()-FP.startTs); },400); }
+  p.style.zoom=''; // 끌 때는 실제 크기로
+  fpDrag={p,ox:FP.pw/2,oy:FP.ph/2};
+  p.classList.add('dragging'); p.style.position='fixed'; p.style.zIndex=9999;
+  document.body.appendChild(p); fpMove(e);
+  window.addEventListener('pointermove',fpMove); window.addEventListener('pointerup',fpUp);
+}
+function fpMove(e){ if(!fpDrag) return; fpDrag.p.style.left=(e.clientX-fpDrag.ox)+'px'; fpDrag.p.style.top=(e.clientY-fpDrag.oy)+'px'; }
+function fpUp(e){
+  if(!fpDrag) return;
+  const p=fpDrag.p, idx=+p.dataset.fidx; fpDrag=null;
+  window.removeEventListener('pointermove',fpMove); window.removeEventListener('pointerup',fpUp);
+  p.style.pointerEvents='none'; const under=document.elementFromPoint(e.clientX,e.clientY); p.style.pointerEvents='';
+  const slot=under&&under.closest('#fpBoard .slot');
+  p.classList.remove('dragging'); p.style.position=''; p.style.left=''; p.style.top=''; p.style.zIndex='';
+  if(slot && +slot.dataset.fidx===idx && !slot.classList.contains('filled')){
+    p.classList.add('locked'); slot.classList.add('filled'); slot.appendChild(p);
+    FP.count++; fpUpdateCount();
+    showPraise(); const r=slot.getBoundingClientRect(); popConfetti(r.left+r.width/2, r.top+r.height/2); if(soundOn) playPop();
+    if(FP.count>=FP.total) fpFinish();
+  }else{
+    const tray=document.getElementById('fpTray');
+    const tScale=fpTrayScale(); if(tScale<1) p.style.zoom=tScale;
+    p.classList.add('shake'); setTimeout(()=>p.classList.remove('shake'),350); tray.appendChild(p);
+  }
+}
+function fpUpdateCount(){ document.getElementById('fpCount').textContent=`${FP?FP.count:0}/${FP?FP.total:0}`; }
+function fpFinish(){
+  FP.done=true; clearInterval(fpTimerH);
+  document.getElementById('fpDoneTime').textContent=`${FP.total}조각 · 걸린 시간 ${fmt(Date.now()-FP.startTs)}`;
+  if(soundOn) playCheer(); burstConfetti();
+  setTimeout(()=>document.getElementById('fpDone').classList.add('on'),500);
+}
+function fpToggleGhost(){
+  const b=document.getElementById('fpBoard'), on=b.classList.toggle('show-ghost');
+  document.getElementById('fpGhostBtn').classList.toggle('on',on);
+}
+function fpPeek(){
+  const b=document.getElementById('fpBoard'); if(!b||!FP) return;
+  const had=b.classList.contains('show-ghost'); const g=b.querySelector('.ghost'); if(!g) return;
+  g.style.opacity='1'; g.style.zIndex='3'; setTimeout(()=>{ g.style.opacity=''; g.style.zIndex=''; if(had) b.classList.add('show-ghost'); },1500);
+}
+(function fpInit(){
+  document.querySelectorAll('#fpLevel button').forEach(btn=>btn.onclick=()=>{
+    document.querySelectorAll('#fpLevel button').forEach(x=>x.classList.remove('on')); btn.classList.add('on');
+    fpLevel=btn.dataset.lv; fpStart();
+  });
+  fpArtIdx=-1; fpRandomArt();
+  let rt; window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(()=>{ if(curScreen==='home'&&FP&&!FP.startTs) fpStart(); },300); });
+})();
 
 /* 시작: URL에 ?room= 있으면 학생은 바로 학생 화면. 없으면 학생 화면(교사는 로그인으로 방 생성) */
 (function initRoom(){
