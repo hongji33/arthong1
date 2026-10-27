@@ -418,9 +418,23 @@ body.is-wide .wrap{max-width:1240px;}
 .solo-tag span{color:var(--muted); font-size:12.5px;}
 
 .ts-own-btn{background:#fff7ed!important; color:#c2410c!important; box-shadow:inset 0 0 0 1.5px #fdba74;}
+
+/* ===== 맨 위 띠: 학교·학년·반 / 선생님 ===== */
+.who-bar{position:sticky; top:0; z-index:50; display:none; align-items:center; justify-content:space-between; gap:10px;
+  padding:5px 14px; background:rgba(255,255,255,.95); box-shadow:0 2px 10px rgba(30,20,80,.15); font-size:13.5px; font-weight:700; color:var(--ink);}
+body.has-room .who-bar{display:flex;}
+.who-bar span{white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;}
+.wb-room b{color:var(--accent); font-size:15px;}
+.wb-me .t-on{display:inline-block; background:#dcfce7; color:#166534; font-size:11.5px; padding:1px 8px; border-radius:999px; margin-left:4px; vertical-align:1px;}
+.wb-me .stu{color:#c2410c;}
+@media (max-width:520px){ .who-bar{font-size:12px; padding:5px 10px;} .wb-room b{font-size:13px;} }
 </style>
 </head>
 <body>
+<div class="who-bar" id="whoBar">
+  <span class="wb-room" id="wbRoom"></span>
+  <span class="wb-me" id="wbMe"></span>
+</div>
 <div class="wrap">
 
   <div class="mode-bar"><span id="modePill" class="pill pill-demo">● 데모 모드</span></div>
@@ -435,7 +449,10 @@ body.is-wide .wrap{max-width:1240px;}
       <input id="rgTeacher" placeholder="예: 김미술">
       <label>반 / 교시</label>
       <input id="rgClass" placeholder="예: 3-1">
+      <label>교사 비밀번호 <small style="font-weight:500;color:var(--muted)">(이 반 방의 비밀번호 · 처음 만드는 방이면 지금 정해요)</small></label>
+      <input id="rgPw" type="password" placeholder="예: 0000" onkeydown="if(event.key==='Enter')createRoom()">
       <button class="btn btn-primary mt2" onclick="createRoom()">이 방으로 입장</button>
+      <p class="hint" id="rgErr" style="color:#dc2626; font-weight:700; margin-top:8px;"></p>
       <p class="hint" id="rgMsg">같은 <b>학교·닉네임·반</b>을 넣으면 같은 방이에요. 반이 다르면(3-1, 3-2) 자료가 서로 <b>섞이지 않고 따로</b> 저장돼요. 닉네임까지 완전히 같으면 다른 선생님과 겹칠 수 있으니, 나만의 닉네임을 쓰세요.</p>
     </div>
   </section>
@@ -521,7 +538,7 @@ body.is-wide .wrap{max-width:1240px;}
 
   <!-- ===== 교사 메뉴 (로그인 후) ===== -->
   <section id="teacherhub" class="screen">
-    <button class="topback" onclick="go('home')">← 로그아웃</button>
+    <button class="topback" onclick="teacherAuthed=false; go('home')">← 로그아웃</button>
     <div class="title"><h1>교사 메뉴</h1></div>
     <div class="card">
       <div id="hubRoomLabel" style="font-weight:800; color:var(--accent); margin-bottom:14px;"></div>
@@ -746,7 +763,7 @@ body.is-wide .wrap{max-width:1240px;}
         <div class="ts-ghead"><span>모둠 이름</span><span>비밀번호</span></div>
         <div id="groupCfgList" class="ts-groups"></div>
         <button class="ts-mini" onclick="addGroupRow()">＋ 모둠 추가</button>
-        <div class="ts-h" style="margin-top:16px;"><span class="num-badge">4</span>교사 비밀번호</div>
+        <div class="ts-h" style="margin-top:16px;"><span class="num-badge">4</span>이 반 교사 비밀번호 <small>이 반 방에 들어올 때 쓰는 비밀번호예요</small></div>
         <input id="cfgTeacherPw" placeholder="예: 0000">
       </div>
     </div>
@@ -790,6 +807,7 @@ if(isLive){
       update(p,o){ return db.ref(p).update(o); },
       remove(p){ return db.ref(p).remove(); },
       push(p,v){ const r=db.ref(p).push(); r.set(v); return r.key; },
+      get(p){ return db.ref(p).once('value').then(s=>s.val()); },
       stamp(){ return Date.now(); }
     };
     const mp=document.getElementById('modePill'); mp.className='pill pill-live'; mp.textContent='● 실시간 모드';
@@ -806,6 +824,7 @@ if(!store){
     update(p,o){Object.keys(o).forEach(k=>setP(p+'/'+k,o[k]));notify(p);},
     remove(p){setP(p,null);notify(p);},
     push(p,v){const id='k'+Date.now()+Math.floor(Math.random()*999);setP(p+'/'+id,v);notify(p);return id;},
+    get(p){return Promise.resolve(get(p));},
     stamp(){return Date.now();}
   };
 }
@@ -900,6 +919,7 @@ function go(id){
   curScreen=id; window.scrollTo(0,0);
   document.body.classList.toggle('is-home', id==='home');
   document.body.classList.toggle('is-wide', id==='home'||id==='teacher');
+  if(typeof updateWhoBar==='function') updateWhoBar();
 }
 
 function attachLeaderboard(r){
@@ -968,7 +988,7 @@ function doLogin(){
   // 번호가 없으니, 이 기기만의 고유번호를 자동으로 만들어 저장 (닉네임이 같아도 섞이지 않게)
   let did=lsGet('deviceId'); if(!did){ did='d'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); lsSet('deviceId',did); }
   const sid=grade+'_'+did;
-  me={studentId:sid,name:nm,grade,groupId:gi}; msg.textContent='';
+  me={studentId:sid,name:nm,grade,groupId:gi}; msg.textContent=''; updateWhoBar();
   store.set(`rooms/${ROOM}/members/${gi}/${sid}`,{name:nm,grade,ts:store.stamp()});
   startQuiz();
 }
@@ -1045,7 +1065,7 @@ function teacherStart(){
   if(!teacherAuthed){
     const pw=prompt('교사 비밀번호를 입력하세요'); if(pw===null) return;
     if(pw!==((CONFIG&&CONFIG.teacherPassword)||'0000')){ alert('비밀번호가 맞지 않아요.'); return; }
-    teacherAuthed=true;
+    teacherAuthed=true; updateWhoBar();
   }
   const round=((gameState&&gameState.round)||0)+1;
   store.set(`rooms/${ROOM}/game`,{round,startedAt:store.stamp()});
@@ -1389,8 +1409,9 @@ function updateTsSummary(){
   const parts=(roomDisplay||'').split(' · ').filter(Boolean);
   const cls=(ROOM&&ROOM!=='main'&&parts.length)?parts[parts.length-1]:'';
   const tt=document.getElementById('tsTitle');
-  if(tt) tt.innerHTML=cls?`⚙️ <span class="ts-cls">${cls.replace(/</g,'&lt;')}${/반$/.test(cls)?'':'반'}</span> 교사 설정`:'⚙️ 교사 설정';
-  const roomChip=(ROOM&&ROOM!=='main')?`<span class="room">📍 ${roomDisplay||ROOM} 방</span>`:`<span class="room warn">📍 방을 고르지 않았어요</span>`;
+  const cl=classLabel(roomInfo().cls);
+  if(tt) tt.innerHTML=(ROOM&&ROOM!=='main'&&cl)?`⚙️ <span class="ts-cls">${cl.replace(/</g,'&lt;')}</span> 교사 설정`:'⚙️ 교사 설정';
+  const roomChip=(ROOM&&ROOM!=='main')?'':`<span class="room warn">📍 방을 고르지 않았어요</span>`; // 방은 맨 위 띠에 표시
   box.innerHTML=roomChip+`<span>🖼️ <b>${t.replace(/</g,'&lt;')}</b></span><span>📷 ${hasImg?'사진 있음':'<b style="color:#b45309">사진 없음</b>'}</span><span>🧩 ${pieces}</span><span>👥 모둠 ${g}개</span>`;
   // 예시 버튼 중 지금 제목과 같은 것에 ✔ 표시
   document.querySelectorAll('#presetBtns button').forEach((b,i)=>b.classList.toggle('on',PRESETS[i]&&PRESETS[i].title===document.getElementById('cfgTitle').value.trim()));
@@ -1514,7 +1535,35 @@ if(isLive && firebaseAuth){
 }
 
 let roomDisplay='';
+let roomMeta=null;
+/* 방 정보 → 학교 / 선생님 / 반 */
+function roomInfo(){
+  let m=roomMeta;
+  if(!m && ROOM && ROOM!=='main'){
+    const p=decodeURIComponent(ROOM).split('_');
+    m= p.length>=3 ? {school:p[0],teacher:p[1],cls:p.slice(2).join('_')} : {cls:p[p.length-1]};
+  }
+  return m||{};
+}
+function classLabel(c){
+  c=(c||'').trim(); if(!c) return '';
+  const m=c.match(/^(\d)\s*[-–.]\s*(\d+)$/); if(m) return `${m[1]}학년 ${m[2]}반`;
+  return /반$/.test(c)?c:c+'반';
+}
+function updateWhoBar(){
+  const has=ROOM&&ROOM!=='main';
+  document.body.classList.toggle('has-room',!!has);
+  if(!has) return;
+  const r=roomInfo(), esc=t=>String(t||'').replace(/</g,'&lt;');
+  document.getElementById('wbRoom').innerHTML=`🏫 ${r.school?esc(r.school)+' · ':''}<b>${esc(classLabel(r.cls))||'수업 방'}</b>`;
+  let me_='';
+  if(teacherAuthed) me_=`👩‍🏫 ${esc(r.teacher||'')} 선생님<span class="t-on">● 로그인됨</span>`;
+  else if(me&&me.name) me_=`<span class="stu">🙋 ${esc(me.name)}</span>${CONFIG&&CONFIG.groups&&CONFIG.groups[me.groupId]?' · '+esc(CONFIG.groups[me.groupId].name):''} · ${esc(r.teacher||'')} 선생님 반`;
+  else if(r.teacher) me_=`👩‍🏫 ${esc(r.teacher)} 선생님 반`;
+  document.getElementById('wbMe').innerHTML=me_;
+}
 function updateRoomLabels(){
+  updateWhoBar();
   const hub=document.getElementById('hubRoomLabel'); if(hub) hub.textContent=roomDisplay?('📍 '+roomDisplay):'';
   const tag=document.getElementById('homeRoomTag'); if(tag) tag.textContent=roomDisplay?('📍 '+roomDisplay+' 방'):'';
   const lr=document.getElementById('loginRoom'); if(lr) lr.textContent=roomDisplay?('📍 '+roomDisplay+' 방'):'';
@@ -1522,23 +1571,55 @@ function updateRoomLabels(){
 function enterRoom(key, meta, dest){
   ROOM=key||'main'; roomReady=true;
   roomDisplay = meta? [meta.school,meta.teacher,meta.cls].filter(Boolean).join(' · ') : decodeURIComponent(ROOM).split('_').join(' · ');
+  roomMeta=meta||null;
   if(meta) lsSet('lastRoom', {key:ROOM, meta});
   updateRoomLabels();
   maybeStart();
   go(dest||'home');
+  try{
+    if(meta) store.update(`rooms/${ROOM}/meta`, meta);
+    store.onValue(`rooms/${ROOM}/meta`, v=>{ if(v&&(v.teacher||v.cls)){ roomMeta=v; roomDisplay=[v.school,v.teacher,v.cls].filter(Boolean).join(' · '); updateRoomLabels(); if(curScreen==='teacher') updateTsSummary(); } });
+  }catch(e){}
 }
 function createRoom(){
   const school=document.getElementById('rgSchool').value.trim();
   const teacher=document.getElementById('rgTeacher').value.trim();
   const cls=document.getElementById('rgClass').value.trim();
-  if(!school&&!teacher&&!cls){ document.getElementById('rgMsg').textContent='학교명·닉네임·반 중 하나 이상 입력해 주세요.'; return; }
-  const key=buildRoomKey(school,teacher,cls);
-  if(appStarted && key!==ROOM){ lsSet('lastRoom',{key,meta:{school,teacher,cls}}); location.href=inviteLinkFor(key); return; }
-  enterRoom(key,{school,teacher,cls},'teacherhub');
+  const pw=document.getElementById('rgPw').value.trim();
+  const err=document.getElementById('rgErr'); err.textContent='';
+  if(!school||!teacher||!cls){ err.textContent='학교명·교사 닉네임·반을 모두 입력해 주세요.'; return; }
+  if(!pw){ err.textContent='교사 비밀번호를 입력해 주세요.'; return; }
+  const key=buildRoomKey(school,teacher,cls), meta={school,teacher,cls};
+  err.textContent='확인하는 중…';
+  // 그 방의 비밀번호와 맞는지 확인. 처음 만드는 방이면 입력한 비밀번호로 새로 만듦
+  store.get(`rooms/${key}/config`).then(cfg=>{
+    if(cfg){
+      if(pw!==String(cfg.teacherPassword||'0000')){ err.textContent='이 반 방의 교사 비밀번호가 맞지 않아요.'; return; }
+    }else{
+      const c=JSON.parse(JSON.stringify(DEFAULT_CONFIG)); c.teacherPassword=pw;
+      store.set(`rooms/${key}/config`, c);
+    }
+    err.textContent='';
+    teacherOk(key,meta);
+  }).catch(e=>{
+    console.error(e);
+    err.textContent='저장소 연결 오류로 비밀번호를 확인할 수 없어요. Firebase 규칙을 확인해 주세요.';
+  });
+}
+function teacherOk(key,meta){
+  teacherAuthed=true;
+  if(appStarted && key!==ROOM){
+    // 다른 반으로 바꿀 때는 새로 불러오므로, 이 창에서만 '교사 로그인'을 이어감
+    lsSet('lastRoom',{key,meta});
+    try{ sessionStorage.setItem('teacherRoom',key); }catch(e){}
+    location.href=inviteLinkFor(key); return;
+  }
+  enterRoom(key,meta,'teacherhub');
 }
 function switchRoom(){
   const last=lsGet('lastRoom');
   if(last&&last.meta){ document.getElementById('rgSchool').value=last.meta.school||''; document.getElementById('rgTeacher').value=last.meta.teacher||''; document.getElementById('rgClass').value=last.meta.cls||''; }
+  const pwEl=document.getElementById('rgPw'); if(pwEl) pwEl.value=''; const er=document.getElementById('rgErr'); if(er) er.textContent='';
   go('roomgate');
 }
 function studentEnter(){
@@ -1546,7 +1627,8 @@ function studentEnter(){
   go('login');
 }
 function teacherLogin(){
-  const pw=prompt('교사 비밀번호를 입력하세요 (기본 0000)'); if(pw===null) return;
+  if(!roomReady){ switchRoom(); return; }
+  const pw=prompt('이 반 방의 교사 비밀번호를 입력하세요'); if(pw===null) return;
   const expected=(CONFIG&&CONFIG.teacherPassword)||'0000';
   if(pw!==expected){ alert('비밀번호가 맞지 않아요.'); return; }
   teacherAuthed=true;
@@ -1870,7 +1952,12 @@ function pickLibArt(i){
 /* 시작: URL에 ?room= 있으면 학생은 바로 학생 화면. 없으면 학생 화면(교사는 로그인으로 방 생성) */
 (function initRoom(){
   const urlRoom=new URLSearchParams(location.search).get('room');
-  if(urlRoom){ enteredViaLink=true; applyHomeMode(); enterRoom(sanitizeKey(decodeURIComponent(urlRoom)), null, 'login'); return; }
+  if(urlRoom){
+    const k=sanitizeKey(decodeURIComponent(urlRoom));
+    let tr=null; try{ tr=sessionStorage.getItem('teacherRoom'); sessionStorage.removeItem('teacherRoom'); }catch(e){}
+    if(tr===k){ const last=lsGet('lastRoom'); teacherAuthed=true; enteredViaLink=false; applyHomeMode(); enterRoom(k,(last&&last.key===k)?last.meta:null,'teacherhub'); return; }
+    enteredViaLink=true; applyHomeMode(); enterRoom(k, null, 'login'); return;
+  }
   enteredViaLink=false; applyHomeMode();
   const last=lsGet('lastRoom');
   if(last&&last.meta){ document.getElementById('rgSchool').value=last.meta.school||''; document.getElementById('rgTeacher').value=last.meta.teacher||''; document.getElementById('rgClass').value=last.meta.cls||''; }
