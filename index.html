@@ -282,6 +282,72 @@ body.is-home .mode-bar{justify-content:flex-end; align-items:flex-start; height:
   .home-layout{grid-template-columns:1fr;}
   .side{position:static;}
 }
+
+/* ===== 교사 설정: 한 화면 ===== */
+body.is-wide .wrap{max-width:1240px;}
+.ts-head{display:flex; align-items:center; gap:12px; margin:0 0 12px; color:#fff;}
+.ts-head h1{margin:0; font-size:22px; font-weight:800; text-shadow:0 2px 10px rgba(0,0,0,.2); white-space:nowrap;}
+.ts-head .ts-msg{flex:1; margin:0; color:#fff; font-weight:700; text-align:right; min-width:0;}
+.ts-head .ts-save{width:auto; padding:11px 18px; font-size:15px; white-space:nowrap;}
+.ts-grid{display:grid; grid-template-columns:1.15fr 1.1fr .8fr; gap:14px; align-items:start;}
+.ts-col{padding:18px;}
+.ts-col label{font-size:12.5px; margin:10px 0 4px;}
+.ts-col label small{font-weight:500; color:var(--muted);}
+.ts-col input, .ts-col select, .ts-col textarea{padding:9px 11px; font-size:14px;}
+.ts-col textarea{min-height:0; resize:vertical;}
+.ts-h{font-weight:800; font-size:15px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px;}
+.ts-h small{font-weight:500; font-size:12px; color:var(--muted); flex-basis:100%;}
+.ts-presets{display:flex; flex-wrap:wrap; gap:6px;}
+.ts-presets button{border:1.5px solid var(--line); background:#fff; border-radius:10px; padding:6px 10px; font:inherit; font-size:12.5px; font-weight:700; color:var(--accent); cursor:pointer;}
+.ts-presets button:hover{border-color:var(--accent); background:var(--soft);}
+.ts-mini{border:0; background:var(--soft2); color:var(--accent); font:inherit; font-size:12.5px; font-weight:700; padding:7px 11px; border-radius:10px; cursor:pointer; margin-top:8px;}
+.ts-art{display:flex; gap:12px; margin-top:10px;}
+.ts-imgbox{position:relative; flex:0 0 132px; height:132px; margin:10px 0 0!important; border-radius:12px; overflow:hidden; background:var(--soft2); cursor:pointer; box-shadow:inset 0 0 0 2px var(--line);}
+.ts-imgbox img{width:100%; height:100%; object-fit:cover; display:block;}
+.ts-imgbox span{position:absolute; left:0; right:0; bottom:0; background:rgba(30,33,58,.65); color:#fff; font-size:12px; font-weight:700; text-align:center; padding:5px 0;}
+.ts-art-r{flex:1; min-width:0;}
+.ts-two{display:grid; grid-template-columns:1.3fr 1fr; gap:8px;}
+.ts-qtabs{display:flex; gap:6px; margin-bottom:10px;}
+.ts-qtabs button{flex:1; border:0; border-radius:10px; padding:8px 0; font:inherit; font-weight:800; background:var(--soft); color:var(--muted); cursor:pointer;}
+.ts-qtabs button.on{background:var(--accent); color:#fff;}
+.ts-q{display:none;}
+.ts-q.on{display:block;}
+.ts-q .qq{font-weight:700; margin-bottom:8px;}
+.ts-choice{display:flex; gap:6px; align-items:center; margin-top:6px;}
+.ts-choice .ans{flex:0 0 40px; height:40px; border-radius:10px; border:2px solid var(--line); background:#fff; color:#c7c7d8; font-size:18px; font-weight:900; cursor:pointer;}
+.ts-choice .ans.on{background:var(--good); border-color:var(--good); color:#fff;}
+.ts-choice input{flex:1;}
+.ts-ghead{display:grid; grid-template-columns:1fr 1fr 34px; gap:6px; font-size:12px; color:var(--muted); font-weight:700; margin-bottom:4px;}
+.ts-groups{display:flex; flex-direction:column; gap:6px; max-height:300px; overflow-y:auto;}
+.ts-groups .grouprow{display:grid; grid-template-columns:1fr 1fr 34px; gap:6px; margin:0;}
+.ts-groups .grouprow input{min-width:0;}
+.ts-groups .del{border:0; background:var(--soft); color:var(--muted); border-radius:9px; cursor:pointer; font-weight:800;}
+.ts-groups .del:hover{background:#fee2e2; color:#b91c1c;}
+@media (max-width:980px){
+  .ts-grid{grid-template-columns:1fr 1fr;}
+  .ts-grid .ts-col:last-child{grid-column:1 / -1;}
+}
+@media (max-width:640px){
+  .ts-grid{grid-template-columns:1fr;}
+  .ts-head{flex-wrap:wrap;}
+  .ts-head .ts-msg{order:5; flex-basis:100%; text-align:left;}
+  .ts-head .ts-save{margin-left:auto;}
+}
+
+.today-art{display:flex; gap:14px; align-items:center; background:var(--soft); border-radius:16px; padding:12px; margin-bottom:6px;}
+.today-art img{flex:0 0 96px; width:96px; height:96px; object-fit:cover; border-radius:12px; background:var(--soft2);}
+.today-art small{display:block; color:var(--accent); font-weight:800; font-size:12px;}
+.today-art b{display:block; font-size:18px; margin:2px 0 4px;}
+.today-art span{display:block; color:var(--muted); font-size:12.5px; line-height:1.5;}
+
+.ts-summary{display:flex; gap:6px; flex-wrap:wrap; min-width:0;}
+.ts-summary span{background:rgba(255,255,255,.92); color:var(--ink); border-radius:999px; padding:5px 11px; font-size:12.5px; font-weight:700; white-space:nowrap;}
+.ts-summary span b{color:var(--accent);}
+.ts-presets button.on{background:var(--accent); border-color:var(--accent); color:#fff;}
+.ts-presets button.on::before{content:"✔ ";}
+
+@keyframes tsflash{0%{box-shadow:0 0 0 0 rgba(16,185,129,.0);} 25%{box-shadow:0 0 0 6px rgba(16,185,129,.55);} 100%{box-shadow:var(--shadow-card);}}
+.ts-flash{animation:tsflash 1.4s ease;}
 </style>
 </head>
 <body>
@@ -355,7 +421,7 @@ body.is-home .mode-bar{justify-content:flex-end; align-items:flex-start; height:
           <p class="sub">모둠과 함께 퍼즐 대결을 하려면 입장하세요.</p>
           <div id="homeRoomTag" class="status-line" style="color:var(--accent); text-shadow:none; margin-bottom:10px;"></div>
           <button id="btnStudentEnter" class="btn btn-primary" onclick="studentEnter()">
-            <span class="ic">🙋</span><span class="bt">학생 입장<small id="studentSub">학번·이름·모둠으로 입장</small></span>
+            <span class="ic">🙋</span><span class="bt">학생 입장<small id="studentSub">학년·닉네임·모둠으로 입장</small></span>
           </button>
           <button id="btnTeacherLogin" class="btn btn-line" onclick="teacherLogin()">
             <span class="ic">🔑</span><span class="bt">교사용 로그인<small>작품·퀴즈·모둠 설정, 진행</small></span>
@@ -417,12 +483,21 @@ body.is-home .mode-bar{justify-content:flex-end; align-items:flex-start; height:
   <!-- ===== 학생 로그인 ===== -->
   <section id="login" class="screen">
     <button class="topback" onclick="go('home')">← 뒤로</button>
-    <div class="title"><h1>학생 입장</h1></div>
+    <div class="title"><h1>학생 입장</h1><p id="loginRoom"></p></div>
     <div class="card">
-      <label>학번</label>
-      <input id="inStudentId" inputmode="numeric" placeholder="예: 10203">
-      <label>이름</label>
-      <input id="inName" placeholder="예: 홍길동">
+      <div class="today-art">
+        <img id="loginArtImg" alt="오늘의 작품">
+        <div><small>오늘의 작품</small><b id="loginArtTitle">불러오는 중…</b><span>입장하면 퀴즈 → 감상 → 모둠 퍼즐 순서로 진행돼요.</span></div>
+      </div>
+      <label>학년</label>
+      <select id="inGrade">
+        <option value="">학년을 골라요</option>
+        <option value="1">1학년</option>
+        <option value="2">2학년</option>
+        <option value="3">3학년</option>
+      </select>
+      <label>닉네임</label>
+      <input id="inName" maxlength="12" placeholder="예: 그림왕">
       <label>우리 모둠 선택</label>
       <select id="inGroup"></select>
       <label>모둠 비밀번호</label>
@@ -542,70 +617,61 @@ body.is-home .mode-bar{justify-content:flex-end; align-items:flex-start; height:
 
   <!-- ===== 교사 설정 ===== -->
   <section id="teacher" class="screen">
-    <button class="topback" onclick="go('teacherhub')">← 뒤로</button>
-    <div class="title"><h1>교사 설정</h1></div>
-    <div class="card">
-      <p class="hint" style="margin-top:0;">아래 순서대로 채운 뒤, 맨 아래 <b>저장</b>을 누르면 학생 화면에 적용돼요.</p>
-
-      <div class="section">
-        <div class="section-title"><span class="num-badge">1</span>빠르게 채우기</div>
-        <div class="section-desc">예시를 누르면 제목·설명·퀴즈가 채워져요. 작품 사진은 아래 ②에서 직접 올려주세요.</div>
-        <div id="presetBtns" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
-        <button class="btn btn-ghost mt" onclick="loadLastCfg()">↩ 지난 수업에서 쓴 설정 그대로 불러오기</button>
-      </div>
-
-      <div class="section">
-        <div class="section-title"><span class="num-badge">2</span>오늘의 작품</div>
-        <label>작품 이미지</label>
-        <input type="file" id="imgFile" accept="image/*" onchange="onImgPick(event)">
-        <img id="cfgImgPreview" class="side-img mt" style="display:none; max-height:220px;">
-        <label>작품 제목</label>
-        <input id="cfgTitle" placeholder="예: 별이 빛나는 밤 (반 고흐)">
-        <label>작품 설명 (학생이 감상 시간에 읽어요)</label>
-        <textarea id="cfgDesc" placeholder="작가, 시대, 표현 기법, 감상 포인트 등을 적어주세요."></textarea>
-      </div>
-
-      <div class="section">
-        <div class="section-title"><span class="num-badge">3</span>퍼즐 난이도</div>
-        <div class="split">
-          <div>
-            <label>조각 수</label>
-            <select id="cfgPieces">
-              <option value="2x3">6조각 (2×3) 쉬움</option>
-              <option value="3x4" selected>12조각 (3×4) 보통</option>
-              <option value="3x5">15조각 (3×5)</option>
-              <option value="4x6">24조각 (4×6) 어려움</option>
-              <option value="5x6">30조각 (5×6) 도전</option>
-            </select>
-          </div>
-          <div>
-            <label>시작 전 미리보기 시간(초)</label>
-            <input id="cfgPreview" type="number" min="1" max="60" value="5">
+    <div class="ts-head">
+      <button class="topback" style="margin:0" onclick="go('teacherhub')">← 뒤로</button>
+      <h1>⚙️ 교사 설정</h1>
+      <div class="ts-summary" id="tsSummary"></div>
+      <span class="hint ts-msg" id="saveMsg"></span>
+      <button class="btn btn-primary ts-save" onclick="saveConfig()">💾 저장하고 모두에게 적용</button>
+    </div>
+    <div class="ts-grid">
+      <!-- 1열: 작품 -->
+      <div class="card ts-col">
+        <div class="ts-h"><span class="num-badge">1</span>오늘의 작품</div>
+        <div class="ts-presets" id="presetBtns"></div>
+        <button class="ts-mini" onclick="loadLastCfg()">↩ 지난 수업 설정 불러오기</button>
+        <div class="ts-art">
+          <label class="ts-imgbox" title="눌러서 작품 사진 올리기">
+            <img id="cfgImgPreview" alt="">
+            <span>📷 사진 바꾸기</span>
+            <input type="file" id="imgFile" accept="image/*" onchange="onImgPick(event)" style="display:none">
+          </label>
+          <div class="ts-art-r">
+            <label>작품 제목</label>
+            <input id="cfgTitle" placeholder="예: 별이 빛나는 밤 (반 고흐)">
+            <div class="ts-two">
+              <div><label>조각 수</label>
+                <select id="cfgPieces">
+                  <option value="2x3">6조각 쉬움</option>
+                  <option value="3x4" selected>12조각 보통</option>
+                  <option value="3x5">15조각</option>
+                  <option value="4x6">24조각 어려움</option>
+                  <option value="5x6">30조각 도전</option>
+                </select></div>
+              <div><label>미리보기(초)</label><input id="cfgPreview" type="number" min="1" max="60" value="5"></div>
+            </div>
           </div>
         </div>
+        <label>작품 설명 <small>(감상 시간에 학생이 읽어요)</small></label>
+        <textarea id="cfgDesc" rows="4" placeholder="작가, 시대, 표현 기법, 감상 포인트 등을 적어주세요."></textarea>
       </div>
 
-      <div class="section">
-        <div class="section-title"><span class="num-badge">4</span>작품 퀴즈</div>
-        <div class="section-desc">5문제예요. 각 문제에서 정답 보기 옆의 <b>정답</b> 버튼을 눌러 표시하세요.</div>
+      <!-- 2열: 퀴즈 -->
+      <div class="card ts-col" id="quizCol">
+        <div class="ts-h"><span class="num-badge">2</span>작품 퀴즈 <small>번호를 눌러 문제를 바꿔요 · 정답 보기의 ✔를 눌러요</small></div>
+        <div class="ts-qtabs" id="quizTabs"></div>
         <div id="quizCfgList"></div>
       </div>
 
-      <div class="section">
-        <div class="section-title"><span class="num-badge">5</span>모둠과 비밀번호</div>
-        <div class="section-desc">모둠 이름과, 학생이 입장할 때 쓸 비밀번호를 정해요.</div>
-        <div id="groupCfgList"></div>
-        <button class="btn btn-ghost mt" onclick="addGroupRow()">＋ 모둠 추가</button>
-      </div>
-
-      <div class="section">
-        <div class="section-title"><span class="num-badge">6</span>교사 비밀번호</div>
-        <div class="section-desc">학생이 교사 화면에 못 들어오게 막아줘요.</div>
+      <!-- 3열: 모둠·비밀번호 -->
+      <div class="card ts-col">
+        <div class="ts-h"><span class="num-badge">3</span>모둠과 비밀번호</div>
+        <div class="ts-ghead"><span>모둠 이름</span><span>비밀번호</span></div>
+        <div id="groupCfgList" class="ts-groups"></div>
+        <button class="ts-mini" onclick="addGroupRow()">＋ 모둠 추가</button>
+        <div class="ts-h" style="margin-top:16px;"><span class="num-badge">4</span>교사 비밀번호</div>
         <input id="cfgTeacherPw" placeholder="예: 0000">
       </div>
-
-      <button class="btn btn-primary btn-big mt2" onclick="saveConfig()">💾 저장하고 모두에게 적용</button>
-      <p class="hint" id="saveMsg"></p>
     </div>
   </section>
 
@@ -743,6 +809,7 @@ function go(id){
   document.getElementById(id).classList.add('on');
   curScreen=id; window.scrollTo(0,0);
   document.body.classList.toggle('is-home', id==='home');
+  document.body.classList.toggle('is-wide', id==='home'||id==='teacher');
 }
 
 function attachLeaderboard(r){
@@ -794,18 +861,25 @@ function refreshGroupSelect(){
   const cur=sel.value;
   sel.innerHTML=CONFIG.groups.map((g,i)=>`<option value="${i}">${g.name}</option>`).join('');
   if(cur) sel.value=cur;
+  // 학생 입장 화면에 선생님이 정한 오늘의 작품 보여주기
+  const ti=document.getElementById('loginArtImg'), tt=document.getElementById('loginArtTitle');
+  if(ti) ti.src=CONFIG.imageDataUrl||DEFAULT_IMG;
+  if(tt) tt.textContent=CONFIG.title||'오늘의 작품';
 }
 function doLogin(){
-  const sid=document.getElementById('inStudentId').value.trim();
+  const grade=document.getElementById('inGrade').value;
   const nm=document.getElementById('inName').value.trim();
   const gi=+document.getElementById('inGroup').value;
   const pw=document.getElementById('inGroupPw').value.trim();
   const msg=document.getElementById('loginMsg');
-  if(!sid||!nm){msg.textContent='학번과 이름을 입력해 주세요.';return;}
+  if(!grade||!nm){msg.textContent='학년과 닉네임을 입력해 주세요.';return;}
   if(!CONFIG.groups[gi]){msg.textContent='모둠을 선택해 주세요.';return;}
   if(CONFIG.groups[gi].password!==pw){msg.textContent='모둠 비밀번호가 맞지 않아요.';return;}
-  me={studentId:sid,name:nm,groupId:gi}; msg.textContent='';
-  store.set(`rooms/${ROOM}/members/${gi}/${sid}`,{name:nm,ts:store.stamp()});
+  // 번호가 없으니, 이 기기만의 고유번호를 자동으로 만들어 저장 (닉네임이 같아도 섞이지 않게)
+  let did=lsGet('deviceId'); if(!did){ did='d'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); lsSet('deviceId',did); }
+  const sid=grade+'_'+did;
+  me={studentId:sid,name:nm,grade,groupId:gi}; msg.textContent='';
+  store.set(`rooms/${ROOM}/members/${gi}/${sid}`,{name:nm,grade,ts:store.stamp()});
   startQuiz();
 }
 function leaveStudent(){
@@ -1137,7 +1211,8 @@ function teacherGate(){
 let pickedImg=null;
 function renderPresetBtns(){
   const pb=document.getElementById('presetBtns'); if(!pb) return;
-  pb.innerHTML=PRESETS.map((p,i)=>`<button class="btn btn-line" style="flex:1 1 46%; padding:11px; font-size:14px;" onclick="loadPreset(${i})">${p.title}</button>`).join('');
+  const cur=(document.getElementById('cfgTitle')||{}).value||(CONFIG&&CONFIG.title)||'';
+  pb.innerHTML=PRESETS.map((p,i)=>`<button class="${cur===p.title?'on':''}" title="예시 불러오기: 제목·설명·퀴즈" onclick="loadPreset(${i})">${p.title}</button>`).join('');
 }
 function loadPreset(i){
   const p=PRESETS[i];
@@ -1145,7 +1220,11 @@ function loadPreset(i){
   CONFIG.quizzes=JSON.parse(JSON.stringify(p.quizzes));
   pickedImg=DEFAULT_IMG;
   openTeacher();
-  document.getElementById('saveMsg').textContent=`"${p.title}" 예시를 불러왔어요. 실제 작품 사진이 있으면 위에서 업로드로 바꾸고, 아래 저장을 눌러주세요.`;
+  document.getElementById('saveMsg').textContent=`"${p.title}" 예시로 제목·설명·퀴즈 5문제를 채웠어요. 사진을 올리고 저장을 눌러주세요.`;
+  // 채워진 곳(작품·퀴즈 칸)을 잠깐 반짝여서 바뀐 걸 알려줌
+  ['quizCol'].concat([...document.querySelectorAll('#teacher .ts-col')].slice(0,1).map(x=>x.id||(x.id='artCol'))).forEach(id=>{
+    const el=document.getElementById(id); if(!el) return; el.classList.remove('ts-flash'); void el.offsetWidth; el.classList.add('ts-flash');
+  });
 }
 function loadLastCfg(){
   const c=lsGet('lastCfg');
@@ -1168,30 +1247,58 @@ function openTeacher(){
   pickedImg=CONFIG.imageDataUrl;
   const ip=document.getElementById('cfgImgPreview'); ip.src=pickedImg; ip.style.display='block';
   const ql=document.getElementById('quizCfgList'); ql.innerHTML='';
+  const qt=document.getElementById('quizTabs'); qt.innerHTML='';
+  if(quizTab>=(CONFIG.quizzes||[]).length) quizTab=0;
   (CONFIG.quizzes||[]).forEach((q,qi)=>{
-    const d=document.createElement('div'); d.className='quiz-cfg';
-    d.innerHTML=`<input data-q="${qi}" class="qq" value="${(q.q||'').replace(/"/g,'&quot;')}" placeholder="질문 ${qi+1}">
-      ${q.choices.map((c,ci)=>`<div class="grouprow" style="margin-top:6px">
+    const t=document.createElement('button'); t.textContent=(qi+1)+'번'; t.className=qi===quizTab?'on':'';
+    t.onclick=()=>showQuizTab(qi); qt.appendChild(t);
+    const d=document.createElement('div'); d.className='quiz-cfg ts-q'+(qi===quizTab?' on':''); d.dataset.q=qi;
+    d.innerHTML=`<label>질문 ${qi+1}</label><input data-q="${qi}" class="qq" value="${(q.q||'').replace(/"/g,'&quot;')}" placeholder="질문을 적어요">
+      <label>보기 <small>(정답 보기의 ✔를 눌러요)</small></label>
+      ${q.choices.map((c,ci)=>`<div class="ts-choice">
+        <button class="ans${q.answer===ci?' on':''}" title="정답으로 정하기" onclick="setAns(${qi},${ci})">✔</button>
         <input class="qc" data-q="${qi}" data-c="${ci}" value="${(c||'').replace(/"/g,'&quot;')}" placeholder="보기 ${ci+1}">
-        <button class="btn ${q.answer===ci?'btn-primary':'btn-ghost'}" style="flex:0 0 78px" onclick="setAns(${qi},${ci})">정답</button>
       </div>`).join('')}`;
     ql.appendChild(d);
   });
   renderGroupCfg();
+  updateTsSummary();
 }
-function setAns(qi,ci){ CONFIG.quizzes[qi].answer=ci; openTeacher(); }
+function updateTsSummary(){
+  const box=document.getElementById('tsSummary'); if(!box||!CONFIG) return;
+  const t=document.getElementById('cfgTitle').value.trim()||'(제목 없음)';
+  const pc=document.getElementById('cfgPieces'); const pieces=pc.options[pc.selectedIndex]?pc.options[pc.selectedIndex].text:'';
+  const g=document.querySelectorAll('#groupCfgList .grouprow').length;
+  const hasImg=pickedImg&&pickedImg!==DEFAULT_IMG;
+  box.innerHTML=`<span>🖼️ <b>${t.replace(/</g,'&lt;')}</b></span><span>📷 ${hasImg?'사진 있음':'<b style="color:#b45309">사진 없음</b>'}</span><span>🧩 ${pieces}</span><span>👥 모둠 ${g}개</span>`;
+  // 예시 버튼 중 지금 제목과 같은 것에 ✔ 표시
+  document.querySelectorAll('#presetBtns button').forEach((b,i)=>b.classList.toggle('on',PRESETS[i]&&PRESETS[i].title===document.getElementById('cfgTitle').value.trim()));
+}
+document.addEventListener('input',e=>{ if(e.target.closest&&e.target.closest('#teacher')) updateTsSummary(); });
+document.addEventListener('change',e=>{ if(e.target.closest&&e.target.closest('#teacher')) updateTsSummary(); });
+let quizTab=0;
+function showQuizTab(qi){
+  quizTab=qi;
+  document.querySelectorAll('#quizTabs button').forEach((b,i)=>b.classList.toggle('on',i===qi));
+  document.querySelectorAll('#quizCfgList .ts-q').forEach((d,i)=>d.classList.toggle('on',i===qi));
+}
+function setAns(qi,ci){
+  // 다시 그리지 않고 표시만 바꿈 (쓰고 있던 글자가 지워지지 않게)
+  CONFIG.quizzes[qi].answer=ci;
+  document.querySelectorAll(`#quizCfgList .ts-q[data-q="${qi}"] .ans`).forEach((b,i)=>b.classList.toggle('on',i===ci));
+}
 function renderGroupCfg(){
   const gl=document.getElementById('groupCfgList'); gl.innerHTML='';
   (CONFIG.groups||[]).forEach((g,i)=>{
     const d=document.createElement('div'); d.className='grouprow';
     d.innerHTML=`<input class="gname" value="${g.name}" placeholder="모둠 이름">
       <input class="gpw" value="${g.password}" placeholder="비번">
-      <button class="btn btn-ghost" style="flex:0 0 46px" onclick="delGroup(${i})">✕</button>`;
+      <button class="del" title="모둠 지우기" onclick="delGroup(${i})">✕</button>`;
     gl.appendChild(d);
   });
 }
-function addGroupRow(){ collectGroups(); CONFIG.groups.push({name:(CONFIG.groups.length+1)+'모둠',password:''}); renderGroupCfg(); }
-function delGroup(i){ collectGroups(); CONFIG.groups.splice(i,1); renderGroupCfg(); }
+function addGroupRow(){ collectGroups(); CONFIG.groups.push({name:(CONFIG.groups.length+1)+'모둠',password:''}); renderGroupCfg(); updateTsSummary(); }
+function delGroup(i){ collectGroups(); CONFIG.groups.splice(i,1); renderGroupCfg(); updateTsSummary(); }
 function collectGroups(){
   const names=[...document.querySelectorAll('.gname')],pws=[...document.querySelectorAll('.gpw')];
   CONFIG.groups=names.map((n,i)=>({name:n.value.trim()||((i+1)+'모둠'),password:pws[i].value.trim()}));
@@ -1205,6 +1312,7 @@ function onImgPick(ev){
     const cv=document.createElement('canvas'); cv.width=w; cv.height=h; cv.getContext('2d').drawImage(img,0,0,w,h);
     pickedImg=cv.toDataURL('image/jpeg',0.72);
     const ip=document.getElementById('cfgImgPreview'); ip.src=pickedImg; ip.style.display='block';
+    updateTsSummary();
   }; img.src=e.target.result;}; rd.readAsDataURL(f);
 }
 function saveConfig(){
@@ -1253,7 +1361,7 @@ function applyHomeMode(){
   const hint=document.getElementById('homeHint'), rank=document.getElementById('homeRank');
   if(!s) return;
   if(enteredViaLink){
-    s.classList.remove('locked'); if(sub) sub.textContent='학번·이름·모둠으로 입장';
+    s.classList.remove('locked'); if(sub) sub.textContent='학년·닉네임·모둠으로 입장';
     if(hint) hint.textContent='선생님이 시작하면 모둠 퍼즐이 열려요!';
     if(rank) rank.style.display='';
   }else{
@@ -1272,10 +1380,11 @@ let roomDisplay='';
 function updateRoomLabels(){
   const hub=document.getElementById('hubRoomLabel'); if(hub) hub.textContent=roomDisplay?('📍 '+roomDisplay):'';
   const tag=document.getElementById('homeRoomTag'); if(tag) tag.textContent=roomDisplay?('📍 '+roomDisplay+' 방'):'';
+  const lr=document.getElementById('loginRoom'); if(lr) lr.textContent=roomDisplay?('📍 '+roomDisplay+' 방'):'';
 }
 function enterRoom(key, meta, dest){
   ROOM=key||'main'; roomReady=true;
-  roomDisplay = meta? [meta.school,meta.teacher,meta.cls].filter(Boolean).join(' · ') : decodeURIComponent(ROOM);
+  roomDisplay = meta? [meta.school,meta.teacher,meta.cls].filter(Boolean).join(' · ') : decodeURIComponent(ROOM).split('_').join(' · ');
   if(meta) lsSet('lastRoom', {key:ROOM, meta});
   updateRoomLabels();
   maybeStart();
@@ -1525,7 +1634,7 @@ function fpPeek(){
 /* 시작: URL에 ?room= 있으면 학생은 바로 학생 화면. 없으면 학생 화면(교사는 로그인으로 방 생성) */
 (function initRoom(){
   const urlRoom=new URLSearchParams(location.search).get('room');
-  if(urlRoom){ enteredViaLink=true; applyHomeMode(); enterRoom(sanitizeKey(decodeURIComponent(urlRoom)), null, 'home'); return; }
+  if(urlRoom){ enteredViaLink=true; applyHomeMode(); enterRoom(sanitizeKey(decodeURIComponent(urlRoom)), null, 'login'); return; }
   enteredViaLink=false; applyHomeMode();
   const last=lsGet('lastRoom');
   if(last&&last.meta){ document.getElementById('rgSchool').value=last.meta.school||''; document.getElementById('rgTeacher').value=last.meta.teacher||''; document.getElementById('rgClass').value=last.meta.cls||''; }
