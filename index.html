@@ -416,6 +416,8 @@ body.is-wide .wrap{max-width:1240px;}
 .solo-tag{display:flex; align-items:baseline; gap:10px; margin:-4px 0 10px; flex-wrap:wrap;}
 .solo-tag b{background:#e0f2fe; color:#0369a1; font-size:13.5px; padding:4px 12px; border-radius:999px;}
 .solo-tag span{color:var(--muted); font-size:12.5px;}
+
+.ts-own-btn{background:#fff7ed!important; color:#c2410c!important; box-shadow:inset 0 0 0 1.5px #fdba74;}
 </style>
 </head>
 <body>
@@ -702,6 +704,7 @@ body.is-wide .wrap{max-width:1240px;}
         <div class="ts-presets" id="presetBtns"></div>
         <div style="display:flex; gap:6px; flex-wrap:wrap;">
           <button class="ts-mini ts-lib-btn" onclick="openArtLib()">🖼️ 명화 더 고르기 (자동 채우기)</button>
+          <button class="ts-mini ts-own-btn" onclick="startOwnWork()">📤 내 작품 올리기</button>
           <button class="ts-mini" onclick="loadLastCfg()">↩ 지난 수업 설정</button>
         </div>
         <div class="ts-art">
@@ -1422,6 +1425,12 @@ function collectGroups(){
   const names=[...document.querySelectorAll('.gname')],pws=[...document.querySelectorAll('.gpw')];
   CONFIG.groups=names.map((n,i)=>({name:n.value.trim()||((i+1)+'모둠'),password:pws[i].value.trim()}));
 }
+let ownWorkMode=false;
+function startOwnWork(){
+  // 내 작품: 사진을 고르면 제목·설명을 비우고 직접 쓰게 함
+  ownWorkMode=true;
+  const f=document.getElementById('imgFile'); f.value=''; f.click();
+}
 function onImgPick(ev){
   const f=ev.target.files[0]; if(!f) return;
   const img=new Image(),rd=new FileReader();
@@ -1431,7 +1440,16 @@ function onImgPick(ev){
     const cv=document.createElement('canvas'); cv.width=w; cv.height=h; cv.getContext('2d').drawImage(img,0,0,w,h);
     pickedImg=cv.toDataURL('image/jpeg',0.72);
     const ip=document.getElementById('cfgImgPreview'); ip.src=pickedImg; ip.style.display='block';
-    updateTsSummary(); tsSay('✔ 내 사진을 넣었어요. 제목·설명·퀴즈를 확인하고 💾 저장!');
+    if(ownWorkMode){
+      ownWorkMode=false;
+      const t=document.getElementById('cfgTitle'), d=document.getElementById('cfgDesc');
+      t.value=''; d.value=''; t.placeholder='작품 제목을 써 주세요 (예: 나의 자화상 - 3학년 1반)';
+      updateTsSummary(); t.focus();
+      tsSay('✔ 내 작품 사진을 넣었어요 → 제목·설명을 쓰고, 퀴즈도 고친 뒤 💾 저장!');
+      const qc=document.getElementById('quizCol'); if(qc){ qc.classList.remove('ts-flash'); void qc.offsetWidth; qc.classList.add('ts-flash'); }
+    }else{
+      updateTsSummary(); tsSay('✔ 사진을 바꿨어요. 제목·설명·퀴즈를 확인하고 💾 저장!');
+    }
   }; img.src=e.target.result;}; rd.readAsDataURL(f);
 }
 function saveConfig(){ ensureConfig();
