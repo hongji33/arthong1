@@ -695,7 +695,8 @@ if(isLive){
     const db=firebase.database();
     firebaseAuth=firebase.auth();
     store={
-      onValue(p,cb){ db.ref(p).on('value',s=>cb(s.val())); },
+      onValue(p,cb){ db.ref(p).on('value',s=>cb(s.val()),err=>{ console.error('읽기 오류',p,err);
+        const mp=document.getElementById('modePill'); if(mp){ mp.className='pill pill-demo'; mp.textContent='⚠ 저장소 연결 오류 ('+(err&&err.code||'')+')'; } }); },
       set(p,v){ return db.ref(p).set(v); },
       update(p,o){ return db.ref(p).update(o); },
       remove(p){ return db.ref(p).remove(); },
@@ -822,7 +823,7 @@ function attachLeaderboard(r){
 /* 앱 시작(구독 연결) — 실시간 모드에서는 익명 로그인 완료 후 호출됨 */
 function startApp(){
   store.onValue(`rooms/${ROOM}/config`, val=>{
-    CONFIG=val||DEFAULT_CONFIG;
+    CONFIG=val||JSON.parse(JSON.stringify(DEFAULT_CONFIG)); ensureConfig();
     if(!val) store.set(`rooms/${ROOM}/config`, DEFAULT_CONFIG);
     refreshGroupSelect();
   });
@@ -1214,7 +1215,7 @@ function renderPresetBtns(){
   const cur=(document.getElementById('cfgTitle')||{}).value||(CONFIG&&CONFIG.title)||'';
   pb.innerHTML=PRESETS.map((p,i)=>`<button class="${cur===p.title?'on':''}" title="예시 불러오기: 제목·설명·퀴즈" onclick="loadPreset(${i})">${p.title}</button>`).join('');
 }
-function loadPreset(i){
+function loadPreset(i){ ensureConfig();
   const p=PRESETS[i];
   CONFIG.title=p.title; CONFIG.description=p.desc; CONFIG.imageDataUrl=DEFAULT_IMG;
   CONFIG.quizzes=JSON.parse(JSON.stringify(p.quizzes));
@@ -1226,7 +1227,7 @@ function loadPreset(i){
     const el=document.getElementById(id); if(!el) return; el.classList.remove('ts-flash'); void el.offsetWidth; el.classList.add('ts-flash');
   });
 }
-function loadLastCfg(){
+function loadLastCfg(){ ensureConfig();
   const c=lsGet('lastCfg');
   if(!c){ document.getElementById('saveMsg').textContent='아직 저장된 지난 설정이 없어요. (한 번 저장하면 다음부터 불러올 수 있어요)'; return; }
   CONFIG.title=c.title; CONFIG.description=c.description; CONFIG.imageDataUrl=c.imageDataUrl;
@@ -1236,7 +1237,19 @@ function loadLastCfg(){
   pickedImg=c.imageDataUrl; openTeacher();
   document.getElementById('saveMsg').textContent='지난 수업 설정을 불러왔어요. 확인 후 저장을 눌러주세요.';
 }
+/* 설정값이 아직 안 왔거나 일부가 비어 있어도 기본값으로 채워서 화면이 멈추지 않게 함 */
+function ensureConfig(){
+  const base=JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+  if(!CONFIG) CONFIG=base;
+  ['title','imageDataUrl','description','pieces','previewSeconds','teacherPassword'].forEach(k=>{ if(CONFIG[k]==null||CONFIG[k]==='') CONFIG[k]=base[k]; });
+  const arr=v=>Array.isArray(v)?v:(v&&typeof v==='object'?Object.values(v):[]);
+  CONFIG.quizzes=arr(CONFIG.quizzes); if(!CONFIG.quizzes.length) CONFIG.quizzes=base.quizzes;
+  CONFIG.quizzes.forEach(q=>{ q.choices=arr(q.choices); while(q.choices.length<4) q.choices.push(''); if(q.answer==null) q.answer=0; });
+  CONFIG.groups=arr(CONFIG.groups); if(!CONFIG.groups.length) CONFIG.groups=base.groups;
+  return CONFIG;
+}
 function openTeacher(){
+  ensureConfig();
   go('teacher');
   renderPresetBtns();
   document.getElementById('cfgTitle').value=CONFIG.title||'';
@@ -1283,6 +1296,7 @@ function showQuizTab(qi){
   document.querySelectorAll('#quizCfgList .ts-q').forEach((d,i)=>d.classList.toggle('on',i===qi));
 }
 function setAns(qi,ci){
+  ensureConfig();
   // 다시 그리지 않고 표시만 바꿈 (쓰고 있던 글자가 지워지지 않게)
   CONFIG.quizzes[qi].answer=ci;
   document.querySelectorAll(`#quizCfgList .ts-q[data-q="${qi}"] .ans`).forEach((b,i)=>b.classList.toggle('on',i===ci));
@@ -1297,7 +1311,7 @@ function renderGroupCfg(){
     gl.appendChild(d);
   });
 }
-function addGroupRow(){ collectGroups(); CONFIG.groups.push({name:(CONFIG.groups.length+1)+'모둠',password:''}); renderGroupCfg(); updateTsSummary(); }
+function addGroupRow(){ ensureConfig(); collectGroups(); CONFIG.groups.push({name:(CONFIG.groups.length+1)+'모둠',password:''}); renderGroupCfg(); updateTsSummary(); }
 function delGroup(i){ collectGroups(); CONFIG.groups.splice(i,1); renderGroupCfg(); updateTsSummary(); }
 function collectGroups(){
   const names=[...document.querySelectorAll('.gname')],pws=[...document.querySelectorAll('.gpw')];
@@ -1315,7 +1329,7 @@ function onImgPick(ev){
     updateTsSummary();
   }; img.src=e.target.result;}; rd.readAsDataURL(f);
 }
-function saveConfig(){
+function saveConfig(){ ensureConfig();
   collectGroups();
   const quizzes=(CONFIG.quizzes||[]).map((q,qi)=>({
     q:document.querySelector(`.qq[data-q="${qi}"]`).value.trim(),
