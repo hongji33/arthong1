@@ -1562,11 +1562,19 @@ function updateWhoBar(){
   else if(r.teacher) me_=`👩‍🏫 ${esc(r.teacher)} 선생님 반`;
   document.getElementById('wbMe').innerHTML=me_;
 }
+/* 예: 📍 오션중 · 3학년 9반 · 홍미술 선생님 */
+function roomText(){
+  if(!ROOM||ROOM==='main') return '';
+  const r=roomInfo();
+  return '📍 '+[r.school, classLabel(r.cls), r.teacher?r.teacher+' 선생님':''].filter(Boolean).join(' · ');
+}
 function updateRoomLabels(){
   updateWhoBar();
-  const hub=document.getElementById('hubRoomLabel'); if(hub) hub.textContent=roomDisplay?('📍 '+roomDisplay):'';
-  const tag=document.getElementById('homeRoomTag'); if(tag) tag.textContent=roomDisplay?('📍 '+roomDisplay+' 방'):'';
-  const lr=document.getElementById('loginRoom'); if(lr) lr.textContent=roomDisplay?('📍 '+roomDisplay+' 방'):'';
+  const t=roomText();
+  const hub=document.getElementById('hubRoomLabel'); if(hub) hub.textContent=t;
+  const tag=document.getElementById('homeRoomTag'); if(tag) tag.textContent=t;
+  const lr=document.getElementById('loginRoom'); if(lr) lr.textContent=t;
+  const iv=document.getElementById('inviteRoomLabel'); if(iv) iv.textContent=t;
 }
 function enterRoom(key, meta, dest){
   ROOM=key||'main'; roomReady=true;
@@ -1638,7 +1646,7 @@ function openInvite(){
   go('invite');
   const url=inviteLink();
   const lt=document.getElementById('inviteLinkText'); if(lt) lt.textContent=url;
-  const lbl=document.getElementById('inviteRoomLabel'); if(lbl) lbl.textContent=roomDisplay?('📍 '+roomDisplay+' 방'):'';
+  const lbl=document.getElementById('inviteRoomLabel'); if(lbl) lbl.textContent=roomText();
   const msg=document.getElementById('inviteMsg'); if(msg) msg.textContent='';
   renderInviteQR(url);
 }
