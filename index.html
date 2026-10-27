@@ -227,8 +227,7 @@ body.is-home .wrap{max-width:1240px;}
 .home-head{color:#fff; margin:0 0 10px; display:flex; align-items:baseline; gap:12px; min-width:0; padding-right:120px;}
 .home-head h1{margin:0; font-size:22px; font-weight:800; letter-spacing:-.5px; text-shadow:0 2px 10px rgba(0,0,0,.2); white-space:nowrap;}
 .home-head p{margin:0; color:#efeaff; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;}
-body.is-home .wrap{padding-top:10px;}
-body.is-home .mode-bar{justify-content:flex-end; align-items:flex-start; height:0; margin:0; position:relative; top:2px; z-index:2;}
+
 @media (max-width:600px){ .home-head p{display:none;} }
 .fp-card{padding:20px;}
 .fp-bar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; margin-bottom:14px;}
@@ -287,7 +286,7 @@ body.is-home .mode-bar{justify-content:flex-end; align-items:flex-start; height:
 body.is-wide .wrap{max-width:1240px;}
 .ts-head{display:flex; align-items:center; gap:12px; margin:0 0 12px; color:#fff;}
 .ts-head h1{margin:0; font-size:22px; font-weight:800; text-shadow:0 2px 10px rgba(0,0,0,.2); white-space:nowrap;}
-.ts-head .ts-msg{flex:1; margin:0; color:#fff; font-weight:700; text-align:right; min-width:0;}
+.ts-head .ts-msg{flex:1; margin:0; color:#fff; font-weight:700; text-align:right; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .ts-head .ts-save{width:auto; padding:11px 18px; font-size:15px; white-space:nowrap;}
 .ts-grid{display:grid; grid-template-columns:1.15fr 1.1fr .8fr; gap:14px; align-items:start;}
 .ts-col{padding:18px;}
@@ -348,6 +347,71 @@ body.is-wide .wrap{max-width:1240px;}
 
 @keyframes tsflash{0%{box-shadow:0 0 0 0 rgba(16,185,129,.0);} 25%{box-shadow:0 0 0 6px rgba(16,185,129,.55);} 100%{box-shadow:var(--shadow-card);}}
 .ts-flash{animation:tsflash 1.4s ease;}
+
+.ts-summary span.room{background:var(--accent); color:#fff;}
+.ts-summary span.room.warn{background:#fef3c7; color:#92400e;}
+.ts-summary{flex-wrap:nowrap; overflow:hidden; flex:1;}
+.ts-head .ts-save{margin-left:auto;}
+.ts-head{margin-bottom:8px;}
+.ts-msgline{color:#fff; font-weight:700; font-size:14px; margin:0 0 10px 4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 6px rgba(0,0,0,.25);}
+@media (max-width:1180px){ .ts-head{flex-wrap:wrap;} .ts-summary{order:4; flex-basis:100%; flex-wrap:wrap;} }
+
+.ts-cls{background:#fff; color:var(--accent); border-radius:10px; padding:1px 10px; margin:0 2px; text-shadow:none;}
+
+/* ===== 위쪽 공간 줄이기 (모든 화면) ===== */
+.wrap{padding-top:10px;}
+.mode-bar{position:fixed; left:10px; bottom:10px; margin:0; z-index:60; pointer-events:none;}
+.mode-bar .pill{padding:4px 10px; font-size:11px; box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.screen{position:relative;}
+.screen > .topback{position:absolute; left:0; top:0; margin:0; padding:7px 12px; font-size:13px; z-index:3;}
+.screen > .title{margin:0 0 12px; padding:0 120px; min-height:34px; display:flex; flex-direction:column; justify-content:center;}
+.screen > .title h1{font-size:22px; margin:0; line-height:1.25;}
+.screen > .title p{margin:2px 0 0; font-size:13px;}
+.screen > .title:first-child{padding:0;}
+.steps{margin-bottom:10px;}
+@media (max-width:640px){
+  .screen > .title{padding:0 0 0 96px; text-align:right;}
+  .screen > .title h1{font-size:19px;}
+  .screen > .title p{font-size:12px;}
+}
+
+.ts-lib-btn{background:var(--accent)!important; color:#fff!important;}
+.lib-modal{position:fixed; inset:0; background:rgba(20,14,50,.55); z-index:200; display:none; align-items:center; justify-content:center; padding:16px;}
+.lib-modal.on{display:flex; animation:fade .25s ease;}
+.lib-box{background:#fff; border-radius:20px; width:min(980px,100%); max-height:88vh; display:flex; flex-direction:column; box-shadow:var(--shadow-card);}
+.lib-head{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; padding:16px 18px 10px; border-bottom:1px solid var(--line); position:relative; padding-right:56px;}
+.lib-head b{font-size:17px;}
+.lib-head span{font-size:12.5px; color:var(--muted);}
+.lib-x{position:absolute; right:12px; top:10px; border:0; background:var(--soft); width:36px; height:36px; border-radius:10px; font-size:16px; cursor:pointer;}
+.lib-grid{display:grid; grid-auto-rows:max-content; align-content:start; min-height:0; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; padding:14px 18px 18px; overflow-y:auto;}
+.lib-card{display:flex; flex-direction:column; flex-shrink:0; min-height:172px; height:auto; border:2px solid var(--line); border-radius:14px; overflow:hidden; background:#fff; cursor:pointer; padding:0; font:inherit; text-align:left; transition:.15s;}
+.lib-card:hover{border-color:var(--accent); transform:translateY(-2px);}
+.lib-card.on{border-color:var(--accent); box-shadow:0 0 0 3px rgba(109,40,217,.25);}
+.lib-card .th{flex:0 0 110px; height:110px; background:var(--soft2) center/cover no-repeat;}
+.lib-card .tx{padding:8px 10px;}
+.lib-card .tx b{display:block; font-size:13.5px; line-height:1.3;}
+.lib-card .tx small{color:var(--muted); font-size:12px;}
+
+/* ===== 모둠 대항전 강조 ===== */
+.vs-tag{display:inline-block; vertical-align:middle; font-size:13px; font-weight:800; background:linear-gradient(135deg,#f59e0b,#ef4444); color:#fff; padding:3px 10px; border-radius:999px; margin-left:6px; text-shadow:none; box-shadow:0 3px 10px rgba(239,68,68,.35);}
+.vs-banner{margin:-20px -20px 14px; padding:16px 18px 14px; border-radius:var(--r-lg) var(--r-lg) 0 0; background:linear-gradient(135deg,#f59e0b,#ef4444 55%,#db2777); color:#fff; position:relative; overflow:hidden;}
+.vs-banner::after{content:"🏆"; position:absolute; right:10px; top:8px; font-size:44px; opacity:.28; transform:rotate(12deg);}
+.vs-banner h2{color:#fff; font-size:22px; margin:4px 0 2px; text-shadow:0 2px 8px rgba(0,0,0,.18);}
+.vs-banner p{margin:0; font-size:13px; color:#fff7ed;}
+.vs-teams{display:flex; gap:5px; align-items:center; font-size:11.5px; font-weight:800;}
+.vs-teams span{background:rgba(255,255,255,.25); padding:2px 8px; border-radius:999px;}
+.vs-teams b{font-size:11px; opacity:.9;}
+
+/* ===== 학생 입장: 한 화면 ===== */
+.lg-card{max-width:560px; margin:0 auto; padding:18px 20px 14px;}
+.today-art{gap:12px; padding:10px; margin-bottom:4px;}
+.today-art img{flex:0 0 72px; width:72px; height:72px;}
+.today-art b{font-size:16px; margin:1px 0 2px;}
+.lg-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 12px;}
+.lg-grid label{margin:10px 0 4px; font-size:13px;}
+.lg-grid input, .lg-grid select{padding:11px 12px; font-size:15px;}
+.lg-go{width:100%; margin-top:14px; padding:15px; font-size:18px;}
+@media (max-width:420px){ .lg-grid{gap:0 8px;} .lg-grid input, .lg-grid select{font-size:14px; padding:10px;} }
 </style>
 </head>
 <body>
@@ -373,8 +437,8 @@ body.is-wide .wrap{max-width:1240px;}
   <!-- ===== 홈: 자유 퍼즐(왼쪽) + 로그인 패널(오른쪽) ===== -->
   <section id="home" class="screen on">
     <div class="home-head">
-      <h1>🧩 미술 작품 퍼즐</h1>
-      <p>작품을 골라 바로 맞춰 보세요 · 수업 참여는 오른쪽에서 입장!</p>
+      <h1>🧩 미술 작품 퍼즐 <span class="vs-tag">⚔️ 모둠 대항전</span></h1>
+      <p>혼자 연습하고, 수업에서는 모둠끼리 누가 먼저 완성하나 겨뤄요!</p>
     </div>
     <div class="home-layout">
       <!-- 왼쪽: 바로 하는 퍼즐 -->
@@ -417,8 +481,11 @@ body.is-wide .wrap{max-width:1240px;}
       <!-- 오른쪽: 로그인 패널 -->
       <aside class="side">
         <div class="card">
-          <h2>수업 참여하기</h2>
-          <p class="sub">모둠과 함께 퍼즐 대결을 하려면 입장하세요.</p>
+          <div class="vs-banner">
+            <div class="vs-teams"><span>1모둠</span><b>VS</b><span>2모둠</span><b>VS</b><span>3모둠</span></div>
+            <h2>⚔️ 모둠 대항전</h2>
+            <p>모둠 친구들과 힘을 합쳐 <b>가장 먼저</b> 퍼즐을 완성하면 🏆 1등!</p>
+          </div>
           <div id="homeRoomTag" class="status-line" style="color:var(--accent); text-shadow:none; margin-bottom:10px;"></div>
           <button id="btnStudentEnter" class="btn btn-primary" onclick="studentEnter()">
             <span class="ic">🙋</span><span class="bt">학생 입장<small id="studentSub">학년·닉네임·모둠으로 입장</small></span>
@@ -447,7 +514,7 @@ body.is-wide .wrap{max-width:1240px;}
 
   <!-- ===== 교사 메뉴 (로그인 후) ===== -->
   <section id="teacherhub" class="screen">
-    <button class="topback" onclick="go('home')">← 처음 화면으로 (로그아웃)</button>
+    <button class="topback" onclick="go('home')">← 로그아웃</button>
     <div class="title"><h1>교사 메뉴</h1></div>
     <div class="card">
       <div id="hubRoomLabel" style="font-weight:800; color:var(--accent); margin-bottom:14px;"></div>
@@ -483,27 +550,26 @@ body.is-wide .wrap{max-width:1240px;}
   <!-- ===== 학생 로그인 ===== -->
   <section id="login" class="screen">
     <button class="topback" onclick="go('home')">← 뒤로</button>
-    <div class="title"><h1>학생 입장</h1><p id="loginRoom"></p></div>
-    <div class="card">
+    <div class="title"><h1>⚔️ 모둠 대항전 입장</h1><p id="loginRoom"></p></div>
+    <div class="card lg-card">
       <div class="today-art">
         <img id="loginArtImg" alt="오늘의 작품">
-        <div><small>오늘의 작품</small><b id="loginArtTitle">불러오는 중…</b><span>입장하면 퀴즈 → 감상 → 모둠 퍼즐 순서로 진행돼요.</span></div>
+        <div><small>오늘의 작품</small><b id="loginArtTitle">불러오는 중…</b><span>퀴즈 → 감상 → 🧩 모둠 퍼즐 대결!</span></div>
       </div>
-      <label>학년</label>
-      <select id="inGrade">
-        <option value="">학년을 골라요</option>
-        <option value="1">1학년</option>
-        <option value="2">2학년</option>
-        <option value="3">3학년</option>
-      </select>
-      <label>닉네임</label>
-      <input id="inName" maxlength="12" placeholder="예: 그림왕">
-      <label>우리 모둠 선택</label>
-      <select id="inGroup"></select>
-      <label>모둠 비밀번호</label>
-      <input id="inGroupPw" placeholder="선생님이 알려준 비번">
-      <button class="btn btn-primary mt2" onclick="doLogin()">입장하기</button>
-      <p class="hint" id="loginMsg"></p>
+      <div class="lg-grid">
+        <div><label>학년</label>
+          <select id="inGrade">
+            <option value="">학년 선택</option>
+            <option value="1">1학년</option>
+            <option value="2">2학년</option>
+            <option value="3">3학년</option>
+          </select></div>
+        <div><label>닉네임</label><input id="inName" maxlength="12" placeholder="예: 그림왕"></div>
+        <div><label>우리 모둠</label><select id="inGroup"></select></div>
+        <div><label>모둠 비밀번호</label><input id="inGroupPw" placeholder="선생님이 알려준 비번" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      </div>
+      <button class="btn btn-primary btn-big lg-go" onclick="doLogin()">⚔️ 입장하기</button>
+      <p class="hint center" id="loginMsg" style="min-height:1.2em; margin:6px 0 0;"></p>
     </div>
   </section>
 
@@ -619,21 +685,24 @@ body.is-wide .wrap{max-width:1240px;}
   <section id="teacher" class="screen">
     <div class="ts-head">
       <button class="topback" style="margin:0" onclick="go('teacherhub')">← 뒤로</button>
-      <h1>⚙️ 교사 설정</h1>
+      <h1 id="tsTitle">⚙️ 교사 설정</h1>
       <div class="ts-summary" id="tsSummary"></div>
-      <span class="hint ts-msg" id="saveMsg"></span>
       <button class="btn btn-primary ts-save" onclick="saveConfig()">💾 저장하고 모두에게 적용</button>
     </div>
+    <div class="ts-msgline" id="saveMsg">예시 작품을 누르거나 직접 채운 뒤 💾 저장을 눌러요.</div>
     <div class="ts-grid">
       <!-- 1열: 작품 -->
-      <div class="card ts-col">
+      <div class="card ts-col" id="artCol">
         <div class="ts-h"><span class="num-badge">1</span>오늘의 작품</div>
         <div class="ts-presets" id="presetBtns"></div>
-        <button class="ts-mini" onclick="loadLastCfg()">↩ 지난 수업 설정 불러오기</button>
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <button class="ts-mini ts-lib-btn" onclick="openArtLib()">🖼️ 명화 더 고르기 (자동 채우기)</button>
+          <button class="ts-mini" onclick="loadLastCfg()">↩ 지난 수업 설정</button>
+        </div>
         <div class="ts-art">
           <label class="ts-imgbox" title="눌러서 작품 사진 올리기">
             <img id="cfgImgPreview" alt="">
-            <span>📷 사진 바꾸기</span>
+            <span>📷 내 사진 올리기</span>
             <input type="file" id="imgFile" accept="image/*" onchange="onImgPick(event)" style="display:none">
           </label>
           <div class="ts-art-r">
@@ -674,6 +743,18 @@ body.is-wide .wrap{max-width:1240px;}
       </div>
     </div>
   </section>
+
+  <!-- 명화 고르기 창 -->
+  <div class="lib-modal" id="artLib" onclick="if(event.target===this) closeArtLib()">
+    <div class="lib-box">
+      <div class="lib-head">
+        <b>🖼️ 수업할 명화 고르기</b>
+        <span>누르면 사진·제목·설명·퀴즈 5문제가 자동으로 채워져요. 내 작품은 📷 내 사진 올리기로 넣어요.</span>
+        <button class="lib-x" onclick="closeArtLib()">✕</button>
+      </div>
+      <div class="lib-grid" id="artLibGrid"></div>
+    </div>
+  </div>
 
 </div>
 
@@ -739,7 +820,7 @@ const svgURL=s=>'data:image/svg+xml;utf8,'+encodeURIComponent(s);
 /* 예시 작품 4개 (저작권 걱정 없는 원작 일러스트 + 설명 + 쉬운 퀴즈) */
 const PRESETS=[
   {
-    title:'씨름 (김홍도)',
+    title:'씨름 (김홍도)', imgFiles:['Kim_Hong-do_-_Ssireum.jpg','Kim_Hong-do-Ssireum.jpg','Ssireum_by_Kim_Hong-do.jpg'],
     desc:'조선 시대 화가 김홍도가 그린 풍속화예요. 씨름판에서 두 사람이 힘을 겨루고, 둘레에는 다양한 표정의 구경꾼들이 둥글게 둘러앉아 있어요. 엿장수의 모습까지 담겨 있어 옛날 사람들의 생활을 생생하게 엿볼 수 있답니다.',
     quizzes:[
       {q:'이 그림을 그린 조선 시대 화가는 누구일까요?',choices:['김홍도','신윤복','겸재 정선','피카소'],answer:0},
@@ -750,7 +831,7 @@ const PRESETS=[
     ]
   },
   {
-    title:'우는 여인 (피카소)',
+    title:'우는 여인 (피카소)', noImgReason:'저작권 작품이라 사진은 직접 올려주세요',
     desc:'스페인 화가 피카소가 그린 작품이에요. 슬퍼서 우는 여인의 얼굴을 여러 각도에서 본 모습으로 쪼개어 한 화면에 담았어요. 강렬한 색과 조각난 형태로 깊은 슬픔을 표현한 입체파(큐비즘) 그림이에요.',
     quizzes:[
       {q:'이 작품을 그린 화가는 누구일까요?',choices:['피카소','반 고흐','김홍도','겸재 정선'],answer:0},
@@ -761,7 +842,7 @@ const PRESETS=[
     ]
   },
   {
-    title:'인왕제색도 (겸재 정선)',
+    title:'인왕제색도 (겸재 정선)', imgFiles:['Inwang_jesaekdo.jpg','Jeong_Seon-Inwang_jesaekdo.jpg','Inwangjesaekdo.jpg'],
     desc:'조선 시대 화가 겸재 정선이 비 온 뒤의 인왕산을 그린 그림이에요. 실제 우리나라의 산을 직접 보고 그린 진경산수화로, 물기를 머금은 바위산이 먹의 짙고 옅음으로 웅장하게 표현되어 있어요.',
     quizzes:[
       {q:'이 그림을 그린 조선 시대 화가는 누구일까요?',choices:['겸재 정선','김홍도','신사임당','피카소'],answer:0},
@@ -772,7 +853,7 @@ const PRESETS=[
     ]
   },
   {
-    title:'별이 빛나는 밤 (고흐)',
+    title:'별이 빛나는 밤 (고흐)', imgFiles:['Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg'],
     desc:'네덜란드 화가 반 고흐가 그린 밤 풍경이에요. 소용돌이치는 밤하늘과 빛나는 별, 노란 달이 인상적이에요. 붓의 움직임이 그대로 느껴지는 힘찬 붓질로 마음속 감정을 표현했어요.',
     quizzes:[
       {q:'이 작품을 그린 화가는 누구일까요?',choices:['반 고흐','피카소','김홍도','겸재 정선'],answer:0},
@@ -1215,13 +1296,26 @@ function renderPresetBtns(){
   const cur=(document.getElementById('cfgTitle')||{}).value||(CONFIG&&CONFIG.title)||'';
   pb.innerHTML=PRESETS.map((p,i)=>`<button class="${cur===p.title?'on':''}" title="예시 불러오기: 제목·설명·퀴즈" onclick="loadPreset(${i})">${p.title}</button>`).join('');
 }
+function tsSay(t){ const m=document.getElementById('saveMsg'); if(m){ m.textContent=t; m.title=t; } }
 function loadPreset(i){ ensureConfig();
   const p=PRESETS[i];
   CONFIG.title=p.title; CONFIG.description=p.desc; CONFIG.imageDataUrl=DEFAULT_IMG;
   CONFIG.quizzes=JSON.parse(JSON.stringify(p.quizzes));
   pickedImg=DEFAULT_IMG;
   openTeacher();
-  document.getElementById('saveMsg').textContent=`"${p.title}" 예시로 제목·설명·퀴즈 5문제를 채웠어요. 사진을 올리고 저장을 눌러주세요.`;
+  const short=p.title.split(' (')[0];
+  if(p.imgFiles){
+    // 저작권이 끝난 명화는 위키미디어에서 사진도 자동으로 가져옴
+    tsSay(`✔ ${short}: 설명·퀴즈 채움, 사진 불러오는 중…`);
+    fpLoadFirst(p.imgFiles.map(f=>WM(f,1000)),(url)=>{
+      if(document.getElementById('cfgTitle').value.trim()!==p.title) return; // 그사이 다른 예시를 골랐으면 무시
+      pickedImg=url; CONFIG.imageDataUrl=url;
+      const ip=document.getElementById('cfgImgPreview'); ip.src=url; ip.style.display='block';
+      updateTsSummary(); tsSay(`✔ ${short}: 사진·설명·퀴즈 채움 → 💾 저장하면 적용!`);
+    },()=>{ tsSay(`✔ ${short}: 설명·퀴즈 채움 · 사진은 직접 올려주세요`); });
+  }else{
+    tsSay(`✔ ${short}: 설명·퀴즈 채움 · ${p.noImgReason||'사진은 직접 올려주세요'}`);
+  }
   // 채워진 곳(작품·퀴즈 칸)을 잠깐 반짝여서 바뀐 걸 알려줌
   ['quizCol'].concat([...document.querySelectorAll('#teacher .ts-col')].slice(0,1).map(x=>x.id||(x.id='artCol'))).forEach(id=>{
     const el=document.getElementById(id); if(!el) return; el.classList.remove('ts-flash'); void el.offsetWidth; el.classList.add('ts-flash');
@@ -1229,13 +1323,13 @@ function loadPreset(i){ ensureConfig();
 }
 function loadLastCfg(){ ensureConfig();
   const c=lsGet('lastCfg');
-  if(!c){ document.getElementById('saveMsg').textContent='아직 저장된 지난 설정이 없어요. (한 번 저장하면 다음부터 불러올 수 있어요)'; return; }
+  if(!c){ tsSay('아직 저장한 지난 설정이 없어요'); return; }
   CONFIG.title=c.title; CONFIG.description=c.description; CONFIG.imageDataUrl=c.imageDataUrl;
   CONFIG.pieces=c.pieces||'3x4'; CONFIG.previewSeconds=c.previewSeconds||5;
   CONFIG.quizzes=JSON.parse(JSON.stringify(c.quizzes||[]));
   if(c.groups) CONFIG.groups=JSON.parse(JSON.stringify(c.groups));
   pickedImg=c.imageDataUrl; openTeacher();
-  document.getElementById('saveMsg').textContent='지난 수업 설정을 불러왔어요. 확인 후 저장을 눌러주세요.';
+  tsSay('✔ 지난 설정 불러옴 → 💾 저장하면 적용!');
 }
 /* 설정값이 아직 안 왔거나 일부가 비어 있어도 기본값으로 채워서 화면이 멈추지 않게 함 */
 function ensureConfig(){
@@ -1283,7 +1377,13 @@ function updateTsSummary(){
   const pc=document.getElementById('cfgPieces'); const pieces=pc.options[pc.selectedIndex]?pc.options[pc.selectedIndex].text:'';
   const g=document.querySelectorAll('#groupCfgList .grouprow').length;
   const hasImg=pickedImg&&pickedImg!==DEFAULT_IMG;
-  box.innerHTML=`<span>🖼️ <b>${t.replace(/</g,'&lt;')}</b></span><span>📷 ${hasImg?'사진 있음':'<b style="color:#b45309">사진 없음</b>'}</span><span>🧩 ${pieces}</span><span>👥 모둠 ${g}개</span>`;
+  // 제목에 반을 크게 표시 (방 이름의 마지막 부분이 반)
+  const parts=(roomDisplay||'').split(' · ').filter(Boolean);
+  const cls=(ROOM&&ROOM!=='main'&&parts.length)?parts[parts.length-1]:'';
+  const tt=document.getElementById('tsTitle');
+  if(tt) tt.innerHTML=cls?`⚙️ <span class="ts-cls">${cls.replace(/</g,'&lt;')}${/반$/.test(cls)?'':'반'}</span> 교사 설정`:'⚙️ 교사 설정';
+  const roomChip=(ROOM&&ROOM!=='main')?`<span class="room">📍 ${roomDisplay||ROOM} 방</span>`:`<span class="room warn">📍 방을 고르지 않았어요</span>`;
+  box.innerHTML=roomChip+`<span>🖼️ <b>${t.replace(/</g,'&lt;')}</b></span><span>📷 ${hasImg?'사진 있음':'<b style="color:#b45309">사진 없음</b>'}</span><span>🧩 ${pieces}</span><span>👥 모둠 ${g}개</span>`;
   // 예시 버튼 중 지금 제목과 같은 것에 ✔ 표시
   document.querySelectorAll('#presetBtns button').forEach((b,i)=>b.classList.toggle('on',PRESETS[i]&&PRESETS[i].title===document.getElementById('cfgTitle').value.trim()));
 }
@@ -1326,7 +1426,7 @@ function onImgPick(ev){
     const cv=document.createElement('canvas'); cv.width=w; cv.height=h; cv.getContext('2d').drawImage(img,0,0,w,h);
     pickedImg=cv.toDataURL('image/jpeg',0.72);
     const ip=document.getElementById('cfgImgPreview'); ip.src=pickedImg; ip.style.display='block';
-    updateTsSummary();
+    updateTsSummary(); tsSay('✔ 내 사진을 넣었어요. 제목·설명·퀴즈를 확인하고 💾 저장!');
   }; img.src=e.target.result;}; rd.readAsDataURL(f);
 }
 function saveConfig(){ ensureConfig();
@@ -1351,7 +1451,7 @@ function saveConfig(){ ensureConfig();
   store.remove(`rooms/${ROOM}/play`); store.remove(`rooms/${ROOM}/waiting`);
   store.remove(`rooms/${ROOM}/likes`); store.remove(`rooms/${ROOM}/comments`);
   store.set(`rooms/${ROOM}/game`,{round:0,startedAt:null});
-  document.getElementById('saveMsg').textContent='✅ 저장했어요! 학생들이 접속하면 오늘의 작품이 보여요.';
+  tsSay('✅ 저장했어요!');
   setTimeout(()=>go('teacherhub'),900);
 }
 
@@ -1644,6 +1744,105 @@ function fpPeek(){
   fpArtIdx=-1; fpRandomArt();
   let rt; window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(()=>{ if(curScreen==='home'&&FP&&!FP.startTs) fpStart(); },300); });
 })();
+
+
+/* =========================================================
+   명화 라이브러리 (교사 설정에서 고르기) — 저작권이 끝난 작품만
+   q: 그 작품만의 문제 [질문, 정답, 오답1, 오답2, 오답3]
+   ========================================================= */
+const ART_LIB=[
+  {t:'별이 빛나는 밤', a:'빈센트 반 고흐', c:'네덜란드', y:1889, f:['Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg'], preset:'별이 빛나는 밤 (고흐)'},
+  {t:'씨름', a:'김홍도', c:'한국(조선)', y:1780, f:['Kim_Hong-do_-_Ssireum.jpg','Kim_Hong-do-Ssireum.jpg','Ssireum_by_Kim_Hong-do.jpg'], preset:'씨름 (김홍도)'},
+  {t:'인왕제색도', a:'겸재 정선', c:'한국(조선)', y:1751, f:['Inwang_jesaekdo.jpg','Jeong_Seon-Inwang_jesaekdo.jpg','Inwangjesaekdo.jpg'], preset:'인왕제색도 (겸재 정선)'},
+  {t:'해바라기', a:'빈센트 반 고흐', c:'네덜란드', y:1888, f:['Vincent_Willem_van_Gogh_127.jpg'],
+   d:'반 고흐가 꽃병에 꽂힌 해바라기를 그린 정물화예요. 노란색을 여러 단계로 써서 밝고 따뜻한 느낌을 주고, 두껍게 칠한 물감에서 붓질이 그대로 느껴져요.',
+   q:['꽃병·과일처럼 움직이지 않는 물체를 그린 그림을 무엇이라 할까요?','정물화','풍경화','초상화','풍속화']},
+  {t:'모나리자', a:'레오나르도 다빈치', c:'이탈리아', y:1503, f:['Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg'],
+   d:'르네상스 시대의 레오나르도 다빈치가 그린 초상화예요. 신비로운 미소로 유명하고, 윤곽선을 안개처럼 부드럽게 흐리는 스푸마토 기법으로 그렸어요.',
+   q:['모나리자가 특히 유명한 이유는 무엇일까요?','신비로운 미소','화려한 왕관','큰 칼','밝은 무지개']},
+  {t:'절규', a:'에드바르 뭉크', c:'노르웨이', y:1893, f:['Edvard_Munch,_1893,_The_Scream,_oil,_tempera_and_pastel_on_cardboard,_91_x_73_cm,_National_Gallery_of_Norway.jpg'],
+   d:'뭉크가 마음속 불안과 두려움을 표현한 그림이에요. 붉게 물든 하늘과 휘어진 선, 얼굴을 감싼 사람의 모습이 강한 감정을 전해요.',
+   q:['이 그림이 주로 표현한 감정은 무엇일까요?','불안과 두려움','기쁨과 즐거움','졸림','배부름']},
+  {t:'진주 귀고리를 한 소녀', a:'요하네스 페르메이르', c:'네덜란드', y:1665, f:['1665_Girl_with_a_Pearl_Earring.jpg','Meisje_met_de_parel.jpg'],
+   d:'페르메이르가 그린 소녀 그림이에요. 파란 터번을 쓴 소녀가 고개를 돌려 바라보고, 귀에 걸린 진주가 빛을 받아 반짝여요.',
+   q:['소녀가 머리에 두른 것은 무슨 색일까요?','파란색과 노란색 터번','빨간 모자','초록 헬멧','검은 왕관']},
+  {t:'우유 따르는 여인', a:'요하네스 페르메이르', c:'네덜란드', y:1658, f:['Johannes_Vermeer_-_Het_melkmeisje_-_Google_Art_Project.jpg'],
+   d:'부엌에서 우유를 따르는 여인의 평범한 일상을 그렸어요. 창문으로 들어오는 부드러운 빛과 조용한 분위기가 아름다워요.',
+   q:['이 그림에서 빛은 어디에서 들어오나요?','창문','전등','촛불','텔레비전']},
+  {t:'가나가와 해변의 높은 파도', a:'가쓰시카 호쿠사이', c:'일본', y:1831, f:['Tsunami_by_hokusai_19th_century.jpg','The_Great_Wave_off_Kanagawa.jpg'],
+   d:'호쿠사이가 만든 일본의 목판화(우키요에)예요. 거대한 파도가 배를 덮칠 듯하고, 멀리 작게 후지산이 보여요.',
+   q:['파도 뒤 멀리 작게 보이는 산은 무엇일까요?','후지산','한라산','에베레스트산','알프스산']},
+  {t:'수련', a:'클로드 모네', c:'프랑스', y:1906, f:['Claude_Monet_-_Water_Lilies_-_1906,_Ryerson.jpg'],
+   d:'모네가 자기 집 정원 연못의 수련을 그린 그림이에요. 물에 비친 하늘과 빛의 변화를 짧은 붓질로 표현한 인상주의 작품이에요.',
+   q:['빛과 순간의 느낌을 짧은 붓질로 그린 미술 흐름은?','인상주의','입체파','초현실주의','팝아트']},
+  {t:'인상, 해돋이', a:'클로드 모네', c:'프랑스', y:1872, f:['Monet_-_Impression,_Sunrise.jpg'],
+   d:'항구의 해 뜨는 모습을 빠른 붓질로 그린 모네의 그림이에요. 이 작품의 제목에서 "인상주의"라는 이름이 생겼어요.',
+   q:['이 작품의 제목에서 생겨난 미술 흐름의 이름은?','인상주의','사실주의','추상미술','바로크']},
+  {t:'비너스의 탄생', a:'산드로 보티첼리', c:'이탈리아', y:1485, f:['Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg','Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project.jpg'],
+   d:'르네상스 시대 보티첼리가 그린 그림으로, 사랑의 여신 비너스가 바다에서 태어나 커다란 조개껍데기를 타고 해안에 도착하는 장면이에요.',
+   q:['비너스는 무엇을 타고 바다에서 오고 있나요?','조개껍데기','배','물고기','구름']},
+  {t:'키스', a:'구스타프 클림트', c:'오스트리아', y:1908, f:['The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg'],
+   d:'클림트가 꼭 안은 두 사람을 그린 그림이에요. 진짜 금박을 붙여 화려하게 빛나고, 옷에는 다양한 무늬가 장식되어 있어요.',
+   q:['이 그림을 화려하게 빛나게 하는 재료는 무엇일까요?','금박','유리','모래','종이 신문']},
+  {t:'그랑드자트섬의 일요일 오후', a:'조르주 쇠라', c:'프랑스', y:1886, f:['A_Sunday_on_La_Grande_Jatte,_Georges_Seurat,_1884.jpg'],
+   d:'쇠라가 공원에서 쉬는 사람들을 그린 그림이에요. 작은 색 점을 수없이 찍어서 멀리서 보면 색이 섞여 보이게 했어요.',
+   q:['작은 색 점을 찍어서 그리는 이 기법을 무엇이라 할까요?','점묘법','수묵화','콜라주','판화']},
+  {t:'이삭 줍는 여인들', a:'장프랑수아 밀레', c:'프랑스', y:1857, f:['Jean-François_Millet_-_Gleaners_-_Google_Art_Project_2.jpg'],
+   d:'추수가 끝난 들판에서 떨어진 이삭을 줍는 세 농민 여성을 그린 밀레의 그림이에요. 힘든 노동을 하는 사람들의 모습을 진지하게 담았어요.',
+   q:['그림 속 여인들은 무엇을 하고 있나요?','떨어진 이삭을 줍는다','춤을 춘다','낚시를 한다','책을 읽는다']},
+  {t:'눈 속의 사냥꾼', a:'피터르 브뤼헐', c:'네덜란드(플랑드르)', y:1565, f:['Pieter_Bruegel_the_Elder_-_Hunters_in_the_Snow_(Winter)_-_Google_Art_Project.jpg'],
+   d:'브뤼헐이 그린 겨울 마을 풍경이에요. 사냥에서 돌아오는 사냥꾼과 개들, 얼음 위에서 노는 마을 사람들이 보여요.',
+   q:['이 그림의 계절은 언제일까요?','겨울','봄','여름','가을']},
+  {t:'물랭 드 라 갈레트의 무도회', a:'오귀스트 르누아르', c:'프랑스', y:1876, f:['Pierre-Auguste_Renoir,_Le_Moulin_de_la_Galette.jpg'],
+   d:'르누아르가 파리의 야외 무도회장에서 즐겁게 춤추고 이야기하는 사람들을 그렸어요. 나뭇잎 사이로 비치는 햇빛이 반짝여요.',
+   q:['그림 속 사람들은 어떤 분위기인가요?','즐겁게 춤추고 이야기함','모두 잠을 잠','슬프게 울고 있음','시험을 보고 있음']},
+];
+function libShuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function libQ(q,right,wrongs){ const ch=libShuffle([right,...wrongs.slice(0,3)]); return {q,choices:ch,answer:ch.indexOf(right)}; }
+function libPickOthers(key,val,n){ return libShuffle([...new Set(ART_LIB.map(x=>x[key]).filter(v=>v!==val))]).slice(0,n); }
+function libCentury(y){ return Math.floor((y-1)/100)+1+'세기'; }
+function makeLibQuizzes(w){
+  const cen=libCentury(w.y), cens=['15세기','16세기','17세기','18세기','19세기','20세기'].filter(c=>c!==cen);
+  return [
+    libQ('이 작품을 그린 화가는 누구일까요?', w.a, libPickOthers('a',w.a,3)),
+    libQ('이 작품의 제목은 무엇일까요?', w.t, libPickOthers('t',w.t,3)),
+    libQ('이 작품을 그린 화가는 어느 나라 사람일까요?', w.c, libPickOthers('c',w.c,3)),
+    libQ(w.q[0], w.q[1], w.q.slice(2)),
+    libQ('이 작품은 언제쯤 그려졌을까요?', cen, libShuffle(cens).slice(0,3)),
+  ];
+}
+function openArtLib(){
+  const g=document.getElementById('artLibGrid'); const cur=document.getElementById('cfgTitle').value.trim();
+  g.innerHTML='';
+  ART_LIB.forEach((w,i)=>{
+    const b=document.createElement('button'); b.className='lib-card';
+    const full=w.preset||`${w.t} (${w.a})`; if(full===cur) b.classList.add('on');
+    b.innerHTML=`<div class="th"></div><div class="tx"><b>${w.t}</b><small>${w.a} · ${w.y}년경</small></div>`;
+    fpLoadFirst(w.f.map(f=>WM(f,300)),url=>{ b.querySelector('.th').style.backgroundImage=`url("${url}")`; },()=>{ b.querySelector('.th').innerHTML='<div style="padding:40px 0;text-align:center;color:#9ca3af;font-size:12px">사진 미리보기 없음</div>'; });
+    b.onclick=()=>pickLibArt(i);
+    g.appendChild(b);
+  });
+  document.getElementById('artLib').classList.add('on');
+}
+function closeArtLib(){ document.getElementById('artLib').classList.remove('on'); }
+function pickLibArt(i){
+  closeArtLib();
+  const w=ART_LIB[i];
+  if(w.preset){ const pi=PRESETS.findIndex(p=>p.title===w.preset); if(pi>=0){ loadPreset(pi); return; } }
+  ensureConfig();
+  const title=`${w.t} (${w.a})`;
+  CONFIG.title=title; CONFIG.description=w.d; CONFIG.quizzes=makeLibQuizzes(w);
+  CONFIG.imageDataUrl=DEFAULT_IMG; pickedImg=DEFAULT_IMG;
+  openTeacher();
+  tsSay(`✔ ${w.t}: 설명·퀴즈 채움, 사진 불러오는 중…`);
+  fpLoadFirst(w.f.map(f=>WM(f,1000)),url=>{
+    if(document.getElementById('cfgTitle').value.trim()!==title) return;
+    pickedImg=url; CONFIG.imageDataUrl=url;
+    const ip=document.getElementById('cfgImgPreview'); ip.src=url; ip.style.display='block';
+    updateTsSummary(); tsSay(`✔ ${w.t}: 사진·설명·퀴즈 채움 → 💾 저장하면 적용!`);
+  },()=>tsSay(`✔ ${w.t}: 설명·퀴즈 채움 · 사진을 못 불러왔어요, 📷 내 사진 올리기로 넣어주세요`));
+  ['quizCol','artCol'].forEach(id=>{ const el=document.getElementById(id); if(!el) return; el.classList.remove('ts-flash'); void el.offsetWidth; el.classList.add('ts-flash'); });
+}
 
 /* 시작: URL에 ?room= 있으면 학생은 바로 학생 화면. 없으면 학생 화면(교사는 로그인으로 방 생성) */
 (function initRoom(){
