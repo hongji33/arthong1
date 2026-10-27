@@ -412,6 +412,10 @@ body.is-wide .wrap{max-width:1240px;}
 .lg-grid input, .lg-grid select{padding:11px 12px; font-size:15px;}
 .lg-go{width:100%; margin-top:14px; padding:15px; font-size:18px;}
 @media (max-width:420px){ .lg-grid{gap:0 8px;} .lg-grid input, .lg-grid select{font-size:14px; padding:10px;} }
+
+.solo-tag{display:flex; align-items:baseline; gap:10px; margin:-4px 0 10px; flex-wrap:wrap;}
+.solo-tag b{background:#e0f2fe; color:#0369a1; font-size:13.5px; padding:4px 12px; border-radius:999px;}
+.solo-tag span{color:var(--muted); font-size:12.5px;}
 </style>
 </head>
 <body>
@@ -437,12 +441,13 @@ body.is-wide .wrap{max-width:1240px;}
   <!-- ===== 홈: 자유 퍼즐(왼쪽) + 로그인 패널(오른쪽) ===== -->
   <section id="home" class="screen on">
     <div class="home-head">
-      <h1>🧩 미술 작품 퍼즐 <span class="vs-tag">⚔️ 모둠 대항전</span></h1>
-      <p>혼자 연습하고, 수업에서는 모둠끼리 누가 먼저 완성하나 겨뤄요!</p>
+      <h1>🧩 미술 작품 퍼즐</h1>
+      <p>왼쪽은 🙋 혼자 연습 · 오른쪽에서 ⚔️ 모둠 대항전 입장!</p>
     </div>
     <div class="home-layout">
       <!-- 왼쪽: 바로 하는 퍼즐 -->
       <div class="card fp-card">
+        <div class="solo-tag"><b>🙋 혼자 연습하기</b><span>개인 연습용이에요 · 기록은 저장되지 않아요</span></div>
         <div class="fp-bar">
           <div class="fp-arts" id="fpArts"></div>
         </div>
